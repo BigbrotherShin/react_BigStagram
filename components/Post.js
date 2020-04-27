@@ -16,6 +16,7 @@ const Card = styled.div`
   & header {
     display: flex;
     align-items: center;
+    padding: 0.25rem 1rem;
   }
 
   .card_info {

@@ -1,6 +1,6 @@
 import React, { memo, useState, useCallback } from 'react';
 import styled from 'styled-components';
-import { Button } from 'antd';
+import Button from './common/Button';
 
 const StyledCommentFormDiv = styled.div`
   display: flex;
@@ -15,32 +15,38 @@ const StyledCommentFormDiv = styled.div`
 
 const StyledTextarea = styled.textarea`
   resize: none;
-  flex-basis: 90%;
+
+  width: 100%;
+  font-size: 1rem;
   border: none;
 
   &:focus {
     outline: none;
   }
 
-  & + button {
-    display: none;
+  & + Button {
+    min-width: 4rem;
   }
 
-  &:focus + button {
-    display: inline-block;
-    border: none;
-    flex-basis: 10%;
-    font-size: 0.8rem;
+  // & + button {
+  //   display: none;
+  // }
 
-    &:hover {
-      outline: 1px dotted black;
-    }
+  // &:focus + button {
+  //   display: inline-block;
+  //   border: none;
+  //   flex-basis: 10%;
+  //   font-size: 0.8rem;
+
+    // &:hover {
+    //   outline: 1px dotted black;
+    // }
   }
 
-  &+button: active {
-    display: inline-block;
-    border: 1px solid black;
-  }
+  // &+button: active {
+  //   display: inline-block;
+  //   border: 1px solid black;
+  // }
 `;
 
 const CommentForm = memo(() => {
@@ -64,7 +70,7 @@ const CommentForm = memo(() => {
           rows={1}
           placeholder='댓글 달기...'
         />
-        <Button htmlType='submit' onClick={onSubmit} type='primary' block>
+        <Button htmlType='submit' onClick={onSubmit}>
           <p>게시</p>
         </Button>
       </form>
