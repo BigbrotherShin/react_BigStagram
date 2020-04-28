@@ -5,9 +5,15 @@ import AuthForm from '../components/auth/AuthForm';
 const RegisterPage = memo(() => {
   return (
     <AuthTemplate>
-      <AuthForm />
+      <AuthForm type='register' />
     </AuthTemplate>
   );
 });
+
+RegisterPage.getInitialProps = async (ctx) => {
+  const pathname = ctx.pathname;
+
+  return { pathname };
+};
 
 export default RegisterPage;

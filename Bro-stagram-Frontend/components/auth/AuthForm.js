@@ -44,10 +44,21 @@ const Footer = styled.div`
   }
 `;
 
-const AuthForm = memo(() => {
+const ButtonWithMarginTop = styled(Button)`
+  margin-top: 1rem;
+`;
+
+const textMap = {
+  login: '로그인',
+  register: '회원가입',
+};
+
+const AuthForm = memo(({ type }) => {
+  const text = textMap[type];
+
   return (
     <AuthFormBlock>
-      <h3>로그인</h3>
+      <h3>{text}</h3>
       <form>
         <StyledInput
           autoComplete='username'
@@ -60,12 +71,28 @@ const AuthForm = memo(() => {
           placeholder='비밀번호'
           type='password'
         />
+        {type === 'register' && (
+          <StyledInput
+            autoComplete='new-password'
+            name='passwordConfirm'
+            placeholder='비밀번호 확인'
+            type='password'
+          />
+        )}
+        <ButtonWithMarginTop fullWidth cyan>
+          {text}
+        </ButtonWithMarginTop>
       </form>
-      <Button>로그인</Button>
       <Footer>
-        <Link href='/register'>
-          <a>회원가입</a>
-        </Link>
+        {type === 'login' ? (
+          <Link href='/register'>
+            <a>회원가입</a>
+          </Link>
+        ) : (
+          <Link href='/login'>
+            <a>로그인</a>
+          </Link>
+        )}
       </Footer>
     </AuthFormBlock>
   );

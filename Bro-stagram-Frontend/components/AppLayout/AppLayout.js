@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo, useEffect } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import PropTypes from 'prop-types';
 import {
   InstagramOutlined,
@@ -7,9 +7,7 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import Button from '../common/Button';
-import App from 'next/app';
 
 const dummy = {
   isLoggedIn: false,
@@ -25,10 +23,6 @@ const AppLayout = memo(({ children }) => {
     [searchInput],
   );
 
-  const onLoginClick = useCallback(() => {
-    setLoginClick(true);
-  }, []);
-
   return (
     <div className='container'>
       <div className='nav_container'>
@@ -38,7 +32,7 @@ const AppLayout = memo(({ children }) => {
               <InstagramOutlined className='nav_icons' id='nav_insta_icon' />
             </a>
           </Link>
-          <h2>BigStagram</h2>
+          <h2>BroStagram</h2>
         </div>
         <div className='nav_search'>
           <form>

@@ -33,7 +33,12 @@ const makeStore = (initialState, options) => {
 };
 
 const MyApp = ({ Component, pageProps, store }) => {
-  return (
+  return (pageProps && pageProps.pathname) === '/login' ||
+    (pageProps && pageProps.pathname) === '/register' ? (
+    <Provider store={store}>
+      <Component {...pageProps} />
+    </Provider>
+  ) : (
     <Provider store={store}>
       <AppLayout>
         <Component {...pageProps} />
@@ -45,6 +50,18 @@ const MyApp = ({ Component, pageProps, store }) => {
 MyApp.propTypes = {
   Component: PropTypes.elementType,
   pageProps: PropTypes.object.isRequired,
+};
+
+MyApp.getInitialProps = async (context) => {
+  const { ctx, Component } = context;
+  let pageProps = {};
+
+  if (Component.getInitialProps) {
+    // Component (pages 폴더에 있는 컴포넌트)에 getInitialProps가 있다면
+    pageProps = (await Component.getInitialProps(ctx)) || {};
+
+    return { pageProps };
+  }
 };
 
 export default withRedux(makeStore)(MyApp);
