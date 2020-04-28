@@ -1,4 +1,4 @@
-import React, { memo, useState, useCallback } from 'react';
+import React, { memo, useState, useCallback, useRef } from 'react';
 import styled from 'styled-components';
 import Button from './common/Button';
 
@@ -8,7 +8,9 @@ const StyledCommentFormDiv = styled.div`
 
   & form {
     display: flex;
+    align-items: center;
     width: 100%;
+    height: 1.5rem;
     justify-content: space-between;
   }
 `;
@@ -25,28 +27,16 @@ const StyledTextarea = styled.textarea`
   }
 
   & + Button {
-    min-width: 4rem;
+    display: none;
   }
 
-  // & + button {
-  //   display: none;
-  // }
-
-  // &:focus + button {
-  //   display: inline-block;
-  //   border: none;
-  //   flex-basis: 10%;
-  //   font-size: 0.8rem;
-
-    // &:hover {
-    //   outline: 1px dotted black;
-    // }
+  &:focus + button {
+    display: block;
   }
 
-  // &+button: active {
-  //   display: inline-block;
-  //   border: 1px solid black;
-  // }
+  &+button: active {
+    display: block;
+  }
 `;
 
 const CommentForm = memo(() => {

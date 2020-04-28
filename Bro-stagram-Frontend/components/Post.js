@@ -12,11 +12,13 @@ import UserInfo from './UserInfo';
 
 const Card = styled.div`
   background-color: white;
+  padding: 10px;
+  margin: 10px;
 
   & header {
     display: flex;
     align-items: center;
-    padding: 0.25rem 1rem;
+    padding: 0.25rem 0.3rem 1rem;
   }
 
   .card_info {

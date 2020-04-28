@@ -11,10 +11,15 @@ const StyledButton = styled.button`
   color: white;
   outline: none;
   cursor: pointer;
+  min-width: 4rem;
+  height: 1.5rem;
 
   background: ${palette.gray[8]};
   &:hover {
     background: ${palette.gray[6]};
+  }
+  &:active {
+    background: ${palette.gray[7]};
   }
 `;
 

@@ -6,6 +6,11 @@ import {
   HeartOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import Button from '../common/Button';
+
+const dummy = {
+  isLoggedIn: false,
+};
 
 const AppLayout = memo(({ children }) => {
   const [searchInput, setSearchInput] = useState('');
@@ -34,9 +39,15 @@ const AppLayout = memo(({ children }) => {
           </form>
         </div>
         <div className='nav_right'>
-          <GlobalOutlined className='nav_icons' />
-          <HeartOutlined className='nav_icons' />
-          <UserOutlined className='nav_icons' />
+          {dummy.isLoggedIn ? (
+            <>
+              <GlobalOutlined className='nav_icons' />
+              <HeartOutlined className='nav_icons' />
+              <UserOutlined className='nav_icons' />
+            </>
+          ) : (
+            <Button>로그인</Button>
+          )}
         </div>
       </div>
       <div className='main_container'>

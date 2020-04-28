@@ -164,6 +164,24 @@ h2 {
   padding: 0 15rem;
 }
 
+.nav_left,
+.nav_right,
+.nav_search {
+  flex: none;
+}
+
+.nav_left {
+  margin-right: auto;
+}
+
+.nav_search {
+  margin: 0 auto;
+}
+
+.nav_right {
+  margin-left: auto;
+}
+
 .nav_icons {
   font-size: 1.6rem;
   margin: 1rem;
