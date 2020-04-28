@@ -1,4 +1,4 @@
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback, memo, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import {
   InstagramOutlined,
@@ -6,7 +6,10 @@ import {
   HeartOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
 import Button from '../common/Button';
+import App from 'next/app';
 
 const dummy = {
   isLoggedIn: false,
@@ -22,11 +25,19 @@ const AppLayout = memo(({ children }) => {
     [searchInput],
   );
 
+  const onLoginClick = useCallback(() => {
+    setLoginClick(true);
+  }, []);
+
   return (
     <div className='container'>
       <div className='nav_container'>
         <div className='nav_left'>
-          <InstagramOutlined className='nav_icons' id='nav_insta_icon' />
+          <Link href='/'>
+            <a>
+              <InstagramOutlined className='nav_icons' id='nav_insta_icon' />
+            </a>
+          </Link>
           <h2>BigStagram</h2>
         </div>
         <div className='nav_search'>
@@ -46,7 +57,11 @@ const AppLayout = memo(({ children }) => {
               <UserOutlined className='nav_icons' />
             </>
           ) : (
-            <Button>로그인</Button>
+            <Link href='/login'>
+              <a>
+                <Button>로그인</Button>
+              </a>
+            </Link>
           )}
         </div>
       </div>
