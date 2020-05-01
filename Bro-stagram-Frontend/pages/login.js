@@ -1,11 +1,21 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import Router from 'next/router';
 import AuthTemplate from '../components/auth/AuthTemplate';
 import AuthForm from '../components/auth/AuthForm';
 
 const LoginPage = memo(() => {
+  const { logInErrorReason, isLoggedIn } = useSelector((state) => state.user);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      Router.push('/');
+    }
+  }, [isLoggedIn]);
+
   return (
     <AuthTemplate>
-      <AuthForm type='login' />
+      <AuthForm type='login' error={logInErrorReason} />
     </AuthTemplate>
   );
 });

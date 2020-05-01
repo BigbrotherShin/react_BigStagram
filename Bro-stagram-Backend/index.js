@@ -9,10 +9,18 @@ const path = require('path');
 
 const prod = process.env.NODE_ENV === 'production';
 
-const authAPIRouter = require('./routes/auth');
+const passportConfig = require('./passport');
+const db = require('./models');
+const userAPIRouter = require('./routes/user');
+// const userAPIRouter = require('./routes/user');
+// const postsAPIRouter = require('./routes/posts');
+// const postAPIRouter = require('./routes/post');
+// const hashtagAPIRouter = require('./routes/hashtag');
 
 dotenv.config();
 const app = express();
+db.sequelize.sync();
+passportConfig();
 
 app.use(morgan('dev'));
 app.use(
@@ -38,8 +46,10 @@ app.use(
     name: 'wervzva',
   }),
 );
+app.use(passport.initialize());
+app.use(passport.session());
 
-app.use('/api/auth', authAPIRouter);
+app.use('/api/user', userAPIRouter);
 
 app.get('/', (req, res) => {
   res.send('BroStagram 정상 동작');

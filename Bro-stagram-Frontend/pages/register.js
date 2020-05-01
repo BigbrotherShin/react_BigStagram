@@ -1,11 +1,31 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import AuthTemplate from '../components/auth/AuthTemplate';
 import AuthForm from '../components/auth/AuthForm';
+import Router from 'next/router';
 
 const RegisterPage = memo(() => {
+  const { signUpErrorReason, signedUp, me } = useSelector(
+    (state) => state.user,
+  );
+
+  useEffect(() => {
+    if (me && me.id) {
+      alert('로그인되어 메인페이지로 이동합니다.');
+      Router.push('/');
+    }
+  }, [me && me.id]);
+
+  useEffect(() => {
+    if (signedUp) {
+      alert('회원가입에 성공하셨습니다. 로그인해주세요 :D');
+      Router.push('/login');
+    }
+  }, [signedUp]);
+
   return (
     <AuthTemplate>
-      <AuthForm type='register' />
+      <AuthForm type='register' error={signUpErrorReason} />
     </AuthTemplate>
   );
 });

@@ -9,26 +9,51 @@ import styled from 'styled-components';
 import Comments from './Comments';
 import CommentForm from './CommentForm';
 import UserInfo from './UserInfo';
+import Link from 'next/link';
 
 const Card = styled.div`
-  background-color: white;
-  padding: 10px;
-  margin: 10px;
+  padding: 0;
+
+  @media (min-width: 640px) {
+    margin-bottom: 60px;
+    border-radius: 3px;
+    border: 1px solid #dbdbdb;
+    background: white;
+    margin-left: -1px;
+    margin-right: -1px;
+  }
 
   & header {
     display: flex;
     align-items: center;
     padding: 0.25rem 0.3rem 1rem;
+    height: 60px;
+    padding: 16px;
   }
 
   .card_info {
     display: flex;
-    justify-content: space-between;
+    padding-right: 16px;
+    padding-left: 16px;
+    margin-top: 4px;
     font-size: 1.2rem;
+  }
+
+  .card_info_right {
+    margin-left: auto;
   }
 
   .card_info_icons {
     margin: 0.3rem 0.5rem;
+    font-size: 24px;
+  }
+
+  .card_content_likes_wrapper {
+    display: flex;
+    justify-content: flex-start;
+    padding-left: 16px;
+    padding-right: 16px;
+    margin-bottom: 8px;
   }
 
   & .card_image {
@@ -41,20 +66,29 @@ const Card = styled.div`
 `;
 
 const CardContent = styled.div`
-  margin-top: 0.3rem;
-  margin-bottom: 0.3rem;
+  .card_content_body_wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-left: 16px;
+    padding-right: 16px;
+    flex: 0 0 auto;
+  }
 
   & .card_content_nickname {
     display: inline-block;
-    float: left;
     font-weight: 600;
-    margin: 0.3rem;
   }
 
   & .card_content_body {
     display: inline-block;
-    clear: both;
-    margin: 0.3rem;
+
+    width: 100%;
+  }
+
+  .card_time {
+    padding-left: 16px;
+    margin-bottom: 4px;
   }
 `;
 
@@ -81,16 +115,33 @@ const Post = memo(() => {
         </div>
       </div>
       <CardContent className='card_content'>
-        <div className='card_content_nickname'>Nickname</div>
-        <div className='card_content_body'>
-          This is some text. This is some text. This is some text. This is some
-          text. This is some text. This is some text. This is some text. This is
-          some text. This is some text. This is some text. This is some text.
-          This is some text.
+        <section className='card_content_likes_wrapper'>
+          <div className='card_content_likes'>
+            <Link href='#'>
+              <a>example</a>
+            </Link>
+            님 외
+            <Link href='#'>
+              <a> 여러 명</a>
+            </Link>
+            이 좋아합니다.
+          </div>
+        </section>
+        <div className='card_content_body_wrapper'>
+          <Link href='#'>
+            <a className='card_content_nickname'>Nickname</a>
+          </Link>
+          <span className='card_content_body'>
+            This is some text. This is some text. This is some text. This is
+            some text. This is some text. This is some text. This is some text.
+            This is some text. This is some text. This is some text. This is
+            some text. This is some text.
+          </span>
         </div>
+        <div className='card_time'>7시간 전</div>
+        <Comments className='card_comments' />
+        <CommentForm className='card_comment_form' />
       </CardContent>
-      <Comments className='card_comments' />
-      <CommentForm className='card_comment_form' />
     </Card>
   );
 });

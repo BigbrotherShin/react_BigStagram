@@ -8,12 +8,10 @@ import {
 } from '@ant-design/icons';
 import Link from 'next/link';
 import Button from '../common/Button';
-
-const dummy = {
-  isLoggedIn: false,
-};
+import { useSelector } from 'react-redux';
 
 const AppLayout = memo(({ children }) => {
+  const { me, isLoggedIn } = useSelector((state) => state.user);
   const [searchInput, setSearchInput] = useState('');
 
   const onChange = useCallback(
@@ -24,46 +22,61 @@ const AppLayout = memo(({ children }) => {
   );
 
   return (
-    <div className='container'>
-      <div className='nav_container'>
-        <div className='nav_left'>
-          <Link href='/'>
-            <a>
-              <InstagramOutlined className='nav_icons' id='nav_insta_icon' />
-            </a>
-          </Link>
-          <h2>BroStagram</h2>
+    <section className='container'>
+      <nav>
+        <div className='nav_container_fixed_wrapper'>
+          <div className='nav_container_wrapper'>
+            <div className='nav_container'>
+              <div className='nav_left'>
+                <Link href='/'>
+                  <a>
+                    <div className='nav_left_items'>
+                      <InstagramOutlined
+                        className='nav_icons'
+                        id='nav_insta_icon'
+                      />
+                      <h2>BroStagram</h2>
+                    </div>
+                  </a>
+                </Link>
+              </div>
+              <div className='nav_search'>
+                <input
+                  className='nav_search_input'
+                  placeholder='검색'
+                  onChange={onChange}
+                />
+              </div>
+              <div className='nav_right'>
+                <div className='nav_right_items'>
+                  {me && me.id ? (
+                    <>
+                      <GlobalOutlined className='nav_icons' />
+                      <HeartOutlined className='nav_icons' />
+                      <UserOutlined className='nav_icons' />
+                    </>
+                  ) : (
+                    <Link href='/login'>
+                      <a>
+                        <Button>로그인</Button>
+                      </a>
+                    </Link>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className='nav_search'>
-          <form>
-            <input
-              className='nav_search_input'
-              placeholder='검색'
-              onChange={onChange}
-            />
-          </form>
+      </nav>
+      <section className='main_container_wrapper'>
+        <div className='main_container'>
+          <div className='main_left'>{children}</div>
+          <div className='main_right'>
+            <div className='main_right_items main_right'>right side</div>
+          </div>
         </div>
-        <div className='nav_right'>
-          {dummy.isLoggedIn ? (
-            <>
-              <GlobalOutlined className='nav_icons' />
-              <HeartOutlined className='nav_icons' />
-              <UserOutlined className='nav_icons' />
-            </>
-          ) : (
-            <Link href='/login'>
-              <a>
-                <Button>로그인</Button>
-              </a>
-            </Link>
-          )}
-        </div>
-      </div>
-      <div className='main_container'>
-        <div className='main_left'>{children}</div>
-        <div className='main_right'>right side</div>
-      </div>
-    </div>
+      </section>
+    </section>
   );
 });
 

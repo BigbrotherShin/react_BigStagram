@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import palette from '../../lib/styles/palette';
 
@@ -12,6 +12,7 @@ const StyledButton = styled.button`
   outline: none;
   cursor: pointer;
   min-width: 4rem;
+  max-height: 24px;
 
   background: ${palette.gray[8]};
   &:hover {
@@ -40,6 +41,8 @@ const StyledButton = styled.button`
     `}
 `;
 
-const Button = (props) => <StyledButton {...props} />;
+const Button = (props) => {
+  return <StyledButton {...props} />;
+};
 
 export default Button;

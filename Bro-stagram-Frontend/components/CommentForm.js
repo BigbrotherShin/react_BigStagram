@@ -1,26 +1,33 @@
 import React, { memo, useState, useCallback, useRef } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Button from './common/Button';
 
 const StyledCommentFormDiv = styled.div`
   display: flex;
-  margin: 0.5rem 1rem;
+  padding-left: 16px;
+  padding-right: 16px;
+  margin-top: 4px;
+  margin-bottom: 4px;
 
   & form {
     display: flex;
+    flex-grow: 1;
     align-items: center;
     width: 100%;
-    height: 1.5rem;
+    height: 20px;
     justify-content: space-between;
+    overflow: auto;
   }
 `;
 
 const StyledTextarea = styled.textarea`
   resize: none;
-
+  flex-grow: 1;
   width: 100%;
   font-size: 1rem;
   border: none;
+  height: 24px;
+  max-height: 80px;
 
   &:focus {
     outline: none;
@@ -39,6 +46,14 @@ const StyledTextarea = styled.textarea`
   }
 `;
 
+const CommentButton = styled(Button)`
+  ${(props) =>
+    !props.text &&
+    css`
+      opacity: 0.3;
+    `}
+`;
+
 const CommentForm = memo(() => {
   const [comment, setComment] = useState('');
 
@@ -52,18 +67,20 @@ const CommentForm = memo(() => {
 
   return (
     <StyledCommentFormDiv>
-      <form>
-        <StyledTextarea
-          className='comment_form_textarea'
-          onChange={onChange}
-          value={comment}
-          rows={1}
-          placeholder='댓글 달기...'
-        />
-        <Button htmlType='submit' onClick={onSubmit}>
-          <p>게시</p>
-        </Button>
-      </form>
+      <div style={{ display: 'flex', width: '100%' }}>
+        <form>
+          <StyledTextarea
+            className='comment_form_textarea'
+            onChange={onChange}
+            value={comment}
+            rows={1}
+            placeholder='댓글 달기...'
+          />
+          <CommentButton htmlType='submit' onClick={onSubmit} text={comment}>
+            <p>게시</p>
+          </CommentButton>
+        </form>
+      </div>
     </StyledCommentFormDiv>
   );
 });

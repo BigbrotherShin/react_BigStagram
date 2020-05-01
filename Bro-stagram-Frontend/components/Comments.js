@@ -3,7 +3,8 @@ import Comment from './Comment';
 import styled from 'styled-components';
 
 const StyledCommentsList = styled.div`
-  margin: 0.5rem 1rem;
+  padding-left: 16px;
+  padding-right: 16px;
 `;
 
 const Comments = memo(() => {

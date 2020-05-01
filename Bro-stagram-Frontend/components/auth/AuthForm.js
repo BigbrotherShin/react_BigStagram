@@ -1,8 +1,11 @@
-import React, { memo } from 'react';
+import React, { memo, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import palette from '../../lib/styles/palette';
 import Button from '../common/Button';
+import { useInput } from '../../lib/customHooks';
+import { useDispatch } from 'react-redux';
+import { SIGN_UP_REQUEST, LOG_IN_REQUEST } from '../../reducers/user';
 
 // 회원가입 또는 로그인 폼
 
@@ -48,12 +51,61 @@ const ButtonWithMarginTop = styled(Button)`
   margin-top: 1rem;
 `;
 
+const ErrorMessage = styled.div`
+  color: red;
+  text-align: center;
+  font-size: 0.875rem;
+  margin-top: 1rem;
+`;
+
 const textMap = {
   login: '로그인',
   register: '회원가입',
 };
 
-const AuthForm = memo(({ type }) => {
+const AuthForm = memo(({ type, error }) => {
+  const [id, , onChangeId] = useInput('');
+  const [nickname, , onChangeNickname] = useInput('');
+  const [password, , onChangePassword] = useInput('');
+  const [rePassword, setRePassword] = useInput('');
+  const [passwordCheckError, setPasswordCheckError] = useState(false);
+  const dispatch = useDispatch();
+
+  const passwordCheck = useCallback(
+    (e) => {
+      setPasswordCheckError(
+        e.target.value !== password.slice(0, e.target.value.length),
+      );
+      setRePassword(e.target.value);
+    },
+    [password, rePassword, passwordCheckError],
+  );
+
+  const onSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      if (type === 'register') {
+        dispatch({
+          type: SIGN_UP_REQUEST,
+          data: {
+            userId: id,
+            nickname,
+            password,
+          },
+        });
+      } else if (type === 'login') {
+        dispatch({
+          type: LOG_IN_REQUEST,
+          data: {
+            userId: id,
+            password,
+          },
+        });
+      }
+    },
+    [id, nickname, password],
+  );
+
   const text = textMap[type];
 
   return (
@@ -64,12 +116,22 @@ const AuthForm = memo(({ type }) => {
           autoComplete='username'
           name='username'
           placeholder='아이디'
+          onChange={onChangeId}
         />
+        {type === 'register' && (
+          <StyledInput
+            autoComplete='nickname'
+            name='nickname'
+            placeholder='닉네임'
+            onChange={onChangeNickname}
+          />
+        )}
         <StyledInput
           autoComplete='new-password'
           name='password'
           placeholder='비밀번호'
           type='password'
+          onChange={onChangePassword}
         />
         {type === 'register' && (
           <StyledInput
@@ -77,12 +139,18 @@ const AuthForm = memo(({ type }) => {
             name='passwordConfirm'
             placeholder='비밀번호 확인'
             type='password'
+            onChange={passwordCheck}
           />
         )}
-        <ButtonWithMarginTop fullWidth cyan>
+        {type === 'register' && rePassword && passwordCheckError ? (
+          <ErrorMessage>비밀번호 확인 바랍니다.</ErrorMessage>
+        ) : null}
+        {error ? <ErrorMessage>{error}</ErrorMessage> : null}
+        <ButtonWithMarginTop fullWidth cyan onClick={onSubmit}>
           {text}
         </ButtonWithMarginTop>
       </form>
+
       <Footer>
         {type === 'login' ? (
           <Link href='/register'>
