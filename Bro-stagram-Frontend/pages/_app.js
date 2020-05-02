@@ -11,6 +11,7 @@ import AppLayout from '../components/AppLayout/AppLayout';
 import reducer from '../reducers';
 import rootSaga from '../sagas';
 
+import 'antd/dist/antd.css';
 import '../components/AppLayout/AppLayout.css';
 import { LOAD_USER_REQUEST } from '../reducers/user';
 

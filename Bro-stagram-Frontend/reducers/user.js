@@ -6,6 +6,7 @@ export const initialState = {
   isLoggingIn: false,
   logInErrorReason: '',
   isLoggingOut: false,
+  isLoggedOut: false,
   logOutErrorReason: '',
   signedUp: false,
   isSigningUp: false,
@@ -73,6 +74,23 @@ const reducer = (state = initialState, action) => {
       case LOAD_USER_SUCCESS: {
         draft.isLoggedIn = true;
         draft.me = action.data;
+        break;
+      }
+      case LOG_OUT_REQUEST: {
+        draft.isLoggingOut = true;
+        break;
+      }
+      case LOG_OUT_SUCCESS: {
+        draft.isLoggingOut = false;
+        draft.isLoggedOut = true;
+        draft.isLoggedIn = false;
+        draft.me = null;
+        break;
+      }
+      case LOG_OUT_FAILURE: {
+        draft.isLoggingOut = false;
+        draft.isLoggedOut = false;
+        draft.logOutErrorReason = action.error;
         break;
       }
       default:

@@ -1,5 +1,6 @@
 import React, { memo } from 'react';
 import styled from 'styled-components';
+import { Avatar } from 'antd';
 
 const PostUserImage = styled.img`
   border-radius: 50%;
@@ -32,13 +33,7 @@ const UserNickname = styled.div`
 const UserInfo = memo(() => {
   return (
     <>
-      {PostUserImage.img ? (
-        <PostUserImage src='' alt='post_image' />
-      ) : (
-        <PostImageNickname>
-          <span>{'닉네임'[0]}</span>
-        </PostImageNickname>
-      )}
+      <Avatar src=''>{'닉네임'[0]}</Avatar>
       <UserNickname className='card_user_name'>Nickname</UserNickname>
     </>
   );

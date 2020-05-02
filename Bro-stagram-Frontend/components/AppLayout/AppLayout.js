@@ -6,9 +6,10 @@ import {
   HeartOutlined,
   UserOutlined,
 } from '@ant-design/icons';
+
 import Link from 'next/link';
-import Button from '../common/Button';
 import { useSelector } from 'react-redux';
+import Button from '../common/Button';
 
 const AppLayout = memo(({ children }) => {
   const { me, isLoggedIn } = useSelector((state) => state.user);
@@ -53,7 +54,11 @@ const AppLayout = memo(({ children }) => {
                     <>
                       <GlobalOutlined className='nav_icons' />
                       <HeartOutlined className='nav_icons' />
-                      <UserOutlined className='nav_icons' />
+                      <Link href='/profile'>
+                        <a className='nav_icons'>
+                          <UserOutlined />
+                        </a>
+                      </Link>
                     </>
                   ) : (
                     <Link href='/login'>
@@ -69,12 +74,7 @@ const AppLayout = memo(({ children }) => {
         </div>
       </nav>
       <section className='main_container_wrapper'>
-        <div className='main_container'>
-          <div className='main_left'>{children}</div>
-          <div className='main_right'>
-            <div className='main_right_items main_right'>right side</div>
-          </div>
-        </div>
+        <div className='main_container'>{children}</div>
       </section>
     </section>
   );

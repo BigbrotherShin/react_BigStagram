@@ -75,4 +75,11 @@ router.post('/login', async (req, res, next) => {
   })(req, res, next);
 });
 
+router.post('/logout', (req, res) => {
+  // /api/user/logout
+  req.logout();
+  req.session.destroy();
+  res.status(200).send('로그아웃 성공');
+});
+
 module.exports = router;

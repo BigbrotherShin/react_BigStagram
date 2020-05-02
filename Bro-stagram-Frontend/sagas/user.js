@@ -10,6 +10,9 @@ import {
   LOAD_USER_SUCCESS,
   LOAD_USER_FAILURE,
   LOAD_USER_REQUEST,
+  LOG_OUT_SUCCESS,
+  LOG_OUT_FAILURE,
+  LOG_OUT_REQUEST,
 } from '../reducers/user';
 
 function signUpAPI(SignUpData) {
@@ -88,6 +91,40 @@ function* watchLoadUser() {
   yield takeEvery(LOAD_USER_REQUEST, loadUser);
 }
 
+function logoutAPI() {
+  return Axios.post(
+    '/user/logout',
+    {},
+    {
+      withCredentials: true,
+    },
+  );
+}
+
+function* logout() {
+  try {
+    const result = yield call(logoutAPI);
+    yield put({
+      type: LOG_OUT_SUCCESS,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: LOG_OUT_FAILURE,
+      error: e.response && e.response.data,
+    });
+  }
+}
+
+function* watchLogout() {
+  yield takeEvery(LOG_OUT_REQUEST, logout);
+}
+
 export default function* userSaga() {
-  yield all([fork(watchLogin), fork(watchSignUp), fork(watchLoadUser)]);
+  yield all([
+    fork(watchLogin),
+    fork(watchSignUp),
+    fork(watchLoadUser),
+    fork(watchLogout),
+  ]);
 }
