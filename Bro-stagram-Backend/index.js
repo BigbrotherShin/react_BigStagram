@@ -12,9 +12,10 @@ const prod = process.env.NODE_ENV === 'production';
 const passportConfig = require('./passport');
 const db = require('./models');
 const userAPIRouter = require('./routes/user');
+const postAPIRouter = require('./routes/post');
+const postsAPIRouter = require('./routes/posts');
 // const userAPIRouter = require('./routes/user');
 // const postsAPIRouter = require('./routes/posts');
-// const postAPIRouter = require('./routes/post');
 // const hashtagAPIRouter = require('./routes/hashtag');
 
 dotenv.config();
@@ -50,6 +51,8 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use('/api/user', userAPIRouter);
+app.use('/api/posts', postsAPIRouter);
+app.use('/api/post', postAPIRouter);
 
 app.get('/', (req, res) => {
   res.send('BroStagram 정상 동작');

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useCallback } from 'react';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
+import { SET_OFF_MODAL } from '../../reducers/post';
+import { useDispatch } from 'react-redux';
 
 const FullScreen = styled.div`
   position: fixed;
@@ -16,7 +18,13 @@ const FullScreen = styled.div`
 `;
 
 const Modal = ({ children }) => {
-  return <FullScreen>{children}</FullScreen>;
+  const dispatch = useDispatch();
+  const setOffModal = useCallback(() => {
+    dispatch({
+      type: SET_OFF_MODAL,
+    });
+  }, []);
+  return <FullScreen onClick={setOffModal}>{children}</FullScreen>;
 };
 
 Modal.propTypes = {

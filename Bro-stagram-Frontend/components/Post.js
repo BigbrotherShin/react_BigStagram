@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import {
   HeartOutlined,
   MessageOutlined,
@@ -10,6 +10,17 @@ import Comments from './Comments';
 import CommentForm from './CommentForm';
 import UserInfo from './UserInfo';
 import Link from 'next/link';
+import Slider from './common/Slider';
+import { useDispatch, useSelector } from 'react-redux';
+import { SET_ON_MODAL } from '../reducers/post';
+
+const dummy_images = [
+  'https://interactive-examples.mdn.mozilla.net/media/examples/grapefruit-slice-332-332.jpg',
+  'https://cdn.pixabay.com/photo/2015/04/23/22/00/tree-736885__340.jpg',
+  'https://us.123rf.com/450wm/bigandt/bigandt1509/bigandt150900195/44961521-%EC%95%BC%EC%99%B8-%ED%99%94%EC%B0%BD%ED%95%9C-%EC%97%AC%EB%A6%84-%EB%82%A0%EC%97%90-%EC%9E%94%EB%94%94-%EC%B4%88%EC%9B%90%EC%97%90-%EC%84%B1%EA%B2%A9%EC%97%90-%EB%8B%A4%EC%84%AF-%EA%B7%80%EC%97%AC%EC%9A%B4-%EC%88%9C%EC%A2%85-%EA%B3%A8%EB%93%A0-%EB%A6%AC%ED%8A%B8%EB%A6%AC%EB%B2%84-%EA%B0%95%EC%95%84%EC%A7%80-%EC%93%B0%EB%A0%88%EA%B8%B0-.jpg?ver=6',
+  'https://miro.medium.com/max/1200/1*mk1-6aYaf_Bes1E3Imhc0A.jpeg',
+  'https://s.ftcdn.net/v2013/pics/all/curated/RKyaEDwp8J7JKeZWQPuOVWvkUjGQfpCx_cover_580.jpg?r=1a0fc22192d0c808b8bb2b9bcfbf4a45b1793687',
+];
 
 const Card = styled.div`
   padding: 0;
@@ -92,17 +103,18 @@ const CardContent = styled.div`
   }
 `;
 
-const Post = memo(() => {
-  return (
+const Post = memo((data) => {
+  return data ? (
     <Card>
-      <header>
-        <UserInfo />
-      </header>
+      <header>{<UserInfo data={data && data.user} />}</header>
       <div className='card_image'>
-        <img
-          src='https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSQXE_7Go4FovH9bstguTZSXGwPapB5CwcraJtmLQICkJe9weEk&usqp=CAU'
+        <Slider images={dummy_images} />
+        {/* <img
+          src={
+            'https://us.123rf.com/450wm/bigandt/bigandt1509/bigandt150900195/44961521-%EC%95%BC%EC%99%B8-%ED%99%94%EC%B0%BD%ED%95%9C-%EC%97%AC%EB%A6%84-%EB%82%A0%EC%97%90-%EC%9E%94%EB%94%94-%EC%B4%88%EC%9B%90%EC%97%90-%EC%84%B1%EA%B2%A9%EC%97%90-%EB%8B%A4%EC%84%AF-%EA%B7%80%EC%97%AC%EC%9A%B4-%EC%88%9C%EC%A2%85-%EA%B3%A8%EB%93%A0-%EB%A6%AC%ED%8A%B8%EB%A6%AC%EB%B2%84-%EA%B0%95%EC%95%84%EC%A7%80-%EC%93%B0%EB%A0%88%EA%B8%B0-.jpg?ver=6'
+          }
           alt='card_image'
-        />
+        /> */}
       </div>
       <div className='card_info'>
         <div className='card_info_left'>
@@ -129,21 +141,18 @@ const Post = memo(() => {
         </section>
         <div className='card_content_body_wrapper'>
           <Link href='#'>
-            <a className='card_content_nickname'>Nickname</a>
+            <a className='card_content_nickname'>nickname</a>
           </Link>
           <span className='card_content_body'>
-            This is some text. This is some text. This is some text. This is
-            some text. This is some text. This is some text. This is some text.
-            This is some text. This is some text. This is some text. This is
-            some text. This is some text.
+            내용내용내용내용내용내용내용
           </span>
         </div>
-        <div className='card_time'>7시간 전</div>
+        <div className='card_time'>2020.5.7</div>
         <Comments className='card_comments' />
         <CommentForm className='card_comment_form' />
       </CardContent>
     </Card>
-  );
+  ) : null;
 });
 
 export default Post;

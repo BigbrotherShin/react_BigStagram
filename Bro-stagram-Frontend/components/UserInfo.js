@@ -30,11 +30,11 @@ const UserNickname = styled.div`
   margin-left: 6px;
 `;
 
-const UserInfo = memo(() => {
+const UserInfo = memo(({ user }) => {
   return (
     <>
-      <Avatar src=''>{'닉네임'[0]}</Avatar>
-      <UserNickname className='card_user_name'>Nickname</UserNickname>
+      <Avatar src=''>{`닉네임`[0]}</Avatar>
+      <UserNickname className='card_user_name'>nickname</UserNickname>
     </>
   );
 });

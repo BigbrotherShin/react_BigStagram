@@ -160,6 +160,7 @@ a:active {
   text-decoration: none;
 }
 
+textarea:focus,
 input:focus {
   outline: none;
 }

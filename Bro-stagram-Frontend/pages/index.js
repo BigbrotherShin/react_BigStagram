@@ -1,8 +1,9 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import styled from 'styled-components';
 import Post from '../components/Post';
 import ProfileCard from '../components/ProfileCard';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
+import { LOAD_MAIN_POSTS_REQUEST } from '../reducers/post';
 
 const StyledMainContainer = styled.div`
   justify-content: stretch;
@@ -12,12 +13,25 @@ const StyledMainContainer = styled.div`
 
 const Home = memo(() => {
   const { me, isLoggedIn } = useSelector((state) => state.user);
+  const { mainPosts } = useSelector((state) => state.post);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch({
+      type: LOAD_MAIN_POSTS_REQUEST,
+    });
+  }, []);
+
+  useEffect(() => {
+    console.log('mainPosts', mainPosts);
+  }, []);
 
   return (
     <StyledMainContainer className='main_container'>
       <div className='main_left'>
-        <Post />
-        <Post />
+        {mainPosts.length !== 0
+          ? mainPosts.map((v, i) => <Post key={+v.createdAt} data={v} />)
+          : null}
       </div>
       <div className='main_right'>
         <div className='main_right_items main_right'>

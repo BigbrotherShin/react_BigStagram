@@ -8,6 +8,9 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { LOG_OUT_REQUEST } from '../reducers/user';
 
+import { SET_ON_MODAL } from '../reducers/post';
+import PostEditor from '../Containers/PostEditor';
+
 const ProfileCard = memo(() => {
   const { me } = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -18,27 +21,36 @@ const ProfileCard = memo(() => {
     });
   }, []);
 
+  const openEditor = useCallback(() => {
+    dispatch({
+      type: SET_ON_MODAL,
+    });
+  }, []);
+
   return (
-    <Card
-      style={{ width: 300 }}
-      actions={[
-        <Tooltip key='write' title='글쓰기'>
-          <EditOutlined key='edit' />
-        </Tooltip>,
-        <Tooltip key='setting' title='프로필 편집'>
-          <SettingOutlined key='setting' />
-        </Tooltip>,
-        <Tooltip key='logout' title='로그아웃'>
-          <LogoutOutlined onClick={onLogout} />
-        </Tooltip>,
-      ]}
-    >
-      <Card.Meta
-        avatar={<Avatar src={``}>{`${me.nickname}`[0]}</Avatar>}
-        title={`${me.userId}`}
-        description={`${me.nickname}`}
-      />
-    </Card>
+    <div>
+      <Card
+        style={{ width: 300 }}
+        actions={[
+          <Tooltip key='write' title='글쓰기'>
+            <EditOutlined key='edit' onClick={openEditor} />
+          </Tooltip>,
+          <Tooltip key='setting' title='프로필 편집'>
+            <SettingOutlined key='setting' />
+          </Tooltip>,
+          <Tooltip key='logout' title='로그아웃'>
+            <LogoutOutlined onClick={onLogout} />
+          </Tooltip>,
+        ]}
+      >
+        <Card.Meta
+          avatar={<Avatar src={``}>{`${me.nickname}`[0]}</Avatar>}
+          title={`${me.userId}`}
+          description={`${me.nickname}`}
+        />
+      </Card>
+      <PostEditor />
+    </div>
   );
 });
 

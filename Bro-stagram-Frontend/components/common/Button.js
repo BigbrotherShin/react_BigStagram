@@ -12,7 +12,6 @@ const StyledButton = styled.button`
   outline: none;
   cursor: pointer;
   min-width: 4rem;
-  max-height: 24px;
 
   background: ${palette.gray[8]};
   &:hover {
@@ -38,6 +37,14 @@ const StyledButton = styled.button`
       &:hover {
         background: ${palette.cyan[4]};
       }
+    `}
+
+  ${(props) =>
+    props.arrow &&
+    css`
+      background: none;
+      border: none;
+      color: #efefef;
     `}
 `;
 
