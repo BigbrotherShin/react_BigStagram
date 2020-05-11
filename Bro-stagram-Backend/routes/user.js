@@ -3,7 +3,8 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const Sequelize = require('sequelize');
 const db = require('../models');
-const { isLoggedIn } = require('./middlewares');
+const { isLoggedIn, findUser } = require('./middlewares');
+
 const router = express.Router();
 
 const Op = Sequelize.Op;
@@ -80,6 +81,33 @@ router.post('/logout', (req, res) => {
   req.logout();
   req.session.destroy();
   res.status(200).send('로그아웃 성공');
+});
+
+router.get('/:id', async (req, res, next) => {
+  try {
+    // console.log('/user/:id', req.params.id);
+    const userInfo = await db.User.findOne({
+      where: { id: parseInt(req.params.id, 10) },
+      include: [
+        {
+          model: db.Post,
+          as: 'Posts',
+          order: [['createdAt', 'DESC']],
+          include: [
+            {
+              model: db.Image,
+            },
+          ],
+        },
+      ],
+      attributes: ['id', 'userId', 'nickname'],
+    });
+
+    res.status(200).json(userInfo);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
 });
 
 module.exports = router;

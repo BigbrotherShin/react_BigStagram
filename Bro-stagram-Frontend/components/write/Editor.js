@@ -36,14 +36,14 @@ const EditorWrapper = styled.div`
     height: 100%;
   }
 
-  .editor_bottons_wrapper {
+  .editor_buttons_wrapper {
     margin-top: 0.5rem;
     display: flex;
     justify-content: center;
     align-items: center;
   }
 
-  .editor_bottons_containter {
+  .editor_buttons_containter {
     flex: 1 0 0%;
   }
 `;
@@ -61,7 +61,6 @@ const Editor = memo(({ cancle, isAdded }) => {
   const [text, setText] = useState('');
 
   useEffect(() => {
-    console.log(isAdded);
     if (isAdded) {
       setImages([]);
       setText('');
@@ -96,16 +95,16 @@ const Editor = memo(({ cancle, isAdded }) => {
         <div className='editor_textarea_wrapper'>
           <textarea className='editor_textarea' onChange={onChangeText} />
         </div>
-        <div className='editor_bottons_wrapper'>
-          <div className='editor_bottons_container'>
+        <div className='editor_buttons_wrapper'>
+          <div className='editor_buttons_container'>
             <EditorButton
-              className='editor_bottons_item'
+              className='editor_buttons_item'
               onClick={onSubmit}
               cyan
             >
               Submit
             </EditorButton>
-            <EditorButton className='editor_bottons_item' onClick={cancle}>
+            <EditorButton className='editor_buttons_item' onClick={cancle}>
               Cancle
             </EditorButton>
           </div>

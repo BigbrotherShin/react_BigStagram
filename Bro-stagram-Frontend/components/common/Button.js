@@ -38,14 +38,6 @@ const StyledButton = styled.button`
         background: ${palette.cyan[4]};
       }
     `}
-
-  ${(props) =>
-    props.arrow &&
-    css`
-      background: none;
-      border: none;
-      color: #efefef;
-    `}
 `;
 
 const Button = (props) => {

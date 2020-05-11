@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import {
   HeartOutlined,
   MessageOutlined,
@@ -103,56 +103,58 @@ const CardContent = styled.div`
   }
 `;
 
-const Post = memo((data) => {
-  return data ? (
-    <Card>
-      <header>{<UserInfo data={data && data.user} />}</header>
-      <div className='card_image'>
-        <Slider images={dummy_images} />
-        {/* <img
-          src={
-            'https://us.123rf.com/450wm/bigandt/bigandt1509/bigandt150900195/44961521-%EC%95%BC%EC%99%B8-%ED%99%94%EC%B0%BD%ED%95%9C-%EC%97%AC%EB%A6%84-%EB%82%A0%EC%97%90-%EC%9E%94%EB%94%94-%EC%B4%88%EC%9B%90%EC%97%90-%EC%84%B1%EA%B2%A9%EC%97%90-%EB%8B%A4%EC%84%AF-%EA%B7%80%EC%97%AC%EC%9A%B4-%EC%88%9C%EC%A2%85-%EA%B3%A8%EB%93%A0-%EB%A6%AC%ED%8A%B8%EB%A6%AC%EB%B2%84-%EA%B0%95%EC%95%84%EC%A7%80-%EC%93%B0%EB%A0%88%EA%B8%B0-.jpg?ver=6'
-          }
-          alt='card_image'
-        /> */}
-      </div>
-      <div className='card_info'>
-        <div className='card_info_left'>
-          <HeartOutlined className='card_info_icons' />
-          <MessageOutlined className='card_info_icons' />
-          <UploadOutlined className='card_info_icons' />
+const Post = memo(({ postData }) => {
+  return (
+    <>
+      <Card>
+        <header>
+          <UserInfo postData={postData && postData.User} />
+        </header>
+        <div className='card_image'>
+          <Slider images={postData.Images} />
         </div>
-        <div className='card_info_right'>
-          <BookOutlined className='card_info_icons' />
-        </div>
-      </div>
-      <CardContent className='card_content'>
-        <section className='card_content_likes_wrapper'>
-          <div className='card_content_likes'>
-            <Link href='#'>
-              <a>example</a>
-            </Link>
-            님 외
-            <Link href='#'>
-              <a> 여러 명</a>
-            </Link>
-            이 좋아합니다.
+        <div className='card_info'>
+          <div className='card_info_left'>
+            <HeartOutlined className='card_info_icons' />
+            <MessageOutlined className='card_info_icons' />
+            <UploadOutlined className='card_info_icons' />
           </div>
-        </section>
-        <div className='card_content_body_wrapper'>
-          <Link href='#'>
-            <a className='card_content_nickname'>nickname</a>
-          </Link>
-          <span className='card_content_body'>
-            내용내용내용내용내용내용내용
-          </span>
+          <div className='card_info_right'>
+            <BookOutlined className='card_info_icons' />
+          </div>
         </div>
-        <div className='card_time'>2020.5.7</div>
-        <Comments className='card_comments' />
-        <CommentForm className='card_comment_form' />
-      </CardContent>
-    </Card>
-  ) : null;
+        <CardContent className='card_content'>
+          <section className='card_content_likes_wrapper'>
+            <div className='card_content_likes'>
+              <Link href='#'>
+                <a>example</a>
+              </Link>
+              님 외
+              <Link href='#'>
+                <a> 여러 명</a>
+              </Link>
+              이 좋아합니다.
+            </div>
+          </section>
+          <div className='card_content_body_wrapper'>
+            <Link
+              href={{
+                pathname: '/user',
+                query: { id: postData.User.id },
+              }}
+              as={`/user/${postData.User.id}`}
+            >
+              <a className='card_content_nickname'>{postData.User.nickname}</a>
+            </Link>
+            <span className='card_content_body'>{postData.content}</span>
+          </div>
+          <div className='card_time'>{postData.createdAt}</div>
+          <Comments className='card_comments' />
+          <CommentForm className='card_comment_form' />
+        </CardContent>
+      </Card>
+    </>
+  );
 });
 
 export default Post;

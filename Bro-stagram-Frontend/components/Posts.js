@@ -1,6 +1,8 @@
 import React, { memo } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
+import PostImage from './PostImage';
+import Post from './Post';
 
 const StyledPosts = styled.div`
   & article {
@@ -14,26 +16,16 @@ const StyledPosts = styled.div`
   }
 
   & .profile_posts_container {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+
+    // flex-wrap: wrap;
+    // justify-content: space-between;
+    // align-content: space-between;
 
     @media (min-width: 736px) {
       margin-bottom: 28px;
-    }
-  }
-
-  & .profile_posts_item {
-    flex: 1 0 0%;
-    display: block;
-    position: relative;
-    width: 100%;
-    height: 100%;
-
-    @media (min-width: 736px) {
-      margin-right: 28px;
-    }
-
-    &:last-child {
-      margin-right: 0;
+      grid-gap: 24px;
     }
   }
 
@@ -58,46 +50,16 @@ const StyledPosts = styled.div`
   }
 `;
 
-const Posts = memo(() => {
+const Posts = memo(({ posts }) => {
   return (
     <StyledPosts>
       <article>
         <div>
           <div className='profile_posts_wrapper'>
             <div className='profile_posts_container'>
-              <div className='profile_posts_item'>
-                <Link href='#'>
-                  <a>
-                    <div>
-                      <div className='profile_posts_item_image'>
-                        <img src='https://pbs.twimg.com/profile_images/1248787766978080769/XbnPnDc0_400x400.jpg' />
-                      </div>
-                    </div>
-                  </a>
-                </Link>
-              </div>
-              <div className='profile_posts_item'>
-                <Link href='#'>
-                  <a>
-                    <div>
-                      <div className='profile_posts_item_image'>
-                        <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSQXE_7Go4FovH9bstguTZSXGwPapB5CwcraJtmLQICkJe9weEk&usqp=CAU' />
-                      </div>
-                    </div>
-                  </a>
-                </Link>
-              </div>
-              <div className='profile_posts_item'>
-                <Link href='#'>
-                  <a>
-                    <div>
-                      <div className='profile_posts_item_image'>
-                        <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcSQXE_7Go4FovH9bstguTZSXGwPapB5CwcraJtmLQICkJe9weEk&usqp=CAU' />
-                      </div>
-                    </div>
-                  </a>
-                </Link>
-              </div>
+              {posts.map((v, i) => (
+                <PostImage postThumnail={v.Images[0]} key={`${v} ${i}`} />
+              ))}
             </div>
           </div>
         </div>

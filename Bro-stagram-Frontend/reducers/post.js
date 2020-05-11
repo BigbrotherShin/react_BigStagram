@@ -25,6 +25,10 @@ export const ADD_POST_REQUEST = 'post/ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS = 'post/ADD_POST_SUCCESS';
 export const ADD_POST_FAILURE = 'post/ADD_POST_FAILURE';
 
+export const LOAD_MY_POSTS_REQUEST = 'post/LOAD_MY_POSTS_REQUEST';
+export const LOAD_MY_POSTS_SUCCESS = 'post/LOAD_MY_POSTS_SUCCESS';
+export const LOAD_MY_POSTS_FAILURE = 'post/LOAD_MY_POSTS_FAILURE';
+
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
@@ -55,7 +59,7 @@ const reducer = (state = initialState, action) => {
         break;
       }
       case LOAD_MAIN_POSTS_SUCCESS: {
-        draft.mainPosts.unshift(action.data);
+        draft.mainPosts = action.data;
         draft.isLoadingPosts = false;
         draft.isPostsLoaded = true;
         break;
@@ -70,7 +74,7 @@ const reducer = (state = initialState, action) => {
         break;
       }
       case ADD_POST_SUCCESS: {
-        draft.mainPosts = action.data;
+        draft.mainPosts.unshift(action.data);
         draft.isAdditingPost = false;
         draft.isPostAdded = true;
         break;
@@ -78,6 +82,22 @@ const reducer = (state = initialState, action) => {
       case ADD_POST_FAILURE: {
         draft.isAdditingPost = false;
         draft.addPostErrorReason = action.error;
+        break;
+      }
+      case LOAD_MY_POSTS_REQUEST: {
+        draft.isLoadingPosts = true;
+        draft.isPostsLoaded = false;
+        break;
+      }
+      case LOAD_MY_POSTS_SUCCESS: {
+        draft.isLoadingPosts = false;
+        draft.isPostsLoaded = true;
+        break;
+      }
+      case LOAD_MY_POSTS_FAILURE: {
+        draft.isLoadingPosts = false;
+        draft.loadPostsErrorReason = action.error;
+        break;
       }
       default:
         return {

@@ -7,10 +7,16 @@ import {
   LOAD_MAIN_POSTS_SUCCESS,
   LOAD_MAIN_POSTS_FAILURE,
   LOAD_MAIN_POSTS_REQUEST,
+  LOAD_MY_POSTS_FAILURE,
+  LOAD_MY_POSTS_SUCCESS,
+  LOAD_MY_POSTS_REQUEST,
 } from '../reducers/post';
+import { LOAD_MY_POSTS } from '../reducers/user';
 
 function loadPostsAPI(post) {
-  return Axios.get('/posts');
+  return Axios.get('/posts', {
+    withCredentials: false,
+  });
 }
 
 function* loadPosts(action) {
@@ -59,6 +65,36 @@ function* watchAddPost() {
   yield takeEvery(ADD_POST_REQUEST, addPost);
 }
 
+function loadMyPostsAPI() {
+  return Axios.get('/posts/myPosts', {
+    withCredentials: true,
+  });
+}
+
+function* loadMyPosts(action) {
+  try {
+    const result = yield call(loadMyPostsAPI);
+    console.log(result);
+    yield put({
+      type: LOAD_MY_POSTS_SUCCESS,
+    });
+    yield put({
+      type: LOAD_MY_POSTS,
+      data: result.data,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: LOAD_MY_POSTS_FAILURE,
+      error: e.response && e.response.data,
+    });
+  }
+}
+
+function* watchLoadMyPosts() {
+  yield takeEvery(LOAD_MY_POSTS_REQUEST, loadMyPosts);
+}
+
 export default function* postSaga() {
-  yield all([fork(watchAddPost), fork(watchLoadPosts)]);
+  yield all([fork(watchAddPost), fork(watchLoadPosts), fork(watchLoadMyPosts)]);
 }

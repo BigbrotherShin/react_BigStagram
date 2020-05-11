@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import styled from 'styled-components';
 import { Avatar } from 'antd';
 
@@ -33,8 +33,8 @@ const UserNickname = styled.div`
 const UserInfo = memo(({ user }) => {
   return (
     <>
-      <Avatar src=''>{`닉네임`[0]}</Avatar>
-      <UserNickname className='card_user_name'>nickname</UserNickname>
+      <Avatar src=''>{`aaaa`[0]}</Avatar>
+      <UserNickname className='card_user_name'>aaa</UserNickname>
     </>
   );
 });

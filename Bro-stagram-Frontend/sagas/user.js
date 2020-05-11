@@ -13,6 +13,9 @@ import {
   LOG_OUT_SUCCESS,
   LOG_OUT_FAILURE,
   LOG_OUT_REQUEST,
+  LOAD_OTHER_USER_INFO_SUCCESS,
+  LOAD_OTHER_USER_INFO_FAILURE,
+  LOAD_OTHER_USER_INFO_REQUEST,
 } from '../reducers/user';
 
 function signUpAPI(SignUpData) {
@@ -120,11 +123,39 @@ function* watchLogout() {
   yield takeEvery(LOG_OUT_REQUEST, logout);
 }
 
+function otherUserInfoAPI(action) {
+  console.log(action);
+  return Axios.get(`/user/${action}`, {
+    withCredentials: false,
+  });
+}
+
+function* otherUserInfo(action) {
+  try {
+    const result = yield call(otherUserInfoAPI, action.data);
+    yield put({
+      type: LOAD_OTHER_USER_INFO_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: LOAD_OTHER_USER_INFO_FAILURE,
+      error: e.response && e.response.data,
+    });
+  }
+}
+
+function* watchOtherUserInfo() {
+  yield takeEvery(LOAD_OTHER_USER_INFO_REQUEST, otherUserInfo);
+}
+
 export default function* userSaga() {
   yield all([
     fork(watchLogin),
     fork(watchSignUp),
     fork(watchLoadUser),
     fork(watchLogout),
+    fork(watchOtherUserInfo),
   ]);
 }

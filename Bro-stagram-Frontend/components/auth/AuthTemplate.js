@@ -8,9 +8,9 @@ import Modal from '../common/Modal';
 
 /* 화면 전체를 채움 */
 const AuthTemplateBlock = styled.div`
-  position: absolute;
+  // position: absolute;
   left, top, right, bottom: 0;
-  background: ${palette[2]};
+  background: ${palette.gray[2]};
   /* flex로 내부 내용 중앙 정렬 */
   display: flex;
   flex-direction: column;

@@ -61,8 +61,7 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
           }),
         ),
       );
-      console.log('routes/post/hashtag result', result);
-      await newPost.addHashtag(result.map((r) => r[0]));
+      await newPost.addHashtags(result.map((r) => r[0]));
     }
 
     if (Array.isArray(req.body.image)) {
@@ -73,6 +72,10 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
         ),
       );
       await newPost.addImages(images);
+    } else if (req.body.image) {
+      // 이미지를 하나만 올리면 image: 주소
+      const image = await db.Image.create({ src: req.body.image });
+      await newPost.addImage(image);
     }
 
     const fullPost = await db.Post.findOne({

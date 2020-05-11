@@ -21,6 +21,12 @@ const SliderContainer = styled.div`
     css`
       height: 360px;
     `}
+
+  ${(props) =>
+    props.oneImage === true &&
+    css`
+      transform: translateX(0);
+    `}
 `;
 
 // const ArrowContainer = styled.div`
@@ -99,9 +105,8 @@ const PagenationDot = styled.span`
     `}
 `;
 
-const aniTime = 500;
-
 const Slider = ({ images }) => {
+  const aniTime = 500;
   const [currentSlide, setCurrentSlide] = useState(0);
   const [pagenationSlide, setPagenationSlide] = useState(0);
   const slideRef = useRef(null);
@@ -119,20 +124,22 @@ const Slider = ({ images }) => {
   }, []);
 
   const nextSlide = useCallback(() => {
-    setPagenationSlide((prevState) => prevState + 1);
     setCurrentSlide((prevState) => prevState + 1);
+    setPagenationSlide((prevState) => prevState + 1);
   }, []);
 
   const prevSlide = useCallback(() => {
-    setPagenationSlide((prevState) => prevState - 1);
     setCurrentSlide((prevState) => prevState - 1);
+    setPagenationSlide((prevState) => prevState - 1);
   }, []);
 
   useEffect(() => {
     slideRef.current.style.transition = `all ${aniTime}ms ease-in-out`;
-    slideRef.current.style.transform = `translateX(${
-      -1 * (currentSlide + 1) * 100
-    }%)`;
+    if (images.length > 1) {
+      slideRef.current.style.transform = `translateX(${
+        -1 * (currentSlide + 1) * 100
+      }%)`;
+    }
 
     if (currentSlide === images.length) {
       setPagenationSlide(0);
@@ -145,12 +152,18 @@ const Slider = ({ images }) => {
 
   return (
     <Container>
-      <SliderContainer forPost ref={slideRef}>
-        <Slide img={images[images.length - 1]} />
-        {images.map((v, i) => (
-          <Slide img={v} />
-        ))}
-        <Slide img={images[0]} />
+      <SliderContainer oneImage={images.length === 1} forPost ref={slideRef}>
+        {images.length > 1 ? (
+          <>
+            <Slide img={images[images.length - 1].src} />
+            {images.map((v, i) => (
+              <Slide img={v.src} key={v.createdAt} />
+            ))}
+            <Slide img={images[0].src} />
+          </>
+        ) : (
+          <Slide img={images[0].src} />
+        )}
       </SliderContainer>
       {/* <ArrowContainer>
         <button onClick={prevSlide}>
@@ -160,24 +173,26 @@ const Slider = ({ images }) => {
           <CaretRightOutlined />
         </button>
       </ArrowContainer> */}
-      <ArrowButton left onClick={prevSlide}>
-        <CaretLeftOutlined />
-      </ArrowButton>
-      <ArrowButton right onClick={nextSlide}>
-        <CaretRightOutlined />
-      </ArrowButton>
-      <PagenationContainer>
-        {images.length > 1
-          ? images.map((v, i) => (
-              <PagenationDotContainer key={`${v} ${i}`}>
+      {images.length > 1 ? (
+        <>
+          <ArrowButton left onClick={prevSlide}>
+            <CaretLeftOutlined />
+          </ArrowButton>
+          <ArrowButton right onClick={nextSlide}>
+            <CaretRightOutlined />
+          </ArrowButton>
+          <PagenationContainer>
+            {images.map((v, i) => (
+              <PagenationDotContainer key={`${v.createdAt}`}>
                 <PagenationDot
                   idx={i}
                   currentSlide={pagenationSlide}
                 ></PagenationDot>
               </PagenationDotContainer>
-            ))
-          : null}
-      </PagenationContainer>
+            ))}
+          </PagenationContainer>
+        </>
+      ) : null}
     </Container>
   );
 };

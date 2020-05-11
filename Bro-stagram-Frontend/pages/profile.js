@@ -1,10 +1,13 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { Menu, Avatar, Card } from 'antd';
 import { TableOutlined, BookOutlined, UserOutlined } from '@ant-design/icons';
 import Posts from '../components/Posts';
 import Link from 'next/link';
+import { useSelector, useDispatch } from 'react-redux';
+import { LOAD_MY_POSTS_REQUEST } from '../reducers/post';
+import { LOAD_OTHER_USER_INFO_REQUEST } from '../reducers/user';
 
 const StyledProfileContainer = styled.div`
   @media (min-width: 736px) {
@@ -96,7 +99,19 @@ const ProfileMenu = styled(Menu)`
 
 const ProfileOptions = styled.div``;
 
-const Profile = memo(() => {
+const Profile = memo(({ id }) => {
+  const { myPosts, me, userInfo } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log(id);
+    console.log(userInfo);
+    dispatch({
+      type: LOAD_OTHER_USER_INFO_REQUEST,
+      data: id,
+    });
+  }, []);
+
   return (
     <StyledProfileContainer>
       <ProfileHeader>
@@ -108,7 +123,7 @@ const Profile = memo(() => {
         <div className='profile_card_wrapper'>
           <Card
             className='profile_card'
-            title={'User.id'}
+            title={id ? userInfo.userId : me.userId}
             extra={
               <Link href='#'>
                 <a>프로필 편집</a>
@@ -116,9 +131,13 @@ const Profile = memo(() => {
             }
             bordered={false}
             style={{ width: 300 }}
-            actions={[<p>게시물 6</p>, <p>팔로워 3</p>, <p>팔로우 5</p>]}
+            actions={[
+              <p>게시물 {id ? userInfo.Posts.length : myPosts.length}</p>,
+              <p>팔로워 3</p>,
+              <p>팔로우 5</p>,
+            ]}
           >
-            <div>nickname</div>
+            <div>{id ? userInfo.nickname : me.nickname}</div>
           </Card>
         </div>
       </ProfileHeader>
@@ -141,10 +160,26 @@ const Profile = memo(() => {
           </Menu.Item>
         </ProfileMenu>
       </ProfileOptions>
-      <Posts />
-      <Posts />
+      <Posts posts={id ? userInfo.Posts : myPosts} />
     </StyledProfileContainer>
   );
 });
+
+Profile.getInitialProps = async (ctx) => {
+  const dispatch = ctx.store.dispatch;
+  const state = ctx.store.getState();
+  console.log(ctx.query.id);
+  if (ctx.query.id) {
+    dispatch({
+      type: LOAD_OTHER_USER_INFO_REQUEST,
+      data: ctx.query.id,
+    });
+  } else {
+    dispatch({
+      type: LOAD_MY_POSTS_REQUEST,
+    });
+  }
+  return { id: ctx.query.id };
+};
 
 export default Profile;

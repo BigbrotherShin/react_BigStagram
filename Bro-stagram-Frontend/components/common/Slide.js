@@ -6,7 +6,7 @@ import { SET_ON_MODAL } from '../../reducers/post';
 
 const Img = styled.img`
   display: block;
-  width: auto;
+  width: 100%;
   height: auto;
   flex-shrink: 0;
 `;
@@ -21,12 +21,8 @@ const Slide = ({ img }) => {
     });
   }, []);
 
-  return (
-    <>
-      <Img onClick={onImages} src={img} />
-      {onModal ? <Images images={img} /> : null}
-    </>
-  );
+  // 일단은 이미지 확대 기능 없이 진행(2020.5.9)
+  return <Img src={`http://localhost:3065/${img}`} />;
 };
 
 export default Slide;

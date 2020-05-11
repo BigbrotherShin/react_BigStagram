@@ -11,6 +11,9 @@ export const initialState = {
   signedUp: false,
   isSigningUp: false,
   signUpErrorReason: '',
+  myPosts: [],
+  userInfo: null,
+  loadOtherUserInfoErrorReason: '',
 };
 
 export const LOG_IN_REQUEST = 'user/LOG_IN_REQUEST';
@@ -28,6 +31,12 @@ export const SIGN_UP_FAILURE = 'user/SIGN_UP_FAILURE';
 export const LOAD_USER_REQUEST = 'user/LOAD_USER_REQUEST';
 export const LOAD_USER_SUCCESS = 'user/LOAD_USER_SUCCESS';
 export const LOAD_USER_FAILURE = 'user/LOAD_USER_FAILURE';
+
+export const LOAD_MY_POSTS = 'user/LOAD_MY_POSTS';
+
+export const LOAD_OTHER_USER_INFO_REQUEST = 'user/LOAD_OTHER_USER_INFO_REQUEST';
+export const LOAD_OTHER_USER_INFO_SUCCESS = 'user/LOAD_OTHER_USER_INFO_SUCCESS';
+export const LOAD_OTHER_USER_INFO_FAILURE = 'user/LOAD_OTHER_USER_INFO_FAILURE';
 
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
@@ -91,6 +100,26 @@ const reducer = (state = initialState, action) => {
         draft.isLoggingOut = false;
         draft.isLoggedOut = false;
         draft.logOutErrorReason = action.error;
+        break;
+      }
+      case LOAD_MY_POSTS: {
+        draft.myPosts = action.data;
+        break;
+      }
+      case LOAD_OTHER_USER_INFO_REQUEST: {
+        draft.isOtherUserLoading = true;
+        break;
+      }
+      case LOAD_OTHER_USER_INFO_SUCCESS: {
+        draft.isOtherUserLoading = false;
+        draft.otherUserLoaded = true;
+        draft.userInfo = action.data;
+        break;
+      }
+      case LOAD_OTHER_USER_INFO_FAILURE: {
+        draft.isOtherUserLoading = false;
+        draft.otherUserLoaded = false;
+        draft.loadOtherUserInfoErrorReason = action.error;
         break;
       }
       default:

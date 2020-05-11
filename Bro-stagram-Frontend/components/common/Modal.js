@@ -15,6 +15,10 @@ const FullScreen = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+
+  & .modal_children_container {
+    position: static;
+  }
 `;
 
 const Modal = ({ children }) => {
@@ -24,7 +28,11 @@ const Modal = ({ children }) => {
       type: SET_OFF_MODAL,
     });
   }, []);
-  return <FullScreen onClick={setOffModal}>{children}</FullScreen>;
+  return (
+    <FullScreen>
+      <div className='modal_children_container'>{children}</div>
+    </FullScreen>
+  );
 };
 
 Modal.propTypes = {

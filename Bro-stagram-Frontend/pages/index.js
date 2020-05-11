@@ -16,22 +16,19 @@ const Home = memo(() => {
   const { mainPosts } = useSelector((state) => state.post);
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    dispatch({
-      type: LOAD_MAIN_POSTS_REQUEST,
-    });
-  }, []);
-
-  useEffect(() => {
-    console.log('mainPosts', mainPosts);
-  }, []);
+  // useEffect(() => {
+  //   console.log('mainPosts', mainPosts);
+  //   dispatch({
+  //     type: LOAD_MAIN_POSTS_REQUEST,
+  //   });
+  // }, []);
 
   return (
     <StyledMainContainer className='main_container'>
       <div className='main_left'>
-        {mainPosts.length !== 0
-          ? mainPosts.map((v, i) => <Post key={+v.createdAt} data={v} />)
-          : null}
+        {mainPosts.map((v, i) => (
+          <Post key={v.id} postData={v} />
+        ))}
       </div>
       <div className='main_right'>
         <div className='main_right_items main_right'>
@@ -41,5 +38,11 @@ const Home = memo(() => {
     </StyledMainContainer>
   );
 });
+
+Home.getInitialProps = async (ctx) => {
+  ctx.store.dispatch({
+    type: LOAD_MAIN_POSTS_REQUEST,
+  });
+};
 
 export default Home;
