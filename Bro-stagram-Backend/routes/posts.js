@@ -29,7 +29,6 @@ router.get('/', async (req, res, next) => {
 
 router.get('/myPosts', isLoggedIn, async (req, res, next) => {
   try {
-    console.log(req.user);
     const myPosts = await db.Post.findAll({
       where: { UserId: req.user.id },
       include: [

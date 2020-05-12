@@ -2,7 +2,12 @@ import React, { memo, useEffect } from 'react';
 import styled from 'styled-components';
 
 import { Menu, Avatar, Card } from 'antd';
-import { TableOutlined, BookOutlined, UserOutlined } from '@ant-design/icons';
+import {
+  TableOutlined,
+  BookOutlined,
+  UserOutlined,
+  TagOutlined,
+} from '@ant-design/icons';
 import Posts from '../components/Posts';
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
@@ -89,11 +94,20 @@ const ProfileMenu = styled(Menu)`
   display: flex;
   justify-content: center;
 
-  @media (min-width: 736px) {
-    & .profile_menu_items,
-    .profile_menu_items:hover {
+  & .profile_menu_items {
+    &,
+    &:hover {
       border-bottom: none;
     }
+
+    padding-right: 60px;
+
+    &:last-child {
+      padding-right: 0;
+    }
+  }
+
+  @media (min-width: 736px) {
   }
 `;
 
@@ -123,7 +137,7 @@ const Profile = memo(({ id }) => {
         <div className='profile_card_wrapper'>
           <Card
             className='profile_card'
-            title={id ? userInfo.userId : me.userId}
+            title={id ? userInfo.nickname : me.nickname}
             extra={
               <Link href='#'>
                 <a>프로필 편집</a>
@@ -137,14 +151,13 @@ const Profile = memo(({ id }) => {
               <p>팔로우 5</p>,
             ]}
           >
-            <div>{id ? userInfo.nickname : me.nickname}</div>
+            <div>{id ? userInfo.userId : me.userId}</div>
           </Card>
         </div>
       </ProfileHeader>
       <ProfileOptions>
         <ProfileMenu mode='horizontal'>
           <Menu.Item
-            style={{ marginRight: '60px' }}
             className='profile_menu_items'
             key='myPosts'
             icon={<TableOutlined />}
@@ -157,6 +170,13 @@ const Profile = memo(({ id }) => {
             icon={<BookOutlined />}
           >
             저장됨
+          </Menu.Item>
+          <Menu.Item
+            className='profile_menu_items'
+            key='taggedPosts'
+            icon={<TagOutlined />}
+          >
+            태그됨
           </Menu.Item>
         </ProfileMenu>
       </ProfileOptions>

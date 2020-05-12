@@ -45,8 +45,8 @@ const ProfileCard = memo(() => {
       >
         <Card.Meta
           avatar={<Avatar src={``}>{`${me.nickname}`[0]}</Avatar>}
-          title={`${me.userId}`}
-          description={`${me.nickname}`}
+          title={`${me.nickname}`}
+          description={`${me.userId}`}
         />
       </Card>
       <PostEditor />

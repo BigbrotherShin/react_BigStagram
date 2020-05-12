@@ -1,6 +1,8 @@
-import React, { memo, useState, useCallback, useRef } from 'react';
+import React, { memo, useState, useCallback, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import Button from './common/Button';
+import { useDispatch, useSelector } from 'react-redux';
+import { ADD_COMMENT_REQUEST } from '../reducers/post';
 
 const StyledCommentFormDiv = styled.div`
   display: flex;
@@ -54,16 +56,35 @@ const CommentButton = styled(Button)`
     `}
 `;
 
-const CommentForm = memo(() => {
+const CommentForm = memo(({ postId }) => {
+  const dispatch = useDispatch();
+  const { recommentId, mentionedUser } = useSelector((state) => state.post);
   const [comment, setComment] = useState('');
+
+  useEffect(() => {
+    if (mentionedUser) {
+      setComment(`@${mentionedUser} `);
+    }
+  }, [mentionedUser]);
 
   const onChange = useCallback((e) => {
     setComment(e.target.value);
   }, []);
 
-  const onSubmit = useCallback((e) => {
-    e.preventDefault();
-  }, []);
+  const onSubmit = useCallback(
+    (e) => {
+      e.preventDefault();
+      dispatch({
+        type: ADD_COMMENT_REQUEST,
+        data: {
+          content: comment,
+          postId: postId || null,
+          recommentId: recommentId || null,
+        },
+      });
+    },
+    [comment],
+  );
 
   return (
     <StyledCommentFormDiv>

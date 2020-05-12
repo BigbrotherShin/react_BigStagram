@@ -10,6 +10,9 @@ import {
   LOAD_MY_POSTS_FAILURE,
   LOAD_MY_POSTS_SUCCESS,
   LOAD_MY_POSTS_REQUEST,
+  ADD_COMMENT_SUCCESS,
+  ADD_COMMENT_FAILURE,
+  ADD_COMMENT_REQUEST,
 } from '../reducers/post';
 import { LOAD_MY_POSTS } from '../reducers/user';
 
@@ -74,7 +77,6 @@ function loadMyPostsAPI() {
 function* loadMyPosts(action) {
   try {
     const result = yield call(loadMyPostsAPI);
-    console.log(result);
     yield put({
       type: LOAD_MY_POSTS_SUCCESS,
     });
@@ -95,6 +97,37 @@ function* watchLoadMyPosts() {
   yield takeEvery(LOAD_MY_POSTS_REQUEST, loadMyPosts);
 }
 
+function addCommentAPI(comment) {
+  return Axios.post('/post/comment', comment, {
+    withCredentials: true,
+  });
+}
+
+function* addComment(action) {
+  try {
+    const result = yield call(addCommentAPI, action.data);
+    yield put({
+      type: ADD_COMMENT_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: ADD_COMMENT_FAILURE,
+      error: e.response && e.response.data,
+    });
+  }
+}
+
+function* watchAddComment() {
+  yield takeEvery(ADD_COMMENT_REQUEST, addComment);
+}
+
 export default function* postSaga() {
-  yield all([fork(watchAddPost), fork(watchLoadPosts), fork(watchLoadMyPosts)]);
+  yield all([
+    fork(watchAddPost),
+    fork(watchLoadPosts),
+    fork(watchLoadMyPosts),
+    fork(watchAddComment),
+  ]);
 }

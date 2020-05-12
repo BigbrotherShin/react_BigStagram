@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { HeartOutlined } from '@ant-design/icons';
 import styled from 'styled-components';
-import UserInfo from './UserInfo';
+import Link from 'next/link';
 
 const CommentDiv = styled.div`
   display: flex;
@@ -18,11 +18,26 @@ const CommentDiv = styled.div`
   }
 `;
 
-const Comment = memo(() => {
+const Comment = memo(({ commentData }) => {
   return (
     <CommentDiv>
-      <UserInfo />
-      <div className='comment_body'>댓글 내용</div>
+      <span>Jack</span>
+      <div className='comment_body'>
+        {commentData.content.split(/(@[^\s]+)/g).map((v, i) => {
+          if (v.match(/(@[^\s]+)/g)) {
+            return (
+              <Link
+                key={`${v} ${i}`}
+                href={{ pathname: '/profile', query: { nickname: v.slice(1) } }}
+                as={`/profile/${v.slice(1)}`}
+              >
+                <a>{v}</a>
+              </Link>
+            );
+          }
+          return v;
+        })}
+      </div>
       <HeartOutlined className='comment_like' />
     </CommentDiv>
   );

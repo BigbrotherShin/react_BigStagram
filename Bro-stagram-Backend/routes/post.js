@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const db = require('../models');
-const { isLoggedIn } = require('./middlewares');
+const { isLoggedIn, findPost } = require('./middlewares');
 
 const router = express.Router();
 
@@ -61,6 +61,7 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
           }),
         ),
       );
+      console.log('hashtag', result);
       await newPost.addHashtags(result.map((r) => r[0]));
     }
 
@@ -92,6 +93,45 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
     });
 
     res.status(200).json(fullPost);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.post('/comment', isLoggedIn, findPost, async (req, res, next) => {
+  //POST /api/post/comment
+  try {
+    const mentionedUser = req.body.content.match(/@([^\s]+)/g); // 언급된 유저 뽑아내기
+    const newComment = await db.Comment.create({
+      content: req.body.content,
+      UserId: req.user.id,
+      PostId: req.findPost.id,
+      recommentId: req.body.recommentId,
+    });
+    if (mentionedUser) {
+      const result = await Promise.all(
+        mentionedUser.map((nickname, i) =>
+          db.User.findOne({
+            where: { nickname: nickname.slice(1) },
+          }),
+        ),
+      );
+      console.log(result[0]);
+      await newComment.addMentionedUser(
+        result.map((user) => user[0].dataValues.id),
+      );
+    }
+    const fullComment = await db.Comment.findOne({
+      where: { id: newComment.id },
+      include: [
+        {
+          model: db.User,
+          attributes: ['id', 'userId', 'nickname'],
+        },
+      ],
+    });
+    res.json(fullComment);
   } catch (e) {
     console.error(e);
     next(e);

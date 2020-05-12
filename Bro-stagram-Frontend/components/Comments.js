@@ -7,11 +7,12 @@ const StyledCommentsList = styled.div`
   padding-right: 16px;
 `;
 
-const Comments = memo(() => {
+const Comments = memo(({ comments }) => {
   return (
     <StyledCommentsList>
-      <Comment />
-      <Comment />
+      {comments.map((v, i) => (
+        <Comment key={+v.createdAt} commentData={v} />
+      ))}
     </StyledCommentsList>
   );
 });

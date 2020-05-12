@@ -8,6 +8,11 @@ export const initialState = {
   mainPosts: [],
   isLoadingPosts: false,
   isPostsLoaded: false,
+  isAddingComment: false,
+  isCommentAdded: false,
+  addCommentErrorReason: '',
+  mentionedUser: '',
+  recommentId: '',
 };
 
 export const SET_ON_MODAL = 'post/SET_ON_MODAL';
@@ -28,6 +33,13 @@ export const ADD_POST_FAILURE = 'post/ADD_POST_FAILURE';
 export const LOAD_MY_POSTS_REQUEST = 'post/LOAD_MY_POSTS_REQUEST';
 export const LOAD_MY_POSTS_SUCCESS = 'post/LOAD_MY_POSTS_SUCCESS';
 export const LOAD_MY_POSTS_FAILURE = 'post/LOAD_MY_POSTS_FAILURE';
+
+export const ADD_COMMENT_REQUEST = 'post/ADD_COMMENT_REQUEST';
+export const ADD_COMMENT_SUCCESS = 'post/ADD_COMMENT_SUCCESS';
+export const ADD_COMMENT_FAILURE = 'post/ADD_COMMENT_FAILURE';
+
+export const ADD_MENTION = 'post/ADD_MENTION';
+export const PREPARE_RECOMMENT = 'post/PREPARE_RECOMMENT';
 
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
@@ -97,6 +109,34 @@ const reducer = (state = initialState, action) => {
       case LOAD_MY_POSTS_FAILURE: {
         draft.isLoadingPosts = false;
         draft.loadPostsErrorReason = action.error;
+        break;
+      }
+      case ADD_COMMENT_REQUEST: {
+        draft.isAddingComment = true;
+        draft.isCommentAdded = false;
+        break;
+      }
+      case ADD_COMMENT_SUCCESS: {
+        draft.isAddingComment = false;
+        draft.isCommentAdded = true;
+        const index = draft.mainPosts.findIndex(
+          (v) => v.id === action.data.PostId,
+        );
+        draft.mainPosts[index].Comment.unshift(aciton.data);
+        break;
+      }
+      case ADD_COMMENT_FAILURE: {
+        draft.isAddingComment = false;
+        draft.isCommentAdded = false;
+        draft.addCommentErrorReason = action.error;
+        break;
+      }
+      case ADD_MENTION: {
+        draft.mentionedUser = action.data;
+        break;
+      }
+      case PREPARE_RECOMMENT: {
+        draft.recommentId = action.data;
         break;
       }
       default:

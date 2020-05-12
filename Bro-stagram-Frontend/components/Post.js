@@ -1,18 +1,18 @@
 import React, { memo, useCallback, useEffect } from 'react';
+import Link from 'next/link';
 import {
   HeartOutlined,
   MessageOutlined,
   UploadOutlined,
   BookOutlined,
 } from '@ant-design/icons';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Comments from './Comments';
 import CommentForm from './CommentForm';
-import UserInfo from './UserInfo';
-import Link from 'next/link';
 import Slider from './common/Slider';
-import { useDispatch, useSelector } from 'react-redux';
 import { SET_ON_MODAL } from '../reducers/post';
+import UserName from './common/UserName';
 
 const dummy_images = [
   'https://interactive-examples.mdn.mozilla.net/media/examples/grapefruit-slice-332-332.jpg',
@@ -108,7 +108,7 @@ const Post = memo(({ postData }) => {
     <>
       <Card>
         <header>
-          <UserInfo postData={postData && postData.User} />
+          <UserName user={postData.User} />
         </header>
         <div className='card_image'>
           <Slider images={postData.Images} />
@@ -149,8 +149,10 @@ const Post = memo(({ postData }) => {
             <span className='card_content_body'>{postData.content}</span>
           </div>
           <div className='card_time'>{postData.createdAt}</div>
-          <Comments className='card_comments' />
-          <CommentForm className='card_comment_form' />
+          {postData.Comment ? (
+            <Comments className='card_comments' comments={postData.Comment} />
+          ) : null}
+          <CommentForm className='card_comment_form' postId={postData.id} />
         </CardContent>
       </Card>
     </>
