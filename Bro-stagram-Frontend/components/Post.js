@@ -108,7 +108,7 @@ const Post = memo(({ postData }) => {
     <>
       <Card>
         <header>
-          <UserName user={postData.User} />
+          <UserName user={postData.Writer} />
         </header>
         <div className='card_image'>
           <Slider images={postData.Images} />
@@ -140,17 +140,19 @@ const Post = memo(({ postData }) => {
             <Link
               href={{
                 pathname: '/user',
-                query: { id: postData.User.id },
+                query: { id: postData.Writer.id },
               }}
-              as={`/user/${postData.User.id}`}
+              as={`/user/${postData.Writer.id}`}
             >
-              <a className='card_content_nickname'>{postData.User.nickname}</a>
+              <a className='card_content_nickname'>
+                {postData.Writer.nickname}
+              </a>
             </Link>
             <span className='card_content_body'>{postData.content}</span>
           </div>
           <div className='card_time'>{postData.createdAt}</div>
-          {postData.Comment ? (
-            <Comments className='card_comments' comments={postData.Comment} />
+          {postData.Comments ? (
+            <Comments className='card_comments' comments={postData.Comments} />
           ) : null}
           <CommentForm className='card_comment_form' postId={postData.id} />
         </CardContent>

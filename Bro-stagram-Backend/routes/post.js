@@ -84,13 +84,38 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
       include: [
         {
           model: db.User,
+          as: 'Writer',
           attributes: ['id', 'nickname'],
         },
         {
           model: db.Image,
         },
+        {
+          model: db.Comment,
+          where: { RecommentId: null },
+          include: [
+            {
+              model: db.User,
+              as: 'Commenter',
+              attributes: ['id', 'userId', 'nickname'],
+            },
+            {
+              model: db.Comment,
+              as: 'Recomments',
+              include: [
+                {
+                  model: db.User,
+                  as: 'Commenter',
+                  attributes: ['id', 'userId', 'nickname'],
+                },
+              ],
+            },
+          ],
+        },
       ],
     });
+    console.log(newPost);
+    console.log(fullPost);
 
     res.status(200).json(fullPost);
   } catch (e) {
@@ -105,11 +130,14 @@ router.post('/comment', isLoggedIn, findPost, async (req, res, next) => {
     const mentionedUser = req.body.content.match(/@([^\s]+)/g); // 언급된 유저 뽑아내기
     const newComment = await db.Comment.create({
       content: req.body.content,
-      CommenterId: req.user.id,
+      UserId: req.user.id,
       PostId: req.findPost.id,
       RecommentId: req.body.recommentId,
     });
     await req.findPost.addComment(newComment.id);
+    // if (req.body.recommentId) {
+    //   await newComment.addRecomment(req.body.recommentId);
+    // }
     if (mentionedUser) {
       const result = await Promise.all(
         mentionedUser.map((nickname, i) =>

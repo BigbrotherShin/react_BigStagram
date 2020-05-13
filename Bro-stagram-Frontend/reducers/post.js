@@ -40,6 +40,7 @@ export const ADD_COMMENT_FAILURE = 'post/ADD_COMMENT_FAILURE';
 
 export const ADD_MENTION = 'post/ADD_MENTION';
 export const PREPARE_RECOMMENT = 'post/PREPARE_RECOMMENT';
+export const CLEAR_RECOMMENT = 'post/CLEAR_RECOMMENT';
 
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
@@ -122,7 +123,9 @@ const reducer = (state = initialState, action) => {
         const index = draft.mainPosts.findIndex(
           (v) => v.id === action.data.PostId,
         );
-        draft.mainPosts[index].Comment.push(aciton.data);
+        draft.mainPosts[index].Comments.push(action.data);
+        draft.mentionedUser = '';
+        draft.recommentId = '';
         break;
       }
       case ADD_COMMENT_FAILURE: {
@@ -131,12 +134,14 @@ const reducer = (state = initialState, action) => {
         draft.addCommentErrorReason = action.error;
         break;
       }
-      case ADD_MENTION: {
-        draft.mentionedUser = action.data;
+      case PREPARE_RECOMMENT: {
+        draft.recommentId = action.data.recommentId;
+        draft.mentionedUser = action.data.mentionedUser;
         break;
       }
-      case PREPARE_RECOMMENT: {
-        draft.recommentId = action.data;
+      case CLEAR_RECOMMENT: {
+        draft.recommentId = '';
+        draft.mentionedUser = '';
         break;
       }
       default:

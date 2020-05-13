@@ -12,10 +12,33 @@ router.get('/', async (req, res, next) => {
       include: [
         {
           model: db.User,
-          attributes: ['id', 'UserId', 'nickname'],
+          as: 'Writer',
+          attributes: ['id', 'userId', 'nickname'],
         },
         {
           model: db.Image,
+        },
+        {
+          model: db.Comment,
+          where: { RecommentId: null },
+          include: [
+            {
+              model: db.User,
+              as: 'Commenter',
+              attributes: ['id', 'userId', 'nickname'],
+            },
+            {
+              model: db.Comment,
+              as: 'Recomments',
+              include: [
+                {
+                  model: db.User,
+                  as: 'Commenter',
+                  attributes: ['id', 'userId', 'nickname'],
+                },
+              ],
+            },
+          ],
         },
       ],
     });

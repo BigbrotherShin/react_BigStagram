@@ -2,7 +2,7 @@ import React, { memo, useState, useCallback, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import Button from './common/Button';
 import { useDispatch, useSelector } from 'react-redux';
-import { ADD_COMMENT_REQUEST } from '../reducers/post';
+import { ADD_COMMENT_REQUEST, CLEAR_RECOMMENT } from '../reducers/post';
 
 const StyledCommentFormDiv = styled.div`
   display: flex;
@@ -61,11 +61,24 @@ const CommentForm = memo(({ postId }) => {
   const { recommentId, mentionedUser } = useSelector((state) => state.post);
   const [comment, setComment] = useState('');
 
+  const commentRef = useRef(null);
+
   useEffect(() => {
     if (mentionedUser) {
       setComment(`@${mentionedUser} `);
     }
-  }, [mentionedUser]);
+    if (recommentId) {
+      commentRef.current.focus();
+    }
+  }, [mentionedUser, recommentId]);
+
+  useEffect(() => {
+    return () => {
+      dispatch({
+        type: CLEAR_RECOMMENT,
+      });
+    };
+  }, []);
 
   const onChange = useCallback((e) => {
     setComment(e.target.value);
@@ -92,6 +105,7 @@ const CommentForm = memo(({ postId }) => {
         <form>
           <StyledTextarea
             className='comment_form_textarea'
+            ref={commentRef}
             onChange={onChange}
             value={comment}
             rows={1}

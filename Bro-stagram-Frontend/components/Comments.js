@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect } from 'react';
 import Comment from './Comment';
 import styled from 'styled-components';
 
@@ -10,9 +10,9 @@ const StyledCommentsList = styled.div`
 const Comments = memo(({ comments }) => {
   return (
     <StyledCommentsList>
-      {comments.map((v, i) => (
-        <Comment key={+v.createdAt} commentData={v} />
-      ))}
+      {comments.map((v, i) =>
+        !v.RecommentId ? <Comment key={+v.createdAt} commentData={v} /> : null,
+      )}
     </StyledCommentsList>
   );
 });

@@ -16,30 +16,22 @@ module.exports = (sequelize, DataTypes) => {
   Comment.associate = (db) => {
     db.Comment.belongsTo(db.User, {
       as: 'Commenter',
-      foreignKey: 'CommenterId',
+      foreignKey: 'UserId',
     });
     db.Comment.belongsToMany(db.User, {
       through: 'MentionComment',
       as: 'MentionedUsers',
-      foreignKey: 'MentioningCommentId',
-      sourceKey: 'id',
     });
     db.Comment.belongsTo(db.Post);
-    // db.Comment.hasMany(db.User, {
-    //   foreignKey: 'mentionComment',
-    //   sourceKey: 'id',
-    //   as: 'MentionedUser',
-    // });
     db.Comment.hasMany(db.Comment, {
-      foreignKey: 'RecommentId',
-      sourceKey: 'id',
       as: 'Recomments',
-    });
-    db.Comment.belongsTo(db.Comment, {
       foreignKey: 'RecommentId',
-      targetKey: 'id',
-      as: 'Recommented',
     });
+    // db.Comment.belongsTo(db.Comment, {
+    //   foreignKey: 'RecommentId',
+    //   targetKey: 'id',
+    //   as: 'Recommented',
+    // });
   };
 
   return Comment;

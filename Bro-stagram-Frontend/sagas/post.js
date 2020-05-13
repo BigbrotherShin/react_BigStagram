@@ -77,6 +77,7 @@ function loadMyPostsAPI() {
 function* loadMyPosts(action) {
   try {
     const result = yield call(loadMyPostsAPI);
+
     yield put({
       type: LOAD_MY_POSTS_SUCCESS,
     });
