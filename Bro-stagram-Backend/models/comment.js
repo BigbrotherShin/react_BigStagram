@@ -14,10 +14,15 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   Comment.associate = (db) => {
-    db.Comment.belongsTo(db.User);
+    db.Comment.belongsTo(db.User, {
+      as: 'Commenter',
+      foreignKey: 'CommenterId',
+    });
     db.Comment.belongsToMany(db.User, {
       through: 'MentionComment',
-      as: 'MentionedUser',
+      as: 'MentionedUsers',
+      foreignKey: 'MentioningCommentId',
+      sourceKey: 'id',
     });
     db.Comment.belongsTo(db.Post);
     // db.Comment.hasMany(db.User, {
@@ -26,12 +31,12 @@ module.exports = (sequelize, DataTypes) => {
     //   as: 'MentionedUser',
     // });
     db.Comment.hasMany(db.Comment, {
-      foreignKey: 'recommentId',
+      foreignKey: 'RecommentId',
       sourceKey: 'id',
-      as: 'Recommenting',
+      as: 'Recomments',
     });
     db.Comment.belongsTo(db.Comment, {
-      foreignKey: 'recommentId',
+      foreignKey: 'RecommentId',
       targetKey: 'id',
       as: 'Recommented',
     });

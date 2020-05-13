@@ -122,7 +122,7 @@ const reducer = (state = initialState, action) => {
         const index = draft.mainPosts.findIndex(
           (v) => v.id === action.data.PostId,
         );
-        draft.mainPosts[index].Comment.unshift(aciton.data);
+        draft.mainPosts[index].Comment.push(aciton.data);
         break;
       }
       case ADD_COMMENT_FAILURE: {

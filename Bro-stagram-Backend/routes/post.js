@@ -105,10 +105,11 @@ router.post('/comment', isLoggedIn, findPost, async (req, res, next) => {
     const mentionedUser = req.body.content.match(/@([^\s]+)/g); // 언급된 유저 뽑아내기
     const newComment = await db.Comment.create({
       content: req.body.content,
-      UserId: req.user.id,
+      CommenterId: req.user.id,
       PostId: req.findPost.id,
-      recommentId: req.body.recommentId,
+      RecommentId: req.body.recommentId,
     });
+    await req.findPost.addComment(newComment.id);
     if (mentionedUser) {
       const result = await Promise.all(
         mentionedUser.map((nickname, i) =>
@@ -117,16 +118,15 @@ router.post('/comment', isLoggedIn, findPost, async (req, res, next) => {
           }),
         ),
       );
-      console.log(result[0]);
-      await newComment.addMentionedUser(
-        result.map((user) => user[0].dataValues.id),
-      );
+
+      await newComment.addMentionedUsers(result.map((user) => user.id));
     }
     const fullComment = await db.Comment.findOne({
       where: { id: newComment.id },
       include: [
         {
           model: db.User,
+          as: 'Commenter',
           attributes: ['id', 'userId', 'nickname'],
         },
       ],
