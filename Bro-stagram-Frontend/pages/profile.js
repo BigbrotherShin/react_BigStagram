@@ -188,7 +188,7 @@ const Profile = memo(({ id }) => {
 Profile.getInitialProps = async (ctx) => {
   const dispatch = ctx.store.dispatch;
   const state = ctx.store.getState();
-  console.log(ctx.query.id);
+  console.log(ctx.query);
   if (ctx.query.id) {
     dispatch({
       type: LOAD_OTHER_USER_INFO_REQUEST,

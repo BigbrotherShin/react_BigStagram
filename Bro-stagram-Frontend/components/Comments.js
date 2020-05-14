@@ -10,9 +10,9 @@ const StyledCommentsList = styled.div`
 const Comments = memo(({ comments }) => {
   return (
     <StyledCommentsList>
-      {comments.map((v, i) =>
-        !v.RecommentId ? <Comment key={+v.createdAt} commentData={v} /> : null,
-      )}
+      {comments.map((v, i) => (
+        <Comment key={+v.createdAt} commentData={v} />
+      ))}
     </StyledCommentsList>
   );
 });

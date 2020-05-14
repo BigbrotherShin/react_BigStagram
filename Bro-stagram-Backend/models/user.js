@@ -44,6 +44,10 @@ module.exports = (sequelize, DataTypes) => {
       as: 'Followings',
       foreignKey: 'followerId',
     });
+    db.User.belongsToMany(db.Comment, {
+      through: 'CommentLike',
+      as: 'CommentLiked',
+    });
   };
 
   return User;

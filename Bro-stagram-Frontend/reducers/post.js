@@ -7,12 +7,18 @@ export const initialState = {
   isPostAdded: false,
   mainPosts: [],
   isLoadingPosts: false,
+  isLoadingImages: false,
   isPostsLoaded: false,
   isAddingComment: false,
   isCommentAdded: false,
   addCommentErrorReason: '',
   mentionedUser: '',
   recommentId: '',
+  commentPostId: '',
+  isAddingLike: false,
+  isLikeAdded: false,
+  isDeletingLike: false,
+  isLikeDeleted: false,
 };
 
 export const SET_ON_MODAL = 'post/SET_ON_MODAL';
@@ -38,6 +44,22 @@ export const ADD_COMMENT_REQUEST = 'post/ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS = 'post/ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE = 'post/ADD_COMMENT_FAILURE';
 
+export const ADD_POST_LIKE_REQUEST = 'post/ADD_POST_LIKE_REQUEST';
+export const ADD_POST_LIKE_SUCCESS = 'post/ADD_POST_LIKE_SUCCESS';
+export const ADD_POST_LIKE_FAILURE = 'post/ADD_POST_LIKE_FAILURE';
+
+export const DELETE_POST_LIKE_REQUEST = 'post/DELETE_POST_LIKE_REQUEST';
+export const DELETE_POST_LIKE_SUCCESS = 'post/DELETE_POST_LIKE_SUCCESS';
+export const DELETE_POST_LIKE_FAILURE = 'post/DELETE_POST_LIKE_FAILURE';
+
+export const ADD_COMMENT_LIKE_REQUEST = 'post/ADD_COMMENT_LIKE_REQUEST';
+export const ADD_COMMENT_LIKE_SUCCESS = 'post/ADD_COMMENT_LIKE_SUCCESS';
+export const ADD_COMMENT_LIKE_FAILURE = 'post/ADD_COMMENT_LIKE_FAILURE';
+
+export const DELETE_COMMENT_LIKE_REQUEST = 'post/DELETE_COMMENT_LIKE_REQUEST';
+export const DELETE_COMMENT_LIKE_SUCCESS = 'post/DELETE_COMMENT_LIKE_SUCCESS';
+export const DELETE_COMMENT_LIKE_FAILURE = 'post/DELETE_COMMENT_LIKE_FAILURE';
+
 export const ADD_MENTION = 'post/ADD_MENTION';
 export const PREPARE_RECOMMENT = 'post/PREPARE_RECOMMENT';
 export const CLEAR_RECOMMENT = 'post/CLEAR_RECOMMENT';
@@ -56,16 +78,6 @@ const reducer = (state = initialState, action) => {
         }
         break;
       }
-      // case UPLOAD_IMAGES_REQUEST: {
-      //   break;
-      // }
-      // case UPLOAD_IMAGES_SUCCESS: {
-      //   draft.imageArray = action.data;
-      //   break;
-      // }
-      // case UPLOAD_IMAGES_FAILURE: {
-      //   break;
-      // }
       case LOAD_MAIN_POSTS_REQUEST: {
         draft.isLoadingPosts = true;
         draft.isPostsLoaded = false;
@@ -139,6 +151,7 @@ const reducer = (state = initialState, action) => {
         }
         draft.mentionedUser = '';
         draft.recommentId = '';
+        draft.commentPostId = '';
         break;
       }
       case ADD_COMMENT_FAILURE: {
@@ -147,14 +160,151 @@ const reducer = (state = initialState, action) => {
         draft.addCommentErrorReason = action.error;
         break;
       }
+      case ADD_POST_LIKE_REQUEST: {
+        draft.isAddingLike = true;
+        draft.isLikeAdded = false;
+        break;
+      }
+      case ADD_POST_LIKE_SUCCESS: {
+        draft.isAddingLike = false;
+        draft.isLikeAdded = true;
+        const postIndex = draft.mainPosts.findIndex(
+          (v, i) => v.id === action.data.postId,
+        );
+        draft.mainPosts[postIndex].Likers.push(action.data.userId);
+        break;
+      }
+      case ADD_POST_LIKE_FAILURE: {
+        draft.isAddingLike = false;
+        draft.isLikeAdded = false;
+        draft.loadPostsErrorReason = action.error;
+        break;
+      }
+      case DELETE_POST_LIKE_REQUEST: {
+        draft.isDeletingLike = true;
+        draft.isLikeDeleted = false;
+        break;
+      }
+      case DELETE_POST_LIKE_SUCCESS: {
+        draft.isDeletingLike = false;
+        draft.isLikeDeleted = true;
+        const postIndex = draft.mainPosts.findIndex(
+          (v, i) => v.id === action.data.postId,
+        );
+        const userIndex = draft.mainPosts[postIndex].Likers.findIndex(
+          (v, i) => v === action.data.userId,
+        );
+        draft.mainPosts[postIndex].Likers.splice(userIndex, 1);
+        break;
+      }
+      case DELETE_POST_LIKE_FAILURE: {
+        draft.isDeletingLike = false;
+        draft.isLikeDeleted = false;
+        draft.loadPostsErrorReason = action.error;
+        break;
+      }
+      case ADD_COMMENT_LIKE_REQUEST: {
+        draft.isAddingLike = true;
+        draft.isLikeAdded = false;
+        break;
+      }
+      case ADD_COMMENT_LIKE_SUCCESS: {
+        draft.isAddingLike = false;
+        draft.isLikeAdded = true;
+        const postIndex = draft.mainPosts.findIndex(
+          (v, i) => v.id === action.data.postId,
+        );
+        if (action.data.recommentId) {
+          // 대댓글인 경우 좋아요 추가
+          const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
+            (v, i) => v.id === action.data.recommentId,
+          );
+          const recommentIndex = draft.mainPosts[
+            postIndex
+          ].Comments.Recomments.findIndex((v, i) => v.id === action.commentId);
+          draft.mainPosts[commentIndex].Comments.Recomments[
+            recommentIndex
+          ].CommentLikers.push(action.data.userId);
+          break;
+        } else {
+          // 댓글인 경우 좋아요 추가
+          const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
+            (v, i) => v.id === action.data.commentId,
+          );
+          draft.mainPosts[postIndex].Comments[commentIndex].CommentLikers.push(
+            action.data.userId,
+          );
+          break;
+        }
+      }
+      case ADD_COMMENT_LIKE_FAILURE: {
+        draft.isAddingLike = false;
+        draft.isLikeAdded = false;
+        draft.loadPostsErrorReason = action.error;
+        break;
+      }
+      case DELETE_COMMENT_LIKE_REQUEST: {
+        draft.isDeletingLike = true;
+        draft.isLikeDeleted = false;
+        break;
+      }
+      case DELETE_COMMENT_LIKE_SUCCESS: {
+        draft.isDeletingLike = false;
+        draft.isLikeDeleted = true;
+        const postIndex = draft.mainPosts.findIndex(
+          (v, i) => v.id === action.data.postId,
+        );
+        if (action.data.recommentId) {
+          // 대댓글인 경우 좋아요 취소
+          const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
+            (v, i) => v.id === action.data.recommentId,
+          );
+          const recommentIndex = draft.mainPosts[
+            postIndex
+          ].Comments.Recomments.findIndex(
+            (v, i) => v.id === action.data.commentId,
+          );
+          const userIndex = draft.mainPosts[
+            postIndex
+          ].Comments.Recomments.CommentLikers.findIndex(
+            (v, i) => v === action.data.userId,
+          );
+          draft.mainPosts[commentIndex].Comments.Recomments[
+            recommentIndex
+          ].CommentLikers.splice(userIndex, 1);
+          break;
+        } else {
+          // 댓글인 경우 좋아요 취소
+          const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
+            (v, i) => v.id === action.data.commentId,
+          );
+          const userIndex = draft.mainPosts[
+            postIndex
+          ].Comments.CommentLikers.findIndex(
+            (v, i) => v === action.data.userId,
+          );
+          draft.mainPosts[postIndex].Comments[commentIndex].CommentLikers.push(
+            action.data.userId,
+          );
+          break;
+        }
+      }
+      case DELETE_COMMENT_LIKE_FAILURE: {
+        draft.isDeletingLike = false;
+        draft.isLikeDeleted = false;
+        draft.loadPostsErrorReason = action.error;
+        break;
+      }
       case PREPARE_RECOMMENT: {
         draft.recommentId = action.data.recommentId;
         draft.mentionedUser = action.data.mentionedUser;
+        draft.commentPostId = action.data.commentPostId;
         break;
       }
       case CLEAR_RECOMMENT: {
         draft.recommentId = '';
         draft.mentionedUser = '';
+        draft.commentPostId = '';
         break;
       }
       default:

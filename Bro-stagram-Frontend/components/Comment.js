@@ -37,6 +37,7 @@ const Comment = memo(({ commentData }) => {
         recommentId: commentData.RecommentId
           ? commentData.RecommentId
           : commentData.id,
+        commentPostId: commentData.PostId,
       },
     });
   }, []);
@@ -68,11 +69,12 @@ const Comment = memo(({ commentData }) => {
           <div className='comment_body_recomment'>
             <button onClick={onRecomment}>답글 달기</button>
           </div>
-
-          {/* <Comments comments={commentData.Recomments} /> */}
         </div>
         <HeartOutlined className='comment_like' />
       </CommentDiv>
+      {commentData.Recomments && commentData.Recomments.length !== 0 ? (
+        <Comments comments={commentData.Recomments} />
+      ) : null}
     </>
   );
 });

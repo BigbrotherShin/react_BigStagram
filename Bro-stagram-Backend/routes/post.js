@@ -130,7 +130,7 @@ router.post('/comment', isLoggedIn, findPost, async (req, res, next) => {
       content: req.body.content,
       UserId: req.user.id,
       PostId: req.findPost.id,
-      RecommentId: req.body.recommentId,
+      RecommentId: req.body.recommentId || null,
     });
     await req.findPost.addComment(newComment.id); // 해당 포스트에 댓글 관계 추가
     // if (req.body.recommentId) {
@@ -158,6 +158,70 @@ router.post('/comment', isLoggedIn, findPost, async (req, res, next) => {
       ],
     });
     res.json(fullComment);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.post('/like', isLoggedIn, findPost, async (req, res, next) => {
+  // POST /api/post/like
+  try {
+    await req.findPost.addLiker(req.user.id);
+    res.status(200).json({ userId: req.user.id, postId: findPost.id });
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.delete('/like', isLoggedIn, findPost, async (req, res, next) => {
+  // DELETE /api/post/like
+  try {
+    await req.findPost.removeLiker(req.user.id);
+    res.status(200).json({ userId: req.user.id, postId: findPost.id });
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.post('/comment/like', isLoggedIn, findPost, async (req, res, next) => {
+  // POST /api/post/comment/like
+  try {
+    const findComment = await db.Comment.findOne({
+      where: {
+        id: req.body.commentId,
+      },
+    });
+    await findComment.addCommentLiker(req.user.id);
+    res.status(200).json({
+      userId: req.user.id,
+      postId: req.findPost.id,
+      commentId: findComment.id,
+      recommentId: findComment.RecommentId || null,
+    });
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.delete('/comment/like', isLoggedIn, findPost, async (req, res, next) => {
+  // DELETE /api/post/comment/like
+  try {
+    const findComment = await db.Comment.findOne({
+      where: {
+        id: req.body.commentId,
+      },
+    });
+    await findComment.removeCommentLiker(req.user.id);
+    res.status(200).json({
+      userId: req.user.id,
+      postId: req.findPost.id,
+      commentId: findComment.id,
+      recommentId: findComment.RecommentId || null,
+    });
   } catch (e) {
     console.error(e);
     next(e);

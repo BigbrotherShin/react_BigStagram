@@ -58,19 +58,19 @@ const CommentButton = styled(Button)`
 
 const CommentForm = memo(({ postId }) => {
   const dispatch = useDispatch();
-  const { recommentId, mentionedUser } = useSelector((state) => state.post);
+  const { recommentId, mentionedUser, commentPostId } = useSelector(
+    (state) => state.post,
+  );
   const [comment, setComment] = useState('');
 
-  const commentRef = useRef(null);
+  const commentRef = useRef();
 
   useEffect(() => {
-    if (mentionedUser) {
+    if (mentionedUser && recommentId) {
       setComment(`@${mentionedUser} `);
+      commentRef.current && commentRef.current.focus();
     }
-    if (recommentId) {
-      commentRef.current.focus();
-    }
-  }, [mentionedUser, recommentId]);
+  }, [mentionedUser, recommentId, commentPostId]);
 
   useEffect(() => {
     return () => {
@@ -104,8 +104,9 @@ const CommentForm = memo(({ postId }) => {
       <div style={{ display: 'flex', width: '100%' }}>
         <form>
           <StyledTextarea
+            name={postId}
             className='comment_form_textarea'
-            ref={commentRef}
+            ref={postId === commentPostId ? commentRef : null}
             onChange={onChange}
             value={comment}
             rows={1}

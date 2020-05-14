@@ -16,8 +16,8 @@ import {
 } from '../reducers/post';
 import { LOAD_MY_POSTS } from '../reducers/user';
 
-function loadPostsAPI(post) {
-  return Axios.get('/posts', {
+function loadPostsAPI(data) {
+  return Axios.get(data && data.onlyImages ? '/posts/images' : '/posts', {
     withCredentials: false,
   });
 }
