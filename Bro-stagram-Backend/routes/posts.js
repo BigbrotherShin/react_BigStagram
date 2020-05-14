@@ -20,7 +20,10 @@ router.get('/', async (req, res, next) => {
         },
         {
           model: db.Comment,
-          where: { RecommentId: null },
+          as: 'Comments',
+          where: {
+            RecommentId: null,
+          },
           include: [
             {
               model: db.User,

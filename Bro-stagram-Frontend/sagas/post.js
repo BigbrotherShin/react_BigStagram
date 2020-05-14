@@ -51,6 +51,7 @@ function addPostAPI(post) {
 function* addPost(action) {
   try {
     const result = yield call(addPostAPI, action.data);
+    result.data.Comments = new Array();
     yield put({
       type: ADD_POST_SUCCESS,
       data: result.data,
@@ -107,7 +108,9 @@ function addCommentAPI(comment) {
 function* addComment(action) {
   try {
     const result = yield call(addCommentAPI, action.data);
-    console.log(result);
+    if (!result.data.RecommentId) {
+      result.data.Recomments = new Array();
+    }
     yield put({
       type: ADD_COMMENT_SUCCESS,
       data: result.data,

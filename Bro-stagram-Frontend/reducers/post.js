@@ -120,10 +120,23 @@ const reducer = (state = initialState, action) => {
       case ADD_COMMENT_SUCCESS: {
         draft.isAddingComment = false;
         draft.isCommentAdded = true;
-        const index = draft.mainPosts.findIndex(
+        const postIndex = draft.mainPosts.findIndex(
+          // 댓글을 추가한 포스트 id 찾기
           (v) => v.id === action.data.PostId,
         );
-        draft.mainPosts[index].Comments.push(action.data);
+
+        if (!action.data.RecommentId) {
+          // 대댓글이 아니라면 해당 포스트의 댓글 리스트에 댓글 추가
+          draft.mainPosts[postIndex].Comments.push(action.data);
+        } else {
+          // 대댓글이라면 해당 포스트의 해당 댓글에 대댓글 추가
+          const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
+            (v) => v.id === action.data.RecommentId,
+          );
+          draft.mainPosts[postIndex].Comments[commentIndex].Recomments.push(
+            action.data,
+          );
+        }
         draft.mentionedUser = '';
         draft.recommentId = '';
         break;

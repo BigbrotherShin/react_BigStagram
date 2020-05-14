@@ -90,32 +90,30 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
         {
           model: db.Image,
         },
-        {
-          model: db.Comment,
-          where: { RecommentId: null },
-          include: [
-            {
-              model: db.User,
-              as: 'Commenter',
-              attributes: ['id', 'userId', 'nickname'],
-            },
-            {
-              model: db.Comment,
-              as: 'Recomments',
-              include: [
-                {
-                  model: db.User,
-                  as: 'Commenter',
-                  attributes: ['id', 'userId', 'nickname'],
-                },
-              ],
-            },
-          ],
-        },
+        // {
+        //   model: db.Comment,
+        //   as: 'Comments',
+        //   include: [
+        //     {
+        //       model: db.User,
+        //       as: 'Commenter',
+        //       attributes: ['id', 'userId', 'nickname'],
+        //     },
+        //     {
+        //       model: db.Comment,
+        //       as: 'Recomments',
+        //       include: [
+        //         {
+        //           model: db.User,
+        //           as: 'Commenter',
+        //           attributes: ['id', 'userId', 'nickname'],
+        //         },
+        //       ],
+        //     },
+        //   ],
+        // },
       ],
     });
-    console.log(newPost);
-    console.log(fullPost);
 
     res.status(200).json(fullPost);
   } catch (e) {
@@ -134,7 +132,7 @@ router.post('/comment', isLoggedIn, findPost, async (req, res, next) => {
       PostId: req.findPost.id,
       RecommentId: req.body.recommentId,
     });
-    await req.findPost.addComment(newComment.id);
+    await req.findPost.addComment(newComment.id); // 해당 포스트에 댓글 관계 추가
     // if (req.body.recommentId) {
     //   await newComment.addRecomment(req.body.recommentId);
     // }
