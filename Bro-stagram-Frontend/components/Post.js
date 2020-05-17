@@ -5,13 +5,21 @@ import {
   MessageOutlined,
   UploadOutlined,
   BookOutlined,
+  HeartFilled,
+  BookFilled,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
 import Comments from './Comments';
 import CommentForm from './CommentForm';
 import Slider from './common/Slider';
-import { SET_ON_MODAL } from '../reducers/post';
+import {
+  SET_ON_MODAL,
+  ADD_POST_LIKE_REQUEST,
+  DELETE_POST_LIKE_REQUEST,
+  ADD_BOOKMARK_REQUEST,
+  DELETE_BOOKMARK_REQUEST,
+} from '../reducers/post';
 import UserName from './common/UserName';
 
 const dummy_images = [
@@ -104,6 +112,48 @@ const CardContent = styled.div`
 `;
 
 const Post = memo(({ postData }) => {
+  const { me } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
+
+  const liked =
+    me && postData.Likers && postData.Likers.find((v, i) => v.id === me.id);
+
+  const onLike = useCallback(() => {
+    dispatch({
+      type: ADD_POST_LIKE_REQUEST,
+      data: {
+        postId: postData.id,
+      },
+    });
+  }, []);
+
+  const onDislike = useCallback(() => {
+    dispatch({
+      type: DELETE_POST_LIKE_REQUEST,
+      data: {
+        postId: postData.id,
+      },
+    });
+  }, []);
+
+  const addBookmark = useCallback(() => {
+    dispatch({
+      type: ADD_BOOKMARK_REQUEST,
+      data: {
+        postId: postData.id,
+      },
+    });
+  }, []);
+
+  const deleteBookmark = useCallback(() => {
+    dispatch({
+      type: DELETE_BOOKMARK_REQUEST,
+      data: {
+        postId: postData.id,
+      },
+    });
+  }, []);
+
   return (
     <>
       <Card>
@@ -115,12 +165,28 @@ const Post = memo(({ postData }) => {
         </div>
         <div className='card_info'>
           <div className='card_info_left'>
-            <HeartOutlined className='card_info_icons' />
+            {liked ? (
+              <HeartFilled
+                onClick={onDislike}
+                style={{ color: 'hotpink' }}
+                className='card_info_icons'
+              />
+            ) : (
+              <HeartOutlined onClick={onLike} className='card_info_icons' />
+            )}
+
             <MessageOutlined className='card_info_icons' />
             <UploadOutlined className='card_info_icons' />
           </div>
           <div className='card_info_right'>
-            <BookOutlined className='card_info_icons' />
+            {me && me.BookmarkPosts.find((v, i) => v.id === postData.id) ? (
+              <BookFilled
+                onClick={deleteBookmark}
+                className='card_info_icons'
+              />
+            ) : (
+              <BookOutlined onClick={addBookmark} className='card_info_icons' />
+            )}
           </div>
         </div>
         <CardContent className='card_content'>
@@ -138,11 +204,19 @@ const Post = memo(({ postData }) => {
           </section>
           <div className='card_content_body_wrapper'>
             <Link
-              href={{
-                pathname: '/user',
-                query: { id: postData.Writer.id },
-              }}
-              as={`/user/${postData.Writer.id}`}
+              href={
+                me && me.id !== postData.Writer.id
+                  ? {
+                      pathname: '/user',
+                      query: { id: postData.Writer.id },
+                    }
+                  : { pathname: '/profile' }
+              }
+              as={
+                me && me.id !== postData.Writer.id
+                  ? `/user/${postData.Writer.id}`
+                  : '/profile'
+              }
             >
               <a className='card_content_nickname'>
                 {postData.Writer.nickname}

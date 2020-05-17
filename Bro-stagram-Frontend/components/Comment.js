@@ -1,9 +1,13 @@
 import React, { memo, useCallback } from 'react';
-import { HeartOutlined } from '@ant-design/icons';
+import { HeartOutlined, HeartFilled } from '@ant-design/icons';
 import styled from 'styled-components';
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
-import { PREPARE_RECOMMENT } from '../reducers/post';
+import {
+  PREPARE_RECOMMENT,
+  ADD_COMMENT_LIKE_REQUEST,
+  DELETE_COMMENT_LIKE_REQUEST,
+} from '../reducers/post';
 import Comments from './Comments';
 
 const CommentDiv = styled.div`
@@ -26,7 +30,7 @@ const CommentDiv = styled.div`
 `;
 
 const Comment = memo(({ commentData }) => {
-  // const { mentionedUser, recommentId } = useSelector((state) => state.post);
+  const { me } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const onRecomment = useCallback(() => {
@@ -38,6 +42,33 @@ const Comment = memo(({ commentData }) => {
           ? commentData.RecommentId
           : commentData.id,
         commentPostId: commentData.PostId,
+      },
+    });
+  }, []);
+
+  const liked =
+    me &&
+    commentData.CommentLikers &&
+    commentData.CommentLikers.find((v, i) => v.id === me.id);
+
+  const onCommentLike = useCallback(() => {
+    dispatch({
+      type: ADD_COMMENT_LIKE_REQUEST,
+      data: {
+        postId: commentData.PostId,
+        commentId: commentData.id,
+        // recommentId: commentData.RecommentId || null,
+      },
+    });
+  }, []);
+
+  const onCommentUnlike = useCallback(() => {
+    dispatch({
+      type: DELETE_COMMENT_LIKE_REQUEST,
+      data: {
+        postId: commentData.PostId,
+        commentId: commentData.id,
+        // recommentId: commentData.RecommentId || null,
       },
     });
   }, []);
@@ -70,7 +101,15 @@ const Comment = memo(({ commentData }) => {
             <button onClick={onRecomment}>답글 달기</button>
           </div>
         </div>
-        <HeartOutlined className='comment_like' />
+        {liked ? (
+          <HeartFilled
+            onClick={onCommentUnlike}
+            className='comment_like'
+            style={{ color: 'hotpink' }}
+          />
+        ) : (
+          <HeartOutlined onClick={onCommentLike} className='comment_like' />
+        )}
       </CommentDiv>
       {commentData.Recomments && commentData.Recomments.length !== 0 ? (
         <Comments comments={commentData.Recomments} />

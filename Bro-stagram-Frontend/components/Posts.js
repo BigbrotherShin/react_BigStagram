@@ -58,7 +58,7 @@ const Posts = memo(({ posts }) => {
           <div className='profile_posts_wrapper'>
             <div className='profile_posts_container'>
               {posts.map((v, i) => (
-                <PostImage postThumnail={v.Images[0]} key={`${v} ${i}`} />
+                <PostImage postThumnail={v.Images[0]} key={`${v.id} ${i}`} />
               ))}
             </div>
           </div>

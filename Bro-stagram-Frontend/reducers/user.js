@@ -38,6 +38,10 @@ export const LOAD_OTHER_USER_INFO_REQUEST = 'user/LOAD_OTHER_USER_INFO_REQUEST';
 export const LOAD_OTHER_USER_INFO_SUCCESS = 'user/LOAD_OTHER_USER_INFO_SUCCESS';
 export const LOAD_OTHER_USER_INFO_FAILURE = 'user/LOAD_OTHER_USER_INFO_FAILURE';
 
+export const ADD_BOOKMARK_TO_ME = 'user/ADD_BOOKMARK_TO_ME';
+export const LOAD_BOOKMARK_TO_ME = 'user/LOAD_BOOKMARK_TO_ME';
+export const DELETE_BOOKMARK_TO_ME = 'user/DELETE_BOOKMARK_TO_ME';
+
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
     switch (action.type) {
@@ -103,7 +107,7 @@ const reducer = (state = initialState, action) => {
         break;
       }
       case LOAD_MY_POSTS: {
-        draft.myPosts = action.data;
+        draft.me.Posts = action.data;
         break;
       }
       case LOAD_OTHER_USER_INFO_REQUEST: {
@@ -120,6 +124,27 @@ const reducer = (state = initialState, action) => {
         draft.isOtherUserLoading = false;
         draft.otherUserLoaded = false;
         draft.loadOtherUserInfoErrorReason = action.error;
+        break;
+      }
+      case ADD_BOOKMARK_TO_ME: {
+        if (draft.me && draft.me.BookmarkPosts) {
+          draft.me.BookmarkPosts.push({ id: action.data.postId });
+          break;
+        }
+      }
+      case LOAD_BOOKMARK_TO_ME: {
+        if (draft.me && draft.me.BookmarkPosts) {
+          draft.me.BookmarkPosts = action.data;
+          break;
+        }
+      }
+      case DELETE_BOOKMARK_TO_ME: {
+        if (draft.me && draft.me.BookmarkPosts.length !== 0) {
+          const bookmarkIndex = draft.me.BookmarkPosts.findIndex(
+            (v, i) => v.id === action.data.postId,
+          );
+          draft.me.BookmarkPosts.splice(bookmarkIndex, 1);
+        }
         break;
       }
       default:

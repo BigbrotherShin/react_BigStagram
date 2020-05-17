@@ -35,7 +35,7 @@ app.prepare().then(() => {
 
   server.get('/user/:id', (req, res) => {
     // 내 인스타 포스트들
-    return app.render(req, res, '/profile', { id: req.params.id });
+    return app.render(req, res, '/user', { id: req.params.id });
   });
 
   server.get('*', (req, res) => {

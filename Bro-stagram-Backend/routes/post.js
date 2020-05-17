@@ -3,7 +3,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const db = require('../models');
-const { isLoggedIn, findPost } = require('./middlewares');
+const { isLoggedIn, findPost, findUser } = require('./middlewares');
 
 const router = express.Router();
 
@@ -168,18 +168,18 @@ router.post('/like', isLoggedIn, findPost, async (req, res, next) => {
   // POST /api/post/like
   try {
     await req.findPost.addLiker(req.user.id);
-    res.status(200).json({ userId: req.user.id, postId: findPost.id });
+    res.status(200).json({ user: req.user, postId: req.findPost.id });
   } catch (e) {
     console.error(e);
     next(e);
   }
 });
 
-router.delete('/like', isLoggedIn, findPost, async (req, res, next) => {
+router.delete('/like/', isLoggedIn, findPost, async (req, res, next) => {
   // DELETE /api/post/like
   try {
     await req.findPost.removeLiker(req.user.id);
-    res.status(200).json({ userId: req.user.id, postId: findPost.id });
+    res.status(200).json({ user: req.user, postId: req.findPost.id });
   } catch (e) {
     console.error(e);
     next(e);
@@ -194,9 +194,12 @@ router.post('/comment/like', isLoggedIn, findPost, async (req, res, next) => {
         id: req.body.commentId,
       },
     });
+    if (!findComment) {
+      return res.status(403).send('해당 댓글을 찾을 수 없습니다.');
+    }
     await findComment.addCommentLiker(req.user.id);
     res.status(200).json({
-      userId: req.user.id,
+      user: req.user,
       postId: req.findPost.id,
       commentId: findComment.id,
       recommentId: findComment.RecommentId || null,
@@ -215,12 +218,54 @@ router.delete('/comment/like', isLoggedIn, findPost, async (req, res, next) => {
         id: req.body.commentId,
       },
     });
+    if (!findComment) {
+      return res.status(403).send('해당 댓글을 찾을 수 없습니다.');
+    }
     await findComment.removeCommentLiker(req.user.id);
     res.status(200).json({
-      userId: req.user.id,
+      user: req.user,
       postId: req.findPost.id,
       commentId: findComment.id,
-      recommentId: findComment.RecommentId || null,
+      recommentId: findComment.RecommentId,
+    });
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.post('/bookmark', isLoggedIn, findPost, async (req, res, next) => {
+  try {
+    await req.findPost.addBookmarkUser(req.user.id);
+    res.status(200).json({ postId: req.findPost.id });
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.get('/bookmark', findUser, async (req, res, next) => {
+  try {
+    const bookmarkPosts = await req.findUser.getBookmarkPosts({
+      include: [
+        {
+          model: db.Image,
+          limits: 1,
+        },
+      ],
+    });
+    res.status(200).json(bookmarkPosts);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.delete('/bookmark', findUser, findPost, async (req, res, next) => {
+  try {
+    await req.findUser.removeBookmarkPost(req.findPost.id);
+    res.status(200).json({
+      postId: req.findPost.id,
     });
   } catch (e) {
     console.error(e);

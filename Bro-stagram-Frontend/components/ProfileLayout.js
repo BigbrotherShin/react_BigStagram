@@ -1,4 +1,4 @@
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useCallback } from 'react';
 import styled from 'styled-components';
 
 import { Menu, Avatar, Card } from 'antd';
@@ -8,11 +8,12 @@ import {
   UserOutlined,
   TagOutlined,
 } from '@ant-design/icons';
-import Posts from '../components/Posts';
+import Posts from './Posts';
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
-import { LOAD_MY_POSTS_REQUEST } from '../reducers/post';
+import { LOAD_MY_POSTS_REQUEST, LOAD_BOOKMARK_REQUEST } from '../reducers/post';
 import { LOAD_OTHER_USER_INFO_REQUEST } from '../reducers/user';
+import { useRouter } from 'next/router';
 
 const StyledProfileContainer = styled.div`
   @media (min-width: 736px) {
@@ -113,17 +114,20 @@ const ProfileMenu = styled(Menu)`
 
 const ProfileOptions = styled.div``;
 
-const Profile = memo(({ id }) => {
-  const { myPosts, me, userInfo } = useSelector((state) => state.user);
+const ProfileLayout = memo(({ ...props }) => {
+  const { me } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   useEffect(() => {
-    console.log(id);
-    console.log(userInfo);
+    console.log(props);
+  }, []);
+
+  const loadBookmark = useCallback(() => {
     dispatch({
-      type: LOAD_OTHER_USER_INFO_REQUEST,
-      data: id,
+      type: LOAD_BOOKMARK_REQUEST,
     });
+    router.push('/profile/bookmark');
   }, []);
 
   return (
@@ -137,21 +141,23 @@ const Profile = memo(({ id }) => {
         <div className='profile_card_wrapper'>
           <Card
             className='profile_card'
-            title={id ? userInfo.nickname : me.nickname}
+            title={props.userInfo.nickname}
             extra={
-              <Link href='#'>
-                <a>프로필 편집</a>
-              </Link>
+              props.userInfo.id === me && me.id ? (
+                <Link href='#'>
+                  <a>프로필 편집</a>
+                </Link>
+              ) : null
             }
             bordered={false}
             style={{ width: 300 }}
             actions={[
-              <p>게시물 {id ? userInfo.Posts.length : myPosts.length}</p>,
+              <p>게시물 {props.userInfo.Posts.length}</p>,
               <p>팔로워 3</p>,
               <p>팔로우 5</p>,
             ]}
           >
-            <div>{id ? userInfo.userId : me.userId}</div>
+            <div>{props.userInfo.userId}</div>
           </Card>
         </div>
       </ProfileHeader>
@@ -161,16 +167,21 @@ const Profile = memo(({ id }) => {
             className='profile_menu_items'
             key='myPosts'
             icon={<TableOutlined />}
+            onClick={props.loadPosts}
           >
             게시물
           </Menu.Item>
-          <Menu.Item
-            className='profile_menu_items'
-            key='myBookmark'
-            icon={<BookOutlined />}
-          >
-            저장됨
-          </Menu.Item>
+          {props.userInfo.id === me.id ? (
+            <Menu.Item
+              className='profile_menu_items'
+              key='myBookmark'
+              icon={<BookOutlined />}
+              onClick={loadBookmark}
+            >
+              저장됨
+            </Menu.Item>
+          ) : null}
+
           <Menu.Item
             className='profile_menu_items'
             key='taggedPosts'
@@ -180,26 +191,13 @@ const Profile = memo(({ id }) => {
           </Menu.Item>
         </ProfileMenu>
       </ProfileOptions>
-      <Posts posts={id ? userInfo.Posts : myPosts} />
+      {props.posts ? (
+        <Posts posts={props.posts} />
+      ) : (
+        <Posts posts={props.userInfo && props.userInfo.Posts} />
+      )}
     </StyledProfileContainer>
   );
 });
 
-Profile.getInitialProps = async (ctx) => {
-  const dispatch = ctx.store.dispatch;
-  const state = ctx.store.getState();
-  console.log(ctx.query);
-  if (ctx.query.id) {
-    dispatch({
-      type: LOAD_OTHER_USER_INFO_REQUEST,
-      data: ctx.query.id,
-    });
-  } else {
-    dispatch({
-      type: LOAD_MY_POSTS_REQUEST,
-    });
-  }
-  return { id: ctx.query.id };
-};
-
-export default Profile;
+export default ProfileLayout;

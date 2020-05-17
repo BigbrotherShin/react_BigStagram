@@ -12,7 +12,16 @@ router.get('/', async (req, res, next) => {
   //GET /api/posts
   try {
     const posts = await db.Post.findAll({
-      order: [['createdAt', 'DESC']],
+      order: [
+        ['createdAt', 'DESC'],
+        [{ model: db.Comment, as: 'Comments' }, 'createdAt', 'ASC'],
+        [
+          { model: db.Comment, as: 'Comments' },
+          { model: db.Comment, as: 'Recomments' },
+          'createdAt',
+          'ASC',
+        ],
+      ],
       include: [
         {
           model: db.User,
@@ -46,6 +55,7 @@ router.get('/', async (req, res, next) => {
             {
               model: db.Comment,
               as: 'Recomments',
+              required: false,
               include: [
                 {
                   model: db.User,

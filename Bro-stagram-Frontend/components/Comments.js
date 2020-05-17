@@ -11,7 +11,7 @@ const Comments = memo(({ comments }) => {
   return (
     <StyledCommentsList>
       {comments.map((v, i) => (
-        <Comment key={+v.createdAt} commentData={v} />
+        <Comment key={v.createdAt + i} commentData={v} />
       ))}
     </StyledCommentsList>
   );

@@ -19,6 +19,11 @@ export const initialState = {
   isLikeAdded: false,
   isDeletingLike: false,
   isLikeDeleted: false,
+  addBookmarkErrorReason: '',
+  isLoadingBookmark: false,
+  isBookmarkAdded: false,
+  loadBookmarkErrorReason: '',
+  deleteBookmarkErrorReason: '',
 };
 
 export const SET_ON_MODAL = 'post/SET_ON_MODAL';
@@ -59,6 +64,18 @@ export const ADD_COMMENT_LIKE_FAILURE = 'post/ADD_COMMENT_LIKE_FAILURE';
 export const DELETE_COMMENT_LIKE_REQUEST = 'post/DELETE_COMMENT_LIKE_REQUEST';
 export const DELETE_COMMENT_LIKE_SUCCESS = 'post/DELETE_COMMENT_LIKE_SUCCESS';
 export const DELETE_COMMENT_LIKE_FAILURE = 'post/DELETE_COMMENT_LIKE_FAILURE';
+
+export const ADD_BOOKMARK_REQUEST = 'post/ADD_BOOKMARK_REQUEST';
+export const ADD_BOOKMARK_SUCCESS = 'post/ADD_BOOKMARK_SUCCESS';
+export const ADD_BOOKMARK_FAILURE = 'post/ADD_BOOKMARK_FAILURE';
+
+export const LOAD_BOOKMARK_REQUEST = 'post/LOAD_BOOKMARK_REQUEST';
+export const LOAD_BOOKMARK_SUCCESS = 'post/LOAD_BOOKMARK_SUCCESS';
+export const LOAD_BOOKMARK_FAILURE = 'post/LOAD_BOOKMARK_FAILURE';
+
+export const DELETE_BOOKMARK_REQUEST = 'post/DELETE_BOOKMARK_REQUEST';
+export const DELETE_BOOKMARK_SUCCESS = 'post/DELETE_BOOKMARK_SUCCESS';
+export const DELETE_BOOKMARK_FAILURE = 'post/DELETE_BOOKMARK_FAILURE';
 
 export const ADD_MENTION = 'post/ADD_MENTION';
 export const PREPARE_RECOMMENT = 'post/PREPARE_RECOMMENT';
@@ -171,7 +188,7 @@ const reducer = (state = initialState, action) => {
         const postIndex = draft.mainPosts.findIndex(
           (v, i) => v.id === action.data.postId,
         );
-        draft.mainPosts[postIndex].Likers.push(action.data.userId);
+        draft.mainPosts[postIndex].Likers.push(action.data.user);
         break;
       }
       case ADD_POST_LIKE_FAILURE: {
@@ -192,7 +209,7 @@ const reducer = (state = initialState, action) => {
           (v, i) => v.id === action.data.postId,
         );
         const userIndex = draft.mainPosts[postIndex].Likers.findIndex(
-          (v, i) => v === action.data.userId,
+          (v, i) => v === action.data.user.id,
         );
         draft.mainPosts[postIndex].Likers.splice(userIndex, 1);
         break;
@@ -216,15 +233,15 @@ const reducer = (state = initialState, action) => {
         );
         if (action.data.recommentId) {
           // 대댓글인 경우 좋아요 추가
-          const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
+          const recommentIndex = draft.mainPosts[postIndex].Comments.findIndex(
             (v, i) => v.id === action.data.recommentId,
           );
-          const recommentIndex = draft.mainPosts[
-            postIndex
-          ].Comments.Recomments.findIndex((v, i) => v.id === action.commentId);
-          draft.mainPosts[commentIndex].Comments.Recomments[
+          const commentIndex = draft.mainPosts[postIndex].Comments[
             recommentIndex
-          ].CommentLikers.push(action.data.userId);
+          ].Recomments.findIndex((v, i) => v.id === action.data.commentId);
+          draft.mainPosts[postIndex].Comments[recommentIndex].Recomments[
+            commentIndex
+          ].CommentLikers.push(action.data.user);
           break;
         } else {
           // 댓글인 경우 좋아요 추가
@@ -232,7 +249,7 @@ const reducer = (state = initialState, action) => {
             (v, i) => v.id === action.data.commentId,
           );
           draft.mainPosts[postIndex].Comments[commentIndex].CommentLikers.push(
-            action.data.userId,
+            action.data.user,
           );
           break;
         }
@@ -256,36 +273,32 @@ const reducer = (state = initialState, action) => {
         );
         if (action.data.recommentId) {
           // 대댓글인 경우 좋아요 취소
-          const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
+          const recommentIndex = draft.mainPosts[postIndex].Comments.findIndex(
             (v, i) => v.id === action.data.recommentId,
           );
-          const recommentIndex = draft.mainPosts[
-            postIndex
-          ].Comments.Recomments.findIndex(
-            (v, i) => v.id === action.data.commentId,
-          );
-          const userIndex = draft.mainPosts[
-            postIndex
-          ].Comments.Recomments.CommentLikers.findIndex(
-            (v, i) => v === action.data.userId,
-          );
-          draft.mainPosts[commentIndex].Comments.Recomments[
+          const commentIndex = draft.mainPosts[postIndex].Comments[
             recommentIndex
+          ].Recomments.findIndex((v, i) => v.id === action.data.commentId);
+          const userIndex = draft.mainPosts[postIndex].Comments[
+            recommentIndex
+          ].Recomments[commentIndex].CommentLikers.findIndex(
+            (v, i) => v.id === action.data.user.id,
+          );
+          draft.mainPosts[postIndex].Comments[recommentIndex].Recomments[
+            commentIndex
           ].CommentLikers.splice(userIndex, 1);
           break;
-        } else {
+        } else if (action.data.recommentId === null) {
           // 댓글인 경우 좋아요 취소
           const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
             (v, i) => v.id === action.data.commentId,
           );
-          const userIndex = draft.mainPosts[
-            postIndex
-          ].Comments.CommentLikers.findIndex(
-            (v, i) => v === action.data.userId,
-          );
-          draft.mainPosts[postIndex].Comments[commentIndex].CommentLikers.push(
-            action.data.userId,
-          );
+          const userIndex = draft.mainPosts[postIndex].Comments[
+            commentIndex
+          ].CommentLikers.findIndex((v, i) => v.id === action.data.user.id);
+          draft.mainPosts[postIndex].Comments[
+            commentIndex
+          ].CommentLikers.splice(userIndex, 1);
           break;
         }
       }
@@ -293,6 +306,42 @@ const reducer = (state = initialState, action) => {
         draft.isDeletingLike = false;
         draft.isLikeDeleted = false;
         draft.loadPostsErrorReason = action.error;
+        break;
+      }
+      case ADD_BOOKMARK_REQUEST: {
+        break;
+      }
+      case ADD_BOOKMARK_SUCCESS: {
+        break;
+      }
+      case ADD_BOOKMARK_FAILURE: {
+        draft.addBookmarkErrorReason = action.error;
+        break;
+      }
+      case LOAD_BOOKMARK_REQUEST: {
+        draft.isLoadingBookmark = true;
+        draft.isBookmarkLoaded = false;
+        break;
+      }
+      case LOAD_BOOKMARK_SUCCESS: {
+        draft.isLoadingBookmark = false;
+        draft.isBookmarkLoaded = true;
+        break;
+      }
+      case LOAD_BOOKMARK_FAILURE: {
+        draft.isLoadingBookmark = false;
+        draft.isBookmarkLoaded = false;
+        draft.loadBookmarkErrorReason = action.error;
+        break;
+      }
+      case DELETE_BOOKMARK_REQUEST: {
+        break;
+      }
+      case DELETE_BOOKMARK_SUCCESS: {
+        break;
+      }
+      case DELETE_BOOKMARK_FAILURE: {
+        draft.deleteBookmarkErrorReason = action.error;
         break;
       }
       case PREPARE_RECOMMENT: {

@@ -22,11 +22,18 @@ exports.findUser = async (req, res, next) => {
       where: {
         id: parseInt(req.params.id || (req.user && req.user.id)),
       },
+      include: [
+        {
+          model: db.Post,
+          as: 'BookmarkPosts',
+          attributes: ['id'],
+        },
+      ],
       attributes: ['id', 'userId', 'nickname'],
     });
 
     if (!findUser) {
-      return res.status(403).send('해당 사용자를 찾을 수 없습니다.');
+      res.status(403).send('해당 사용자를 찾을 수 없습니다.');
     }
     req.findUser = findUser; // router에서 req.findUser를 사용할 수 있음.
     next();
@@ -40,11 +47,11 @@ exports.findPost = async (req, res, next) => {
   try {
     const findPost = await db.Post.findOne({
       where: {
-        id: parseInt(req.body.postId, 10),
+        id: parseInt(req.params.postId || req.body.postId, 10),
       },
     });
     if (!findPost) {
-      return res.status(403).send('해당 포스트를 찾지 못했습니다.');
+      res.status(403).send('해당 포스트를 찾지 못했습니다.');
     }
     req.findPost = findPost;
     next();
