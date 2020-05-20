@@ -19,7 +19,9 @@ import {
 } from '../reducers/user';
 
 function signUpAPI(SignUpData) {
-  return Axios.post('/user', SignUpData);
+  return Axios.post('/user', SignUpData, {
+    withCredentials: true,
+  });
 }
 
 function* signUp(action) {
@@ -124,8 +126,7 @@ function* watchLogout() {
 }
 
 function otherUserInfoAPI(action) {
-  console.log(action);
-  return Axios.get(`/user/${action}`, {
+  return Axios.get(`/user/${encodeURIComponent(action)}`, {
     withCredentials: false,
   });
 }

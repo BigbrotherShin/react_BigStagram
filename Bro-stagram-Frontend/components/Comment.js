@@ -85,10 +85,10 @@ const Comment = memo(({ commentData }) => {
                   <Link
                     key={`${v} ${i}`}
                     href={{
-                      pathname: '/profile',
-                      query: { nickname: v.slice(1) },
+                      pathname: '/user',
+                      query: { userData: v.slice(1) },
                     }}
-                    as={`/profile/${v.slice(1)}`}
+                    as={`/user/${v.slice(1)}`}
                   >
                     <a>{v}</a>
                   </Link>

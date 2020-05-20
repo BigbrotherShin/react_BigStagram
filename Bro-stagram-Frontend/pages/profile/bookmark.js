@@ -16,7 +16,7 @@ const ProfileBookmark = memo(() => {
   const router = useRouter();
 
   const loadBookmark = useCallback(() => {
-    router.push('/profile', '/profile/bookmark');
+    router.push('/profile/bookmark');
   }, []);
 
   const loadPosts = useCallback(() => {
@@ -25,6 +25,7 @@ const ProfileBookmark = memo(() => {
 
   return (
     <ProfileLayout
+      loading={!(me && me.BookmarkPosts && isBookmarkLoaded)}
       userInfo={me}
       loadPosts={loadPosts}
       loadBookmark={loadBookmark}
@@ -35,6 +36,7 @@ const ProfileBookmark = memo(() => {
 
 ProfileBookmark.getInitialProps = async (ctx) => {
   const dispatch = ctx.store.dispatch;
+  const state = ctx.store.getState();
 
   dispatch({
     type: LOAD_BOOKMARK_REQUEST,

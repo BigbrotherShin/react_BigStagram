@@ -15,7 +15,7 @@ import { LOAD_MY_POSTS_REQUEST, LOAD_BOOKMARK_REQUEST } from '../reducers/post';
 import { LOAD_OTHER_USER_INFO_REQUEST } from '../reducers/user';
 import { useRouter } from 'next/router';
 
-const StyledProfileContainer = styled.div`
+export const StyledProfileContainer = styled.div`
   @media (min-width: 736px) {
     padding: 30px 20px 0;
     flex-grow: 1;
@@ -116,19 +116,22 @@ const ProfileOptions = styled.div``;
 
 const ProfileLayout = memo(({ ...props }) => {
   const { me } = useSelector((state) => state.user);
+  const { isBookmarkLoaded, isLoadingPosts, isPostsLoaded } = useSelector(
+    (state) => state.post,
+  );
   const dispatch = useDispatch();
   const router = useRouter();
 
-  useEffect(() => {
-    console.log(props);
-  }, []);
-
   const loadBookmark = useCallback(() => {
-    dispatch({
-      type: LOAD_BOOKMARK_REQUEST,
-    });
+    // dispatch({
+    //   type: LOAD_BOOKMARK_REQUEST,
+    // });
     router.push('/profile/bookmark');
   }, []);
+
+  if (props.loading) {
+    return <div>로딩중..</div>;
+  }
 
   return (
     <StyledProfileContainer>
@@ -152,7 +155,9 @@ const ProfileLayout = memo(({ ...props }) => {
             bordered={false}
             style={{ width: 300 }}
             actions={[
-              <p>게시물 {props.userInfo.Posts.length}</p>,
+              <p>
+                게시물 {props.userInfo.Posts && props.userInfo.Posts.length}
+              </p>,
               <p>팔로워 3</p>,
               <p>팔로우 5</p>,
             ]}
@@ -171,7 +176,7 @@ const ProfileLayout = memo(({ ...props }) => {
           >
             게시물
           </Menu.Item>
-          {props.userInfo.id === me.id ? (
+          {props.loadBookmark ? (
             <Menu.Item
               className='profile_menu_items'
               key='myBookmark'

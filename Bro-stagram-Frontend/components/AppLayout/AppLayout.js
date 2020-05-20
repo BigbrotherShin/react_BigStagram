@@ -52,7 +52,11 @@ const AppLayout = memo(({ children }) => {
                 <div className='nav_right_items'>
                   {me && me.id ? (
                     <>
-                      <GlobalOutlined className='nav_icons' />
+                      <Link href='/explore'>
+                        <a className='nav_icons'>
+                          <GlobalOutlined />
+                        </a>
+                      </Link>
                       <HeartOutlined className='nav_icons' />
                       <Link href='/profile'>
                         <a className='nav_icons'>

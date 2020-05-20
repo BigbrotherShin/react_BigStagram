@@ -92,7 +92,7 @@ router.get('/images', async (req, res, next) => {
         },
       ],
     });
-    res.status(200).json(onlyImagesPosts);
+    res.status(200).json({ onlyImagesPosts });
   } catch (e) {
     console.error(e);
     next(e);

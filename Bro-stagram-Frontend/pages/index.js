@@ -3,7 +3,11 @@ import styled from 'styled-components';
 import Post from '../components/Post';
 import ProfileCard from '../components/ProfileCard';
 import { useSelector, useDispatch } from 'react-redux';
-import { LOAD_MAIN_POSTS_REQUEST } from '../reducers/post';
+import {
+  LOAD_MAIN_POSTS_REQUEST,
+  LOAD_BOOKMARK_REQUEST,
+} from '../reducers/post';
+import Router from 'next/router';
 
 const StyledMainContainer = styled.div`
   justify-content: stretch;
@@ -12,16 +16,38 @@ const StyledMainContainer = styled.div`
 `;
 
 const Home = memo(() => {
-  const { me, isLoggedIn } = useSelector((state) => state.user);
+  const {
+    me,
+    isLoggedIn,
+    isLoggingIn,
+    isLoadingPosts,
+    isPostsLoaded,
+  } = useSelector((state) => state.user);
   const { mainPosts } = useSelector((state) => state.post);
   const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   console.log('mainPosts', mainPosts);
-  //   dispatch({
-  //     type: LOAD_MAIN_POSTS_REQUEST,
-  //   });
-  // }, []);
+  useEffect(() => {
+    if (!me) {
+      Router.push('/explore');
+    }
+    if (me) {
+      dispatch({
+        type: LOAD_MAIN_POSTS_REQUEST,
+      });
+    }
+  }, [me]);
+
+  if (!me) {
+    return <div>게시글 불러오는 중..</div>;
+  }
+
+  if (isLoggedIn && !(me && me.BookmarkPosts)) {
+    return <div>북마크 정보 불러오는 중..</div>;
+  }
+
+  if (isLoadingPosts) {
+    return <div>게시글 불러오는 중..</div>;
+  }
 
   return (
     <StyledMainContainer className='main_container'>
@@ -40,9 +66,17 @@ const Home = memo(() => {
 });
 
 Home.getInitialProps = async (ctx) => {
-  ctx.store.dispatch({
-    type: LOAD_MAIN_POSTS_REQUEST,
-  });
+  const dispatch = ctx.store.dispatch;
+  const state = ctx.store.getState();
+
+  if (
+    state.user.isLoggedIn &&
+    !(state.user.me && state.user.me.BookmarkPosts)
+  ) {
+    dispatch({
+      type: LOAD_BOOKMARK_REQUEST,
+    });
+  }
 };
 
 export default Home;

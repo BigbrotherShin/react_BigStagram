@@ -16,12 +16,12 @@ const RegisterPage = memo(() => {
     }
   }, [me && me.id]);
 
-  useEffect(() => {
-    if (signedUp) {
-      alert('회원가입에 성공하셨습니다. 로그인해주세요 :D');
-      Router.push('/login');
-    }
-  }, [signedUp]);
+  // useEffect(() => {
+  //   if (signedUp) {
+  //     alert('회원가입에 성공하셨습니다. 로그인해주세요 :D');
+  //     Router.push('/login');
+  //   }
+  // }, [signedUp]);
 
   return (
     <AuthTemplate>

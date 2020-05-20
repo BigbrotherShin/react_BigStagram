@@ -5,10 +5,12 @@ import AuthTemplate from '../components/auth/AuthTemplate';
 import AuthForm from '../components/auth/AuthForm';
 
 const LoginPage = memo(() => {
-  const { logInErrorReason, isLoggedIn } = useSelector((state) => state.user);
+  const { logInErrorReason, isLoggedIn, me } = useSelector(
+    (state) => state.user,
+  );
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isLoggedIn && me) {
       Router.push('/');
     }
   }, [isLoggedIn]);

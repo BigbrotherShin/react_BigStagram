@@ -9,17 +9,19 @@ import {
 import { LOAD_OTHER_USER_INFO_REQUEST } from '../../reducers/user';
 import { useSelector, useDispatch } from 'react-redux';
 
-const Profile = memo(() => {
+const Profile = () => {
   const { myPosts, me, userInfo } = useSelector((state) => state.user);
-  const { isBookmarkLoaded } = useSelector((state) => state.post);
+  const { isBookmarkLoaded, isLoadingPosts, isPostsLoaded } = useSelector(
+    (state) => state.post,
+  );
   const dispatch = useDispatch();
   const router = useRouter();
 
   const loadBookmark = useCallback(() => {
-    dispatch({
-      type: LOAD_BOOKMARK_REQUEST,
-    });
-    router.push('/profile', '/profile/bookmark');
+    // dispatch({
+    //   type: LOAD_BOOKMARK_REQUEST,
+    // });
+    router.push('/profile/bookmark');
   }, []);
 
   const loadPosts = useCallback(() => {
@@ -28,15 +30,17 @@ const Profile = memo(() => {
 
   return (
     <ProfileLayout
+      loading={!(me && me.Posts && isPostsLoaded)}
       userInfo={me}
       loadPosts={loadPosts}
       loadBookmark={loadBookmark}
     />
   );
-});
+};
 
 Profile.getInitialProps = async (ctx) => {
   const dispatch = ctx.store.dispatch;
+  const state = ctx.store.getState();
 
   dispatch({
     type: LOAD_MY_POSTS_REQUEST,

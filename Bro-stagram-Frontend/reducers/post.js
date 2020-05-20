@@ -6,6 +6,7 @@ export const initialState = {
   isAdditingPost: false,
   isPostAdded: false,
   mainPosts: [],
+  explorePosts: [],
   isLoadingPosts: false,
   isLoadingImages: false,
   isPostsLoaded: false,
@@ -101,7 +102,11 @@ const reducer = (state = initialState, action) => {
         break;
       }
       case LOAD_MAIN_POSTS_SUCCESS: {
-        draft.mainPosts = action.data;
+        if (action.data && action.data.onlyImagesPosts) {
+          draft.explorePosts = action.data.onlyImagesPosts;
+        } else {
+          draft.mainPosts = action.data;
+        }
         draft.isLoadingPosts = false;
         draft.isPostsLoaded = true;
         break;

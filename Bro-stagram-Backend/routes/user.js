@@ -35,7 +35,25 @@ router.post('/', async (req, res, next) => {
       password: hashedPassword,
     });
 
-    return res.status(200).json(newUser);
+    const filteredUser = Object.assign({}, newUser.toJSON());
+    // user 객체는 sequelize 객체이기 때문에 순수한 JSON으로 만들기 위해 user.toJSON()
+    // user.toJSON() 하지 않으면 에러 발생
+    // toJSON()을 붙여주는 이유는 서버로부터 전달받은 데이터를 변형하기 때문임.
+    delete filteredUser.password; // 서버로부터 전달받은 데이터를 변형하지 않는다면
+    delete filteredUser.createdAt;
+    delete filteredUser.updatedAt;
+
+    req.login(newUser, (loginError) => {
+      if (loginError) {
+        console.error(loginError);
+      }
+    });
+    console.log('session', req.session);
+    res.status(200).json(filteredUser);
+
+    console.log(req.isAuthenticated());
+
+    // return res.status(200).json(newUser);
   } catch (e) {
     console.error(e);
     next(e);
@@ -66,6 +84,7 @@ router.post('/login', async (req, res, next) => {
           },
           attributes: ['id', 'userId', 'nickname'],
         });
+        console.log('session', req.session);
 
         return res.status(200).json(fullUser);
       } catch (e) {
@@ -83,11 +102,19 @@ router.post('/logout', (req, res) => {
   res.status(200).send('로그아웃 성공');
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:userData', async (req, res, next) => {
   try {
-    // console.log('/user/:id', req.params.id);
+    console.log('/user/:userData', req.params);
+    const isUserId = parseInt(req.params.userData, 10)
+      ? parseInt(req.params.userData, 10)
+      : null;
     const userInfo = await db.User.findOne({
-      where: { id: parseInt(req.params.id, 10) },
+      where: {
+        [Op.or]: [
+          { id: isUserId },
+          { nickname: decodeURIComponent(req.params.userData) },
+        ],
+      },
       include: [
         {
           model: db.Post,

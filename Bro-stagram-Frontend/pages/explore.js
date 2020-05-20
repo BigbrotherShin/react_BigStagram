@@ -2,11 +2,22 @@ import React, { memo } from 'react';
 import { useSelector } from 'react-redux';
 import { LOAD_MAIN_POSTS_REQUEST } from '../reducers/post';
 import Posts from '../components/Posts';
+import { StyledProfileContainer } from '../components/ProfileLayout';
 
 const Explore = memo(() => {
-  const { mainPosts } = useSelector((state) => state.post);
+  const { explorePosts, isLoadingPosts, isPostsLoaded } = useSelector(
+    (state) => state.post,
+  );
 
-  return <Posts posts={mainPosts} />;
+  if (isLoadingPosts) {
+    return <div>게시글 로딩중...</div>;
+  }
+
+  return (
+    <StyledProfileContainer>
+      <Posts posts={explorePosts} />
+    </StyledProfileContainer>
+  );
 });
 
 Explore.getInitialProps = async (ctx) => {

@@ -13,7 +13,7 @@ const UserName = ({ user }) => {
       <Link
         href={{
           pathname: '/user',
-          query: { id: user.id },
+          query: { userData: user.id },
         }}
         as={`/user/${user.id}`}
       >
@@ -24,7 +24,7 @@ const UserName = ({ user }) => {
       <Link
         href={{
           pathname: '/user',
-          query: { id: user.id },
+          query: { userData: user.id },
         }}
         as={`/user/${user.id}`}
       >

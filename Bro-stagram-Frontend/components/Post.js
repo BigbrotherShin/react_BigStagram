@@ -179,7 +179,9 @@ const Post = memo(({ postData }) => {
             <UploadOutlined className='card_info_icons' />
           </div>
           <div className='card_info_right'>
-            {me && me.BookmarkPosts.find((v, i) => v.id === postData.id) ? (
+            {me &&
+            me.BookmarkPosts &&
+            me.BookmarkPosts.find((v, i) => v.id === postData.id) ? (
               <BookFilled
                 onClick={deleteBookmark}
                 className='card_info_icons'
@@ -205,15 +207,15 @@ const Post = memo(({ postData }) => {
           <div className='card_content_body_wrapper'>
             <Link
               href={
-                me && me.id !== postData.Writer.id
+                (me && me.id !== postData.Writer && postData.Writer.id) || !me
                   ? {
                       pathname: '/user',
-                      query: { id: postData.Writer.id },
+                      query: { userData: postData.Writer.id },
                     }
                   : { pathname: '/profile' }
               }
               as={
-                me && me.id !== postData.Writer.id
+                (me && me.id !== postData.Writer.id) || !me
                   ? `/user/${postData.Writer.id}`
                   : '/profile'
               }

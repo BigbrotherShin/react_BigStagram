@@ -11,7 +11,6 @@ export const initialState = {
   signedUp: false,
   isSigningUp: false,
   signUpErrorReason: '',
-  myPosts: [],
   userInfo: null,
   loadOtherUserInfoErrorReason: '',
 };
@@ -73,6 +72,8 @@ const reducer = (state = initialState, action) => {
       case SIGN_UP_SUCCESS: {
         draft.signedUp = true;
         draft.isSigningUp = false;
+        draft.isLoggedIn = true;
+        draft.me = action.data;
         break;
       }
       case SIGN_UP_FAILURE: {
@@ -133,10 +134,8 @@ const reducer = (state = initialState, action) => {
         }
       }
       case LOAD_BOOKMARK_TO_ME: {
-        if (draft.me && draft.me.BookmarkPosts) {
-          draft.me.BookmarkPosts = action.data;
-          break;
-        }
+        draft.me.BookmarkPosts = action.data;
+        break;
       }
       case DELETE_BOOKMARK_TO_ME: {
         if (draft.me && draft.me.BookmarkPosts.length !== 0) {
