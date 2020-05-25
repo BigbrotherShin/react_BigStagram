@@ -1,6 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import palette from '../../lib/styles/palette';
+import { SET_OFF_MODAL } from '../../reducers/post';
+import { useDispatch } from 'react-redux';
 
 const StyledButton = styled.button`
   border: none;
@@ -38,10 +40,35 @@ const StyledButton = styled.button`
         background: ${palette.cyan[4]};
       }
     `}
+
+  ${(props) =>
+    props.clearButton &&
+    css`
+      border-radius: none;
+      background: none;
+      &:hover {
+        background: none;
+      }
+      &:active {
+        background: none;
+      }
+      font-size: 1rem;
+      font-weight: bold;
+      padding: 0;
+      color: black;
+      cursor: pointer;
+      min-width: 0;
+    `}
 `;
 
 const Button = (props) => {
-  return <StyledButton {...props} />;
+  const dispatch = useDispatch();
+  const setOffModal = useCallback(() => {
+    dispatch({
+      type: SET_OFF_MODAL,
+    });
+  }, []);
+  return <StyledButton onClick={props.setOffModal && setOffModal} {...props} />;
 };
 
 export default Button;

@@ -2,9 +2,10 @@ import React, { useState, useCallback, memo } from 'react';
 import PropTypes from 'prop-types';
 import {
   InstagramOutlined,
-  GlobalOutlined,
+  CompassOutlined,
   HeartOutlined,
   UserOutlined,
+  HomeOutlined,
 } from '@ant-design/icons';
 
 import Link from 'next/link';
@@ -52,9 +53,15 @@ const AppLayout = memo(({ children }) => {
                 <div className='nav_right_items'>
                   {me && me.id ? (
                     <>
+                      <Link href='/'>
+                        <a className='nav_icons'>
+                          <HomeOutlined />
+                        </a>
+                      </Link>
+
                       <Link href='/explore'>
                         <a className='nav_icons'>
-                          <GlobalOutlined />
+                          <CompassOutlined />
                         </a>
                       </Link>
                       <HeartOutlined className='nav_icons' />

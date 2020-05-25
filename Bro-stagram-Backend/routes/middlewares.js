@@ -28,6 +28,16 @@ exports.findUser = async (req, res, next) => {
           as: 'BookmarkPosts',
           attributes: ['id'],
         },
+        {
+          model: db.User,
+          as: 'Followings',
+          attributes: ['id', 'userId', 'nickname'],
+        },
+        {
+          model: db.User,
+          as: 'Followers',
+          attributes: ['id', 'userId', 'nickname'],
+        },
       ],
       attributes: ['id', 'userId', 'nickname'],
     });
@@ -36,6 +46,26 @@ exports.findUser = async (req, res, next) => {
       res.status(403).send('해당 사용자를 찾을 수 없습니다.');
     }
     req.findUser = findUser; // router에서 req.findUser를 사용할 수 있음.
+    next();
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+};
+
+exports.followUser = async (req, res, next) => {
+  try {
+    if (req.user.id === parseInt(req.body.userId, 10)) {
+      return res.status(403).send('자기 자신을 팔로우할 수 없습니다.');
+    }
+    const followUser = await db.User.findOne({
+      where: { id: parseInt(req.body.userId, 10) },
+      attributes: ['id', 'userId', 'nickname'],
+    });
+    if (!followUser) {
+      return res.status(403).send('해당 사용자를 찾을 수 없습니다.');
+    }
+    req.followUser = followUser;
     next();
   } catch (e) {
     console.error(e);

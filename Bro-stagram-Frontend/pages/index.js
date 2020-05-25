@@ -8,6 +8,7 @@ import {
   LOAD_BOOKMARK_REQUEST,
 } from '../reducers/post';
 import Router from 'next/router';
+import { LOAD_MY_FOLLOW_REQUEST } from '../reducers/user';
 
 const StyledMainContainer = styled.div`
   justify-content: stretch;
@@ -68,6 +69,10 @@ const Home = memo(() => {
 Home.getInitialProps = async (ctx) => {
   const dispatch = ctx.store.dispatch;
   const state = ctx.store.getState();
+
+  dispatch({
+    type: LOAD_MY_FOLLOW_REQUEST,
+  });
 
   if (
     state.user.isLoggedIn &&

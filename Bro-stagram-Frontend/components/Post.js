@@ -9,7 +9,7 @@ import {
   BookFilled,
 } from '@ant-design/icons';
 import { useDispatch, useSelector } from 'react-redux';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Comments from './Comments';
 import CommentForm from './CommentForm';
 import Slider from './common/Slider';
@@ -43,11 +43,7 @@ const Card = styled.div`
   }
 
   & header {
-    display: flex;
-    align-items: center;
-    padding: 0.25rem 0.3rem 1rem;
-    height: 60px;
-    padding: 16px;
+    padding-left: 16px;
   }
 
   .card_info {
@@ -77,7 +73,7 @@ const Card = styled.div`
 
   & .card_image {
     width: 100%;
-
+    float: left;
     & img {
       width: 100%;
     }
@@ -86,9 +82,10 @@ const Card = styled.div`
 
 const CardContent = styled.div`
   .card_content_body_wrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
+    // display: flex;
+    // flex-direction: column;
+    // justify-content: flex-start;
+
     padding-left: 16px;
     padding-right: 16px;
     flex: 0 0 auto;
@@ -101,6 +98,7 @@ const CardContent = styled.div`
 
   & .card_content_body {
     display: inline-block;
+    white-space: pre-wrap;
 
     width: 100%;
   }
@@ -157,13 +155,13 @@ const Post = memo(({ postData }) => {
   return (
     <>
       <Card>
-        <header>
+        <header className='explore_card_two'>
           <UserName user={postData.Writer} />
         </header>
-        <div className='card_image'>
+        <div className='card_image explore_card_one'>
           <Slider images={postData.Images} />
         </div>
-        <div className='card_info'>
+        <div className='card_info explore_card_two'>
           <div className='card_info_left'>
             {liked ? (
               <HeartFilled
@@ -191,40 +189,20 @@ const Post = memo(({ postData }) => {
             )}
           </div>
         </div>
-        <CardContent className='card_content'>
+        <CardContent className='card_content explore_card_two'>
           <section className='card_content_likes_wrapper'>
             <div className='card_content_likes'>
-              <Link href='#'>
-                <a>example</a>
-              </Link>
-              님 외
-              <Link href='#'>
-                <a> 여러 명</a>
-              </Link>
-              이 좋아합니다.
+              {postData.Likers && postData.Likers.length === 0 ? null : (
+                <div>좋아요 {postData.Likers.length}개</div>
+              )}
             </div>
           </section>
           <div className='card_content_body_wrapper'>
-            <Link
-              href={
-                (me && me.id !== postData.Writer && postData.Writer.id) || !me
-                  ? {
-                      pathname: '/user',
-                      query: { userData: postData.Writer.id },
-                    }
-                  : { pathname: '/profile' }
-              }
-              as={
-                (me && me.id !== postData.Writer.id) || !me
-                  ? `/user/${postData.Writer.id}`
-                  : '/profile'
-              }
-            >
-              <a className='card_content_nickname'>
-                {postData.Writer.nickname}
-              </a>
-            </Link>
-            <span className='card_content_body'>{postData.content}</span>
+            <span className='card_content_body'>
+              <UserName user={postData.Writer} bodyName />
+
+              {postData.content}
+            </span>
           </div>
           <div className='card_time'>{postData.createdAt}</div>
           {postData.Comments ? (

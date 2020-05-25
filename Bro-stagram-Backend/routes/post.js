@@ -167,6 +167,11 @@ router.post('/comment', isLoggedIn, findPost, async (req, res, next) => {
 router.post('/like', isLoggedIn, findPost, async (req, res, next) => {
   // POST /api/post/like
   try {
+    const likers = await req.findPost.getLikers();
+    const liked = likers.find((v) => v.id === req.user.id);
+    if (liked) {
+      return res.status(403).send('이미 좋아요를 하셨습니다.');
+    }
     await req.findPost.addLiker(req.user.id);
     res.status(200).json({ user: req.user, postId: req.findPost.id });
   } catch (e) {
@@ -178,6 +183,11 @@ router.post('/like', isLoggedIn, findPost, async (req, res, next) => {
 router.delete('/like/', isLoggedIn, findPost, async (req, res, next) => {
   // DELETE /api/post/like
   try {
+    const likers = await req.findPost.getLikers();
+    const liked = likers.find((v) => v.id === req.user.id);
+    if (!liked) {
+      return res.status(403).send('좋아요를 하지 않은 게시글입니다.');
+    }
     await req.findPost.removeLiker(req.user.id);
     res.status(200).json({ user: req.user, postId: req.findPost.id });
   } catch (e) {

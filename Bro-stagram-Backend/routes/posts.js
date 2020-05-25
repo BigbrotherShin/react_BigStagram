@@ -3,14 +3,15 @@ const db = require('../models');
 const {
   Sequelize: { Op },
 } = require('../models');
-const { isLoggedIn } = require('./middlewares');
+const { isLoggedIn, findUser } = require('./middlewares');
 const router = express.Router();
 
 // const { Op } = Sequelize; === const { Sequelize: { Op }} = require('../models');
 
-router.get('/', async (req, res, next) => {
+router.get('/', isLoggedIn, findUser, async (req, res, next) => {
   //GET /api/posts
   try {
+    const followings = await req.findUser.getFollowings();
     const posts = await db.Post.findAll({
       order: [
         ['createdAt', 'DESC'],
@@ -22,6 +23,10 @@ router.get('/', async (req, res, next) => {
           'ASC',
         ],
       ],
+      where: {
+        // 내 포스트를 포함해서 팔로우 한 사람 게시글만 가져오기.
+        UserId: { [Op.or]: [req.user.id, followings.map((v) => v.id)] },
+      },
       include: [
         {
           model: db.User,
@@ -83,8 +88,20 @@ router.get('/', async (req, res, next) => {
 
 router.get('/images', async (req, res, next) => {
   try {
+    let followings;
+    let exceptFollowingsPosts;
+    if (req.user && req.user.id) {
+      const me = await db.User.findOne({ where: { id: req.user.id } });
+      followings = await me.getFollowings();
+      exceptFollowingsPosts = {
+        UserId: {
+          [Op.ne]: [req.user.id, followings.map((v) => v.id)],
+        },
+      };
+    }
     const onlyImagesPosts = await db.Post.findAll({
       order: [['createdAt', 'DESC']],
+      where: exceptFollowingsPosts,
       include: [
         {
           model: db.Image,

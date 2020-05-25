@@ -1,5 +1,5 @@
 import React, { memo } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Link from 'next/link';
 import palette from '../../lib/styles/palette';
 import Modal from '../common/Modal';
@@ -7,7 +7,7 @@ import Modal from '../common/Modal';
 // 회원가입/ 로그인 페이지의 레이아웃
 
 /* 화면 전체를 채움 */
-const AuthTemplateBlock = styled.div`
+export const AuthTemplateBlock = styled.div`
   // position: absolute;
   left, top, right, bottom: 0;
   background: ${palette.gray[2]};
@@ -19,7 +19,7 @@ const AuthTemplateBlock = styled.div`
 `;
 
 /* 흰색 박스 */
-const WhiteBox = styled.div`
+export const WhiteBox = styled.div`
   .logo_area {
     display: block;
     padding-bottom: 2rem;
@@ -43,6 +43,11 @@ const WhiteBox = styled.div`
   width: 360px;
   background: white;
   border-radious: 2px;
+  ${(props) =>
+    props.followList &&
+    css`
+      padding: 0;
+    `}
 `;
 
 const AuthTemplate = memo(({ children }) => {

@@ -43,9 +43,15 @@ import {
 } from '../reducers/user';
 
 function loadPostsAPI(data) {
-  return Axios.get(data && data.onlyImages ? '/posts/images' : '/posts', {
-    withCredentials: false,
-  });
+  if (!data) {
+    return Axios.get('/posts', {
+      withCredentials: true,
+    });
+  } else if (data && data.onlyImages) {
+    return Axios.get('/posts/images', {
+      withCredentials: data.isLoggedIn ? true : false,
+    });
+  }
 }
 
 function* loadPosts(action) {

@@ -3,7 +3,7 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const Sequelize = require('sequelize');
 const db = require('../models');
-const { isLoggedIn, findUser } = require('./middlewares');
+const { isLoggedIn, findUser, followUser } = require('./middlewares');
 
 const router = express.Router();
 
@@ -48,12 +48,8 @@ router.post('/', async (req, res, next) => {
         console.error(loginError);
       }
     });
-    console.log('session', req.session);
+
     res.status(200).json(filteredUser);
-
-    console.log(req.isAuthenticated());
-
-    // return res.status(200).json(newUser);
   } catch (e) {
     console.error(e);
     next(e);
@@ -84,7 +80,6 @@ router.post('/login', async (req, res, next) => {
           },
           attributes: ['id', 'userId', 'nickname'],
         });
-        console.log('session', req.session);
 
         return res.status(200).json(fullUser);
       } catch (e) {
@@ -126,11 +121,51 @@ router.get('/:userData', async (req, res, next) => {
             },
           ],
         },
+        {
+          model: db.User,
+          as: 'Followers',
+        },
+        {
+          model: db.User,
+          as: 'Followings',
+        },
       ],
       attributes: ['id', 'userId', 'nickname'],
     });
 
     res.status(200).json(userInfo);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.post('/following', isLoggedIn, followUser, async (req, res, next) => {
+  try {
+    await req.followUser.addFollower(req.user.id);
+    res.status(200).json(req.followUser);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.delete('/following', isLoggedIn, followUser, async (req, res, next) => {
+  try {
+    await req.followUser.removeFollower(req.user.id);
+    res.status(200).json(req.followUser);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.get('/me/follow', isLoggedIn, findUser, async (req, res, next) => {
+  try {
+    const followings = await req.findUser.getFollowings();
+    const followers = await req.findUser.getFollowers();
+    const data = { followings, followers };
+    res.status(200).json(data);
   } catch (e) {
     console.error(e);
     next(e);

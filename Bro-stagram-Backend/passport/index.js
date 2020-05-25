@@ -28,6 +28,16 @@ module.exports = () => {
             as: 'BookmarkPosts',
             attributes: ['id'],
           },
+          {
+            model: db.User,
+            as: 'Followers',
+            attributes: ['id', 'nickname', 'userId'],
+          },
+          {
+            model: db.User,
+            as: 'Followings',
+            attributes: ['id', 'nickname', 'userId'],
+          },
         ],
         attributes: ['id', 'nickname', 'userId'],
       });

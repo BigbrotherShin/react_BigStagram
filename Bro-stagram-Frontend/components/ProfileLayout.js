@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useCallback } from 'react';
+import React, { memo, useEffect, useCallback, useState } from 'react';
 import styled from 'styled-components';
 
 import { Menu, Avatar, Card } from 'antd';
@@ -11,9 +11,14 @@ import {
 import Posts from './Posts';
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
-import { LOAD_MY_POSTS_REQUEST, LOAD_BOOKMARK_REQUEST } from '../reducers/post';
+import {
+  LOAD_MY_POSTS_REQUEST,
+  LOAD_BOOKMARK_REQUEST,
+  SET_ON_MODAL,
+} from '../reducers/post';
 import { LOAD_OTHER_USER_INFO_REQUEST } from '../reducers/user';
 import { useRouter } from 'next/router';
+import FollowList from './common/FollowList';
 
 export const StyledProfileContainer = styled.div`
   @media (min-width: 736px) {
@@ -115,12 +120,32 @@ const ProfileMenu = styled(Menu)`
 const ProfileOptions = styled.div``;
 
 const ProfileLayout = memo(({ ...props }) => {
-  const { me } = useSelector((state) => state.user);
-  const { isBookmarkLoaded, isLoadingPosts, isPostsLoaded } = useSelector(
-    (state) => state.post,
-  );
+  const { me, isLoggedIn } = useSelector((state) => state.user);
+  const {
+    isBookmarkLoaded,
+    isLoadingPosts,
+    isPostsLoaded,
+    onModal,
+  } = useSelector((state) => state.post);
   const dispatch = useDispatch();
   const router = useRouter();
+  const [followData, setFollowData] = useState({
+    followType: null,
+    followData: null,
+  });
+
+  const setOnModal = useCallback(
+    (follow) => () => {
+      dispatch({
+        type: SET_ON_MODAL,
+      });
+      setFollowData({
+        followType: follow,
+        followData: props.userInfo[follow],
+      });
+    },
+    [],
+  );
 
   const loadBookmark = useCallback(() => {
     // dispatch({
@@ -129,79 +154,96 @@ const ProfileLayout = memo(({ ...props }) => {
     router.push('/profile/bookmark');
   }, []);
 
-  if (props.loading) {
+  if (props.loading && !(me && me.Followings & me.Followers)) {
     return <div>로딩중..</div>;
   }
 
   return (
-    <StyledProfileContainer>
-      <ProfileHeader>
-        <div className='profile_avatar_wrapper'>
-          <div className='profile_avatar_container'>
-            <Avatar className='profile_avatar_icon' icon={<UserOutlined />} />
+    <>
+      <StyledProfileContainer>
+        <ProfileHeader>
+          <div className='profile_avatar_wrapper'>
+            <div className='profile_avatar_container'>
+              <Avatar className='profile_avatar_icon' icon={<UserOutlined />} />
+            </div>
           </div>
-        </div>
-        <div className='profile_card_wrapper'>
-          <Card
-            className='profile_card'
-            title={props.userInfo.nickname}
-            extra={
-              props.userInfo.id === me && me.id ? (
-                <Link href='#'>
-                  <a>프로필 편집</a>
-                </Link>
-              ) : null
-            }
-            bordered={false}
-            style={{ width: 300 }}
-            actions={[
-              <p>
-                게시물 {props.userInfo.Posts && props.userInfo.Posts.length}
-              </p>,
-              <p>팔로워 3</p>,
-              <p>팔로우 5</p>,
-            ]}
-          >
-            <div>{props.userInfo.userId}</div>
-          </Card>
-        </div>
-      </ProfileHeader>
-      <ProfileOptions>
-        <ProfileMenu mode='horizontal'>
-          <Menu.Item
-            className='profile_menu_items'
-            key='myPosts'
-            icon={<TableOutlined />}
-            onClick={props.loadPosts}
-          >
-            게시물
-          </Menu.Item>
-          {props.loadBookmark ? (
+          <div className='profile_card_wrapper'>
+            <Card
+              className='profile_card'
+              title={props.userInfo.nickname}
+              extra={
+                isLoggedIn ? (
+                  props.profile ? (
+                    <Link href='#'>
+                      <a>프로필 편집</a>
+                    </Link>
+                  ) : props.isFollowing ? (
+                    <button onClick={props.deleteFollowing(props.userInfo)}>
+                      언팔로우
+                    </button>
+                  ) : (
+                    <button onClick={props.addFollowing(props.userInfo)}>
+                      팔로우
+                    </button>
+                  )
+                ) : null
+              }
+              bordered={false}
+              style={{ width: 300 }}
+              actions={[
+                <p>
+                  게시물 {props.userInfo.Posts && props.userInfo.Posts.length}
+                </p>,
+                <p onClick={setOnModal('Followers')}>
+                  팔로워 {props.userInfo && props.userInfo.Followers.length}
+                </p>,
+                <p onClick={setOnModal('Followings')}>
+                  팔로잉 {props.userInfo && props.userInfo.Followings.length}
+                </p>,
+              ]}
+            >
+              <div>{props.userInfo.userId}</div>
+            </Card>
+          </div>
+        </ProfileHeader>
+        <ProfileOptions>
+          <ProfileMenu mode='horizontal'>
             <Menu.Item
               className='profile_menu_items'
-              key='myBookmark'
-              icon={<BookOutlined />}
-              onClick={loadBookmark}
+              key='myPosts'
+              icon={<TableOutlined />}
+              onClick={props.loadPosts}
             >
-              저장됨
+              게시물
             </Menu.Item>
-          ) : null}
+            {props.loadBookmark ? (
+              <Menu.Item
+                className='profile_menu_items'
+                key='myBookmark'
+                icon={<BookOutlined />}
+                onClick={loadBookmark}
+              >
+                저장됨
+              </Menu.Item>
+            ) : null}
 
-          <Menu.Item
-            className='profile_menu_items'
-            key='taggedPosts'
-            icon={<TagOutlined />}
-          >
-            태그됨
-          </Menu.Item>
-        </ProfileMenu>
-      </ProfileOptions>
-      {props.posts ? (
-        <Posts posts={props.posts} />
-      ) : (
-        <Posts posts={props.userInfo && props.userInfo.Posts} />
-      )}
-    </StyledProfileContainer>
+            <Menu.Item
+              className='profile_menu_items'
+              key='taggedPosts'
+              icon={<TagOutlined />}
+            >
+              태그됨
+            </Menu.Item>
+          </ProfileMenu>
+        </ProfileOptions>
+        {props.posts ? (
+          <Posts posts={props.posts} />
+        ) : (
+          <Posts posts={props.userInfo && props.userInfo.Posts} />
+        )}
+      </StyledProfileContainer>
+      {onModal ? <FollowList followData={followData} /> : null}
+    </>
   );
 });
 

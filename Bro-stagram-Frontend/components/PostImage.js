@@ -23,7 +23,7 @@ const PostImageWrapper = styled.div`
     padding-bottom: 100%;
   }
 
-  img {
+  & img {
     position: absolute;
     height: 100%;
     width: 100%;

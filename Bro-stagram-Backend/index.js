@@ -3,7 +3,6 @@ const morgan = require('morgan');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const expressSession = require('express-session');
-const cookieSession = require('cookie-session');
 const dotenv = require('dotenv');
 const passport = require('passport');
 const path = require('path');

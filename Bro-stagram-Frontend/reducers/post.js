@@ -91,9 +91,7 @@ const reducer = (state = initialState, action) => {
       }
       case SET_OFF_MODAL: {
         draft.onModal = false;
-        if (draft.isPostAdded) {
-          draft.isPostAdded = false;
-        }
+
         break;
       }
       case LOAD_MAIN_POSTS_REQUEST: {
@@ -214,7 +212,7 @@ const reducer = (state = initialState, action) => {
           (v, i) => v.id === action.data.postId,
         );
         const userIndex = draft.mainPosts[postIndex].Likers.findIndex(
-          (v, i) => v === action.data.user.id,
+          (v, i) => v.id === action.data.user.id,
         );
         draft.mainPosts[postIndex].Likers.splice(userIndex, 1);
         break;

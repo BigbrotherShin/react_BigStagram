@@ -6,7 +6,10 @@ import {
   LOAD_BOOKMARK_REQUEST,
   LOAD_MY_POSTS_REQUEST,
 } from '../../reducers/post';
-import { LOAD_OTHER_USER_INFO_REQUEST } from '../../reducers/user';
+import {
+  LOAD_OTHER_USER_INFO_REQUEST,
+  LOAD_MY_FOLLOW_REQUEST,
+} from '../../reducers/user';
 import { useSelector, useDispatch } from 'react-redux';
 
 const Profile = () => {
@@ -30,10 +33,13 @@ const Profile = () => {
 
   return (
     <ProfileLayout
-      loading={!(me && me.Posts && isPostsLoaded)}
+      loading={
+        !(me && me.Posts && isPostsLoaded && me.Followers && me.Followings)
+      }
       userInfo={me}
       loadPosts={loadPosts}
       loadBookmark={loadBookmark}
+      profile
     />
   );
 };

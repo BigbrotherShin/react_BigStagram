@@ -8,7 +8,7 @@ module.exports = {
     database: 'brostagram',
     host: '127.0.0.1',
     dialect: 'mysql',
-    operatorsAliases: false,
+    // operatorsAliases: false,
   },
   test: {
     username: 'root',
@@ -16,7 +16,7 @@ module.exports = {
     database: 'brostagram',
     host: '127.0.0.1',
     dialect: 'mysql',
-    operatorsAliases: false,
+    // operatorsAliases: false,
   },
   production: {
     username: 'root',
@@ -24,6 +24,6 @@ module.exports = {
     database: 'brostagram',
     host: '127.0.0.1',
     dialect: 'mysql',
-    operatorsAliases: false,
+    // operatorsAliases: false,
   },
 };

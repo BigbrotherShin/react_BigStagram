@@ -21,10 +21,12 @@ const Explore = memo(() => {
 });
 
 Explore.getInitialProps = async (ctx) => {
+  const state = ctx.store.getState();
   ctx.store.dispatch({
     type: LOAD_MAIN_POSTS_REQUEST,
     data: {
       onlyImages: true,
+      isLoggedIn: state.user.isLoggedIn,
     },
   });
 };

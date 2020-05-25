@@ -13,6 +13,12 @@ export const initialState = {
   signUpErrorReason: '',
   userInfo: null,
   loadOtherUserInfoErrorReason: '',
+  isFollowingAdding: false,
+  isFollowingAdded: false,
+  isFollowingDeleting: false,
+  isFollowingDeleted: false,
+  isFollowLoading: false,
+  isFollowLoaded: false,
 };
 
 export const LOG_IN_REQUEST = 'user/LOG_IN_REQUEST';
@@ -36,6 +42,18 @@ export const LOAD_MY_POSTS = 'user/LOAD_MY_POSTS';
 export const LOAD_OTHER_USER_INFO_REQUEST = 'user/LOAD_OTHER_USER_INFO_REQUEST';
 export const LOAD_OTHER_USER_INFO_SUCCESS = 'user/LOAD_OTHER_USER_INFO_SUCCESS';
 export const LOAD_OTHER_USER_INFO_FAILURE = 'user/LOAD_OTHER_USER_INFO_FAILURE';
+
+export const ADD_FOLLOWING_REQUEST = 'user/ADD_FOLLOWING_REQUEST';
+export const ADD_FOLLOWING_SUCCESS = 'user/ADD_FOLLOWING_SUCCESS';
+export const ADD_FOLLOWING_FAILURE = 'user/ADD_FOLLOWING_FAILURE';
+
+export const DELETE_FOLLOWING_REQUEST = 'user/DELETE_FOLLOWING_REQUEST';
+export const DELETE_FOLLOWING_SUCCESS = 'user/DELETE_FOLLOWING_SUCCESS';
+export const DELETE_FOLLOWING_FAILURE = 'user/DELETE_FOLLOWING_FAILURE';
+
+export const LOAD_MY_FOLLOW_REQUEST = 'user/LOAD_MY_FOLLOW_REQUEST';
+export const LOAD_MY_FOLLOW_SUCCESS = 'user/LOAD_MY_FOLLOW_SUCCESS';
+export const LOAD_MY_FOLLOW_FAILURE = 'user/LOAD_MY_FOLLOW_FAILURE';
 
 export const ADD_BOOKMARK_TO_ME = 'user/ADD_BOOKMARK_TO_ME';
 export const LOAD_BOOKMARK_TO_ME = 'user/LOAD_BOOKMARK_TO_ME';
@@ -124,6 +142,71 @@ const reducer = (state = initialState, action) => {
       case LOAD_OTHER_USER_INFO_FAILURE: {
         draft.isOtherUserLoading = false;
         draft.otherUserLoaded = false;
+        draft.loadOtherUserInfoErrorReason = action.error;
+        break;
+      }
+      case ADD_FOLLOWING_REQUEST: {
+        draft.isFollowingAdding = true;
+        draft.isFollowingAdded = false;
+        break;
+      }
+      case ADD_FOLLOWING_SUCCESS: {
+        draft.isFollowingAdding = false;
+        draft.isFollowingAdded = true;
+        if (draft.userInfo && draft.userInfo.id === action.data.id) {
+          draft.userInfo.Followers.push(action.data);
+        }
+        draft.me.Followings.push(action.data);
+        break;
+      }
+      case ADD_FOLLOWING_FAILURE: {
+        draft.isFollowingAdding = false;
+        draft.isFollowingAdded = false;
+        draft.loadOtherUserInfoErrorReason = action.error;
+        break;
+      }
+      case DELETE_FOLLOWING_REQUEST: {
+        draft.isFollowingDeleting = true;
+        draft.isFollowingDeleted = false;
+        break;
+      }
+      case DELETE_FOLLOWING_SUCCESS: {
+        draft.isFollowingDeleting = false;
+        draft.isFollowingDeleted = true;
+        const followerIndex = draft.me.Followings.findIndex(
+          (v) => v.id === action.data.id,
+        );
+        if (draft.userInfo && draft.userInfo.id === action.data.id) {
+          const followingIndex =
+            draft.userInfo &&
+            draft.userInfo.Followers &&
+            draft.userInfo.Followers.findIndex((v) => v.id === draft.me.id);
+          draft.userInfo.Followers.splice(followingIndex, 1);
+        }
+        draft.me.Followings.splice(followerIndex, 1);
+        break;
+      }
+      case DELETE_FOLLOWING_FAILURE: {
+        draft.isFollowingDeleting = false;
+        draft.isFollowingDeleted = false;
+        draft.loadOtherUserInfoErrorReason = action.error;
+        break;
+      }
+      case LOAD_MY_FOLLOW_REQUEST: {
+        draft.isFollowLoading = true;
+        draft.isFollowLoaded = false;
+        break;
+      }
+      case LOAD_MY_FOLLOW_SUCCESS: {
+        draft.isFollowLoading = false;
+        draft.isFollowLoaded = true;
+        draft.me.Followings = action.data.followings;
+        draft.me.Followers = action.data.followers;
+        break;
+      }
+      case LOAD_MY_FOLLOW_FAILURE: {
+        draft.isFollowLoading = false;
+        draft.isFollowLoaded = false;
         draft.loadOtherUserInfoErrorReason = action.error;
         break;
       }
