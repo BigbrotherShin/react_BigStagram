@@ -67,13 +67,14 @@ const FollowList = memo(({ followData }) => {
                 me && me.Followings.find((f) => f.id === v.id);
 
               return (
-                <UserName
-                  followList
-                  key={+v.createdAt}
-                  isFollowing={isFollowing}
-                  followOrUnfollow={isFollowing ? unfollow : follow}
-                  user={v}
-                />
+                <li key={+v.createdAt}>
+                  <UserName
+                    followList
+                    isFollowing={isFollowing}
+                    followOrUnfollow={isFollowing ? unfollow : follow}
+                    user={v}
+                  />
+                </li>
               );
             })}
           </ul>

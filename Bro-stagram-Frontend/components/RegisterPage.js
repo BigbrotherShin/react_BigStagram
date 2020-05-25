@@ -1,8 +1,9 @@
 import React, { memo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import AuthTemplate from '../components/auth/AuthTemplate';
-import AuthForm from '../components/auth/AuthForm';
+import AuthTemplate from './auth/AuthTemplate';
+import AuthForm from './auth/AuthForm';
 import Router from 'next/router';
+import ModalPortal from './ModalPortal';
 
 const RegisterPage = memo(() => {
   const { signUpErrorReason, signedUp, me } = useSelector(
@@ -30,10 +31,10 @@ const RegisterPage = memo(() => {
   );
 });
 
-RegisterPage.getInitialProps = async (ctx) => {
-  const pathname = ctx.pathname;
+// RegisterPage.getInitialProps = async (ctx) => {
+//   const pathname = ctx.pathname;
 
-  return { pathname };
-};
+//   return { pathname };
+// };
 
 export default RegisterPage;

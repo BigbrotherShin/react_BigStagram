@@ -1,6 +1,7 @@
 import React, { memo, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import palette from '../../lib/styles/palette';
 import Button from '../common/Button';
 import { useInput } from '../../lib/customHooks';
@@ -70,6 +71,7 @@ const AuthForm = memo(({ type, error }) => {
   const [rePassword, setRePassword] = useInput('');
   const [passwordCheckError, setPasswordCheckError] = useState(false);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const passwordCheck = useCallback(
     (e) => {
@@ -143,7 +145,7 @@ const AuthForm = memo(({ type, error }) => {
           />
         )}
         {type === 'register' && rePassword && passwordCheckError ? (
-          <ErrorMessage>비밀번호 확인 바랍니다.</ErrorMessage>
+          <ErrorMessage>비밀번호를 확인해주세요.</ErrorMessage>
         ) : null}
         {error ? <ErrorMessage>{error}</ErrorMessage> : null}
         <ButtonWithMarginTop fullWidth cyan onClick={onSubmit}>
@@ -153,11 +155,11 @@ const AuthForm = memo(({ type, error }) => {
 
       <Footer>
         {type === 'login' ? (
-          <Link href='/register'>
+          <Link href={router.pathname} as='/register'>
             <a>회원가입</a>
           </Link>
         ) : (
-          <Link href='/login'>
+          <Link href={router.pathname} as='/login'>
             <a>로그인</a>
           </Link>
         )}

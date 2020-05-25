@@ -1,14 +1,18 @@
-import React, { memo } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import styled, { css } from 'styled-components';
 import Link from 'next/link';
+import { useRouter } from 'next/router';
 import palette from '../../lib/styles/palette';
 import Modal from '../common/Modal';
+import Button from '../common/Button';
+import { useDispatch } from 'react-redux';
+import { SET_OFF_MODAL } from '../../reducers/post';
 
 // 회원가입/ 로그인 페이지의 레이아웃
 
 /* 화면 전체를 채움 */
 export const AuthTemplateBlock = styled.div`
-  // position: absolute;
+  position: relative;
   left, top, right, bottom: 0;
   background: ${palette.gray[2]};
   /* flex로 내부 내용 중앙 정렬 */
@@ -20,7 +24,7 @@ export const AuthTemplateBlock = styled.div`
 
 /* 흰색 박스 */
 export const WhiteBox = styled.div`
-  .logo_area {
+  .logo_area_logo {
     display: block;
     padding-bottom: 2rem;
     text-align: center;
@@ -29,7 +33,8 @@ export const WhiteBox = styled.div`
     font-family: 'Pacifico', cursive;
     font-color: black;
 
-    & a:link,
+    a,
+    a:link,
     a:visited,
     a:hover,
     a:active {
@@ -38,6 +43,13 @@ export const WhiteBox = styled.div`
     }
   }
 
+  .logo_area_close_button {
+    position: absolute;
+    right: 2px;
+    top: 2px;
+  }
+
+  position: static;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.025);
   padding: 2rem;
   width: 360px;
@@ -51,14 +63,37 @@ export const WhiteBox = styled.div`
 `;
 
 const AuthTemplate = memo(({ children }) => {
+  const router = useRouter();
+  const dispatch = useDispatch();
+  const setOffModal = useCallback(() => {
+    router.push(router.pathname);
+    dispatch({
+      type: SET_OFF_MODAL,
+    });
+  }, []);
+  useEffect(() => {
+    return () => {
+      dispatch({
+        type: SET_OFF_MODAL,
+      });
+    };
+  }, []);
   return (
     <Modal>
       <AuthTemplateBlock>
         <WhiteBox>
+          <Button
+            className='logo_area_close_button'
+            onClick={setOffModal}
+            clearButton
+            setOffModal
+          >
+            X
+          </Button>
           <div className='logo_area'>
-            <Link href='/'>
-              <a>BroStagram</a>
-            </Link>
+            <div className='logo_area_logo'>
+              <a onClick={setOffModal}>BroStagram</a>
+            </div>
           </div>
           {children}
         </WhiteBox>

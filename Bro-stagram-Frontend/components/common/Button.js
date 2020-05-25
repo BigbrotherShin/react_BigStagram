@@ -62,13 +62,14 @@ const StyledButton = styled.button`
 `;
 
 const Button = (props) => {
+  const { clearButton, cyan, fullWidth, setOffModal } = props;
   const dispatch = useDispatch();
-  const setOffModal = useCallback(() => {
+  const setOffModalAction = useCallback(() => {
     dispatch({
       type: SET_OFF_MODAL,
     });
   }, []);
-  return <StyledButton onClick={props.setOffModal && setOffModal} {...props} />;
+  return <StyledButton onClick={setOffModal && setOffModalAction} {...props} />;
 };
 
 export default Button;

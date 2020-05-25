@@ -19,6 +19,7 @@ import {
 import { LOAD_OTHER_USER_INFO_REQUEST } from '../reducers/user';
 import { useRouter } from 'next/router';
 import FollowList from './common/FollowList';
+import ModalPortal from './ModalPortal';
 
 export const StyledProfileContainer = styled.div`
   @media (min-width: 736px) {
@@ -242,7 +243,11 @@ const ProfileLayout = memo(({ ...props }) => {
           <Posts posts={props.userInfo && props.userInfo.Posts} />
         )}
       </StyledProfileContainer>
-      {onModal ? <FollowList followData={followData} /> : null}
+      {onModal ? (
+        <ModalPortal>
+          <FollowList followData={followData} />
+        </ModalPortal>
+      ) : null}
     </>
   );
 });

@@ -1,5 +1,6 @@
 import React, { memo, useCallback } from 'react';
 import { Card, Avatar, Tooltip } from 'antd';
+import { useRouter } from 'next/router';
 import {
   EditOutlined,
   LogoutOutlined,
@@ -14,6 +15,7 @@ import PostEditor from '../Containers/PostEditor';
 const ProfileCard = memo(() => {
   const { me } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const onLogout = useCallback(() => {
     dispatch({
@@ -22,6 +24,7 @@ const ProfileCard = memo(() => {
   }, []);
 
   const openEditor = useCallback(() => {
+    router.push(router.pathname, '/write');
     dispatch({
       type: SET_ON_MODAL,
     });

@@ -1,8 +1,9 @@
 import React, { memo, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import Router from 'next/router';
-import AuthTemplate from '../components/auth/AuthTemplate';
-import AuthForm from '../components/auth/AuthForm';
+import AuthTemplate from './auth/AuthTemplate';
+import AuthForm from './auth/AuthForm';
+import ModalPortal from './ModalPortal';
 
 const LoginPage = memo(() => {
   const { logInErrorReason, isLoggedIn, me } = useSelector(
