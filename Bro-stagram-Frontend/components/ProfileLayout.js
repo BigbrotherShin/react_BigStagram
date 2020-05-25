@@ -136,13 +136,13 @@ const ProfileLayout = memo(({ ...props }) => {
   });
 
   const setOnModal = useCallback(
-    (follow) => () => {
+    (follow, userInfo) => () => {
       dispatch({
         type: SET_ON_MODAL,
       });
       setFollowData({
         followType: follow,
-        followData: props.userInfo[follow],
+        followData: userInfo[follow],
       });
     },
     [],
@@ -155,7 +155,19 @@ const ProfileLayout = memo(({ ...props }) => {
     router.push('/profile/bookmark');
   }, []);
 
-  if (props.loading && !(me && me.Followings & me.Followers)) {
+  if (
+    props.loading &&
+    !(
+      me &&
+      me.Followings &&
+      me.Followers &&
+      props.userInfo &&
+      props.userInfo.Followings &&
+      props.userInfo.Followers &&
+      props.userInfo.nickname &&
+      props.userInfo.Posts
+    )
+  ) {
     return <div>로딩중..</div>;
   }
 
@@ -195,10 +207,10 @@ const ProfileLayout = memo(({ ...props }) => {
                 <p>
                   게시물 {props.userInfo.Posts && props.userInfo.Posts.length}
                 </p>,
-                <p onClick={setOnModal('Followers')}>
+                <p onClick={setOnModal('Followers', props.userInfo)}>
                   팔로워 {props.userInfo && props.userInfo.Followers.length}
                 </p>,
-                <p onClick={setOnModal('Followings')}>
+                <p onClick={setOnModal('Followings', props.userInfo)}>
                   팔로잉 {props.userInfo && props.userInfo.Followings.length}
                 </p>,
               ]}

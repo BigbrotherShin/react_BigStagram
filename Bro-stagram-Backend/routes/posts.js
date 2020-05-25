@@ -93,9 +93,10 @@ router.get('/images', async (req, res, next) => {
     if (req.user && req.user.id) {
       const me = await db.User.findOne({ where: { id: req.user.id } });
       followings = await me.getFollowings();
+      const followingsId = followings.map((v) => v.id);
       exceptFollowingsPosts = {
         UserId: {
-          [Op.ne]: [req.user.id, followings.map((v) => v.id)],
+          [Op.notIn]: [...followingsId, me.id],
         },
       };
     }
