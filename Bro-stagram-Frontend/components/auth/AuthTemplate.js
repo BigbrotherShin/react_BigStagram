@@ -1,10 +1,10 @@
-import React, { memo, useCallback, useEffect } from 'react';
+import React, { memo, useCallback } from 'react';
 import styled, { css } from 'styled-components';
 import Link from 'next/link';
-import { useRouter } from 'next/router';
 import palette from '../../lib/styles/palette';
 import Modal from '../common/Modal';
 import Button from '../common/Button';
+import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
 import { SET_OFF_MODAL } from '../../reducers/post';
 
@@ -24,7 +24,7 @@ export const AuthTemplateBlock = styled.div`
 
 /* 흰색 박스 */
 export const WhiteBox = styled.div`
-  .logo_area_logo {
+  .logo_area {
     display: block;
     padding-bottom: 2rem;
     text-align: center;
@@ -43,13 +43,6 @@ export const WhiteBox = styled.div`
     }
   }
 
-  .logo_area_close_button {
-    position: absolute;
-    right: 2px;
-    top: 2px;
-  }
-
-  position: static;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.025);
   padding: 2rem;
   width: 360px;
@@ -65,36 +58,22 @@ export const WhiteBox = styled.div`
 const AuthTemplate = memo(({ children }) => {
   const router = useRouter();
   const dispatch = useDispatch();
-  const setOffModal = useCallback(() => {
+  const setOffModalAction = useCallback(() => {
     router.push(router.pathname);
     dispatch({
       type: SET_OFF_MODAL,
     });
   }, []);
-  useEffect(() => {
-    return () => {
-      dispatch({
-        type: SET_OFF_MODAL,
-      });
-    };
-  }, []);
   return (
     <Modal>
       <AuthTemplateBlock>
         <WhiteBox>
-          <Button
-            className='logo_area_close_button'
-            onClick={setOffModal}
-            clearButton
-            setOffModal
-          >
+          <div className='logo_area'>
+            <a onClick={setOffModalAction}>BroStagram</a>
+          </div>
+          <Button setOffModal clearButton>
             X
           </Button>
-          <div className='logo_area'>
-            <div className='logo_area_logo'>
-              <a onClick={setOffModal}>BroStagram</a>
-            </div>
-          </div>
           {children}
         </WhiteBox>
       </AuthTemplateBlock>

@@ -50,7 +50,9 @@ const UserName = ({
       {props.bodyName ? null : (
         <Link href={goTo} as={goAs}>
           <a>
-            <Avatar src=''>{user.nickname[0]}</Avatar>
+            <Avatar src={user && `http://localhost:3065/${user.profileImage}`}>
+              {user.nickname[0]}
+            </Avatar>
           </a>
         </Link>
       )}

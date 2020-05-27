@@ -119,6 +119,7 @@ const reducer = (state = initialState, action) => {
         break;
       }
       case ADD_POST_SUCCESS: {
+        action.data.Likers = [];
         draft.mainPosts.unshift(action.data);
         draft.isAdditingPost = false;
         draft.isPostAdded = true;

@@ -1,5 +1,5 @@
 import React, { memo, useEffect, useCallback, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { Menu, Avatar, Card } from 'antd';
 import {
@@ -90,11 +90,18 @@ const ProfileHeader = styled.header`
       height: 100%;
     }
   }
+`;
 
-  .profile_avatar_icon {
-    width: 100%;
-    height: 100%;
-  }
+const ProfileAvatar = styled(Avatar)`
+  width: 100%;
+  height: 100%;
+  ${(props) =>
+    props.profile &&
+    css`
+      &:hover {
+        cursor: pointer;
+      }
+    `}
 `;
 
 const ProfileMenu = styled(Menu)`
@@ -137,6 +144,7 @@ const ProfileLayout = memo(({ ...props }) => {
 
   const setOnModal = useCallback(
     (follow, userInfo) => () => {
+      router.push(router.pathname, `/${follow}`);
       dispatch({
         type: SET_ON_MODAL,
       });
@@ -177,7 +185,16 @@ const ProfileLayout = memo(({ ...props }) => {
         <ProfileHeader>
           <div className='profile_avatar_wrapper'>
             <div className='profile_avatar_container'>
-              <Avatar className='profile_avatar_icon' icon={<UserOutlined />} />
+              <ProfileAvatar
+                profile
+                onClick={props.setProfileImage}
+                src={
+                  props.userInfo &&
+                  `http://localhost:3065/${props.userInfo.profileImage}`
+                }
+                className='profile_avatar_icon'
+                icon={<UserOutlined />}
+              />
             </div>
           </div>
           <div className='profile_card_wrapper'>
@@ -255,7 +272,8 @@ const ProfileLayout = memo(({ ...props }) => {
           <Posts posts={props.userInfo && props.userInfo.Posts} />
         )}
       </StyledProfileContainer>
-      {onModal ? (
+      {onModal &&
+      (router.asPath === `/Followings` || router.asPath === `/Followers`) ? (
         <ModalPortal>
           <FollowList followData={followData} />
         </ModalPortal>

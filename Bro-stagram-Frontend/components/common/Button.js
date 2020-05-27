@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
+import { useRouter } from 'next/router';
 import styled, { css } from 'styled-components';
 import palette from '../../lib/styles/palette';
 import { SET_OFF_MODAL } from '../../reducers/post';
@@ -59,12 +60,22 @@ const StyledButton = styled.button`
       cursor: pointer;
       min-width: 0;
     `}
+
+    ${(props) =>
+      props.setOffModal &&
+      css`
+        position: absolute;
+        right: 4px;
+        top: 4px;
+      `}
 `;
 
 const Button = (props) => {
+  const router = useRouter();
   const { clearButton, cyan, fullWidth, setOffModal } = props;
   const dispatch = useDispatch();
   const setOffModalAction = useCallback(() => {
+    router.push(router.pathname);
     dispatch({
       type: SET_OFF_MODAL,
     });

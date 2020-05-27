@@ -6,17 +6,28 @@ import {
   HeartOutlined,
   UserOutlined,
   HomeOutlined,
+  HomeFilled,
+  CompassFilled,
 } from '@ant-design/icons';
-
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useSelector, useDispatch } from 'react-redux';
+import { Avatar } from 'antd';
 import Button from '../common/Button';
 import ModalPortal from '../ModalPortal';
 import Modal from '../common/Modal';
 import RegisterPage from '../RegisterPage';
 import { SET_ON_MODAL } from '../../reducers/post';
 import LoginPage from '../LoginPage';
+import styled, { css } from 'styled-components';
+
+const NavAvatar = styled(Avatar)`
+  ${(props) =>
+    props.isActive &&
+    css`
+      box-shadow: 0 0 3px #ddd;
+    `}
+`;
 
 const AppLayout = memo(({ children }) => {
   const router = useRouter();
@@ -72,19 +83,35 @@ const AppLayout = memo(({ children }) => {
                       <>
                         <Link href='/'>
                           <a className='nav_icons'>
-                            <HomeOutlined />
+                            {router.pathname === '/' ? (
+                              <HomeFilled />
+                            ) : (
+                              <HomeOutlined />
+                            )}
                           </a>
                         </Link>
 
                         <Link href='/explore'>
                           <a className='nav_icons'>
-                            <CompassOutlined />
+                            {router.pathname === '/explore' ? (
+                              <CompassFilled />
+                            ) : (
+                              <CompassOutlined />
+                            )}
                           </a>
                         </Link>
                         <HeartOutlined className='nav_icons' />
                         <Link href='/profile'>
                           <a className='nav_icons'>
-                            <UserOutlined />
+                            <NavAvatar
+                              isActive={router.pathname === '/profile'}
+                              size='small'
+                              src={
+                                me && `http://localhost:3065/${me.profileImage}`
+                              }
+                            >
+                              {me && me.nickname[0]}
+                            </NavAvatar>
                           </a>
                         </Link>
                       </>

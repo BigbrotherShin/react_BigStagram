@@ -33,6 +33,10 @@ app.prepare().then(() => {
     }),
   );
 
+  server.get('/write', (req, res) => {
+    return res.redirect('/');
+  });
+
   server.get('/user/:userData', (req, res) => {
     // 유저 포스트들
     return app.render(req, res, '/user', { userData: req.params.userData });

@@ -25,6 +25,9 @@ import {
   LOAD_MY_FOLLOW_SUCCESS,
   LOAD_MY_FOLLOW_FAILURE,
   LOAD_MY_FOLLOW_REQUEST,
+  ADD_PROFILE_IMAGE_SUCCESS,
+  ADD_PROFILE_IMAGE_FAILURE,
+  ADD_PROFILE_IMAGE_REQUEST,
 } from '../reducers/user';
 
 function signUpAPI(SignUpData) {
@@ -239,6 +242,32 @@ function* watchLoadMyFollow() {
   yield takeEvery(LOAD_MY_FOLLOW_REQUEST, loadMyFollow);
 }
 
+function addProfileImageAPI(actionData) {
+  return Axios.patch(`/user/profileImage`, actionData, {
+    withCredentials: true,
+  });
+}
+
+function* addProfileImage(action) {
+  try {
+    const result = yield call(addProfileImageAPI, action.data);
+    yield put({
+      type: ADD_PROFILE_IMAGE_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: ADD_PROFILE_IMAGE_FAILURE,
+      error: e.response && e.response.data,
+    });
+  }
+}
+
+function* watchAddProfileImage() {
+  yield takeEvery(ADD_PROFILE_IMAGE_REQUEST, addProfileImage);
+}
+
 export default function* userSaga() {
   yield all([
     fork(watchLogin),
@@ -249,5 +278,6 @@ export default function* userSaga() {
     fork(watchAddFollowing),
     fork(watchDeleteFollowing),
     fork(watchLoadMyFollow),
+    fork(watchAddProfileImage),
   ]);
 }

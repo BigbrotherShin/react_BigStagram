@@ -26,6 +26,10 @@ const PostEditor = memo(() => {
     };
   }, []);
 
+  if (router.pathname === '/write') {
+    return router.push('/');
+  }
+
   return onModal && router.asPath === '/write' ? (
     <ModalPortal>
       <Modal>

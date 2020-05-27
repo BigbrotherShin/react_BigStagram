@@ -3,7 +3,13 @@ const bcrypt = require('bcrypt');
 const passport = require('passport');
 const Sequelize = require('sequelize');
 const db = require('../models');
-const { isLoggedIn, findUser, followUser } = require('./middlewares');
+const {
+  isLoggedIn,
+  findUser,
+  followUser,
+  resizeProfile,
+} = require('./middlewares');
+const { uploadProfileImage } = require('../util/multer');
 
 const router = express.Router();
 
@@ -78,7 +84,7 @@ router.post('/login', async (req, res, next) => {
           where: {
             id: user.id,
           },
-          attributes: ['id', 'userId', 'nickname'],
+          attributes: { exclude: ['password'] },
         });
 
         return res.status(200).json(fullUser);
@@ -130,7 +136,7 @@ router.get('/:userData', async (req, res, next) => {
           as: 'Followings',
         },
       ],
-      attributes: ['id', 'userId', 'nickname'],
+      attributes: { exclude: ['password'] },
     });
 
     res.status(200).json(userInfo);
@@ -171,5 +177,42 @@ router.get('/me/follow', isLoggedIn, findUser, async (req, res, next) => {
     next(e);
   }
 });
+
+router.patch(
+  '/profileImage',
+  isLoggedIn,
+  findUser,
+  uploadProfileImage.single('profileImage'),
+  resizeProfile,
+  async (req, res, next) => {
+    try {
+      await db.User.update(
+        {
+          profileImage: req.body.profileImage,
+        },
+        { where: { id: req.user.id } },
+      );
+      res.status(200).json({
+        imagePath: req.body.profileImage,
+      });
+    } catch (e) {
+      console.error(e);
+      next(e);
+    }
+  },
+);
+
+router.patch(
+  '/:id/profileImage',
+  isLoggedIn,
+  findUser,
+  async (req, res, next) => {
+    try {
+    } catch (e) {
+      console.error(e);
+      next(e);
+    }
+  },
+);
 
 module.exports = router;

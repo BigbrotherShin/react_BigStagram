@@ -31,12 +31,12 @@ router.get('/', isLoggedIn, findUser, async (req, res, next) => {
         {
           model: db.User,
           as: 'Writer',
-          attributes: ['id', 'userId', 'nickname'],
+          attributes: { exclede: ['password'] },
         },
         {
           model: db.User,
           as: 'Likers',
-          attributes: ['id', 'userId', 'nickname'],
+          attributes: { exclede: ['password'] },
         },
         {
           model: db.Image,
@@ -50,12 +50,12 @@ router.get('/', isLoggedIn, findUser, async (req, res, next) => {
             {
               model: db.User,
               as: 'Commenter',
-              attributes: ['id', 'userId', 'nickname'],
+              attributes: { exclede: ['password'] },
             },
             {
               model: db.User,
               as: 'CommentLikers',
-              attributes: ['id', 'userId', 'nickname'],
+              attributes: { exclede: ['password'] },
             },
             {
               model: db.Comment,
@@ -65,12 +65,12 @@ router.get('/', isLoggedIn, findUser, async (req, res, next) => {
                 {
                   model: db.User,
                   as: 'Commenter',
-                  attributes: ['id', 'userId', 'nickname'],
+                  attributes: { exclede: ['password'] },
                 },
                 {
                   model: db.User,
                   as: 'CommentLikers',
-                  attributes: ['id', 'userId', 'nickname'],
+                  attributes: { exclede: ['password'] },
                 },
               ],
             },

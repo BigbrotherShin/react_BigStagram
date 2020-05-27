@@ -47,7 +47,11 @@ const ProfileCard = memo(() => {
         ]}
       >
         <Card.Meta
-          avatar={<Avatar src={``}>{`${me.nickname}`[0]}</Avatar>}
+          avatar={
+            <Avatar src={me && `http://localhost:3065/${me.profileImage}`}>
+              {`${me.nickname}`[0]}
+            </Avatar>
+          }
           title={`${me.nickname}`}
           description={`${me.userId}`}
         />

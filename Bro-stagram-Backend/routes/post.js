@@ -1,32 +1,10 @@
 const express = require('express');
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+
 const db = require('../models');
 const { isLoggedIn, findPost, findUser } = require('./middlewares');
+const { upload } = require('../util/multer');
 
 const router = express.Router();
-
-fs.readdir('uploads', (error) => {
-  if (error) {
-    console.error('uploads 폴더가 없어 uploads 폴더를 생성합니다.');
-    fs.mkdirSync('uploads');
-  }
-});
-
-const upload = multer({
-  storage: multer.diskStorage({
-    destination(req, file, done) {
-      done(null, 'uploads/');
-    },
-    filename(req, file, done) {
-      const ext = path.extname(file.originalname);
-      const basename = path.basename(file.originalname, ext);
-      done(null, basename + new Date().valueOf() + ext);
-    },
-  }),
-  limits: { fileSize: 10 * 1024 * 1024 },
-});
 
 router.post('/image', upload.single('file'), (req, res) => {
   // multer: 폼데이터 파일 -> req.file(s) / 폼데이터 일반 값 -> req.body

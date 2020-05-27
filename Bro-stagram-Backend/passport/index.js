@@ -39,7 +39,7 @@ module.exports = () => {
             attributes: ['id', 'nickname', 'userId'],
           },
         ],
-        attributes: ['id', 'nickname', 'userId'],
+        attributes: { exclude: ['password'] },
       });
       return done(null, user);
     } catch (e) {

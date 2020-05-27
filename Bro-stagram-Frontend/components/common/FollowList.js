@@ -45,6 +45,10 @@ const FollowList = memo(({ followData }) => {
     [],
   );
 
+  if (!(followData && followData.followType && followData.followData)) {
+    return <div>로딩중..</div>;
+  }
+
   return (
     <Modal>
       <AuthTemplateBlock>

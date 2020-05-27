@@ -1,4 +1,6 @@
 const db = require('../models');
+const path = require('path');
+const sharp = require('sharp');
 
 exports.isLoggedIn = (req, res, next) => {
   if (req.isAuthenticated()) {
@@ -84,6 +86,28 @@ exports.findPost = async (req, res, next) => {
       res.status(403).send('해당 포스트를 찾지 못했습니다.');
     }
     req.findPost = findPost;
+    next();
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+};
+
+// 프로필 사진 리사이즈
+exports.resizeProfile = async (req, res, next) => {
+  try {
+    if (!req.file) return next();
+    console.log('file file', req.file);
+
+    const file = req.file;
+    const ext = path.extname(file.originalname);
+    const basename = path.basename(file.originalname, ext);
+    const newFilename =
+      basename + new Date().valueOf() + 'profileThumbnail' + ext;
+    await sharp(file.buffer).resize(150).toFile(`uploads/${newFilename}`);
+
+    req.body.profileImage = newFilename;
+
     next();
   } catch (e) {
     console.error(e);

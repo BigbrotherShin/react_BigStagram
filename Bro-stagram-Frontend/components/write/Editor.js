@@ -1,5 +1,6 @@
 import React, { memo, useState, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
+import { useRouter } from 'next/router';
 import ImageUpload from './ImageUpload';
 import Button from '../common/Button';
 import { useDispatch, useSelector } from 'react-redux';
@@ -59,12 +60,13 @@ const Editor = memo(({ cancle, isAdded }) => {
   // const { isAddingPost, isPostAdded } = useSelector(state => state.post);
   const [images, setImages] = useState([]);
   const [text, setText] = useState('');
+  const router = useRouter();
 
   useEffect(() => {
     if (isAdded) {
       setImages([]);
       setText('');
-
+      router.push(router.pathname);
       dispatch({
         type: SET_OFF_MODAL,
       });
