@@ -21,11 +21,24 @@ import { SET_ON_MODAL } from '../../reducers/post';
 import LoginPage from '../LoginPage';
 import styled, { css } from 'styled-components';
 
-const NavAvatar = styled(Avatar)`
+const NavAvatarWrapper = styled.div`
+  position: relative;
+`;
+
+const NavAvatarCircle = styled.div`
+  display: hidden;
+
   ${(props) =>
     props.isActive &&
     css`
-      box-shadow: 0 0 3px #ddd;
+      display: inline-block;
+      position: absolute;
+      width: 30px;
+      height: 30px;
+      border: 1px solid black;
+      border-radius: 50%;
+      left: -3px;
+      top: -2px;
     `}
 `;
 
@@ -103,15 +116,20 @@ const AppLayout = memo(({ children }) => {
                         <HeartOutlined className='nav_icons' />
                         <Link href='/profile'>
                           <a className='nav_icons'>
-                            <NavAvatar
-                              isActive={router.pathname === '/profile'}
-                              size='small'
-                              src={
-                                me && `http://localhost:3065/${me.profileImage}`
-                              }
-                            >
-                              {me && me.nickname[0]}
-                            </NavAvatar>
+                            <NavAvatarWrapper>
+                              <NavAvatarCircle
+                                isActive={router.pathname === '/profile'}
+                              />
+                              <Avatar
+                                size='small'
+                                src={
+                                  me &&
+                                  `http://localhost:3065/${me.profileImage}`
+                                }
+                              >
+                                {me && me.nickname[0]}
+                              </Avatar>
+                            </NavAvatarWrapper>
                           </a>
                         </Link>
                       </>

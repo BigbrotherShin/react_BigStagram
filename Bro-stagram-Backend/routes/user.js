@@ -202,17 +202,19 @@ router.patch(
   },
 );
 
-router.patch(
-  '/:id/profileImage',
-  isLoggedIn,
-  findUser,
-  async (req, res, next) => {
-    try {
-    } catch (e) {
-      console.error(e);
-      next(e);
-    }
-  },
-);
+router.delete('/profileImage', isLoggedIn, findUser, async (req, res, next) => {
+  try {
+    await db.User.update(
+      {
+        profileImage: null,
+      },
+      { where: { id: req.user.id } },
+    );
+    res.status(200).send('프로필 사진이 삭제되었습니다.');
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
 
 module.exports = router;

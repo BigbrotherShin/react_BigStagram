@@ -6,19 +6,30 @@ import {
   LOAD_BOOKMARK_REQUEST,
   LOAD_MY_POSTS_REQUEST,
   SET_ON_MODAL,
+  SET_OFF_MODAL,
 } from '../../reducers/post';
 import {
   LOAD_OTHER_USER_INFO_REQUEST,
   LOAD_MY_FOLLOW_REQUEST,
   ADD_PROFILE_IMAGE_REQUEST,
+  DELETE_PROFILE_IMAGE_REQUEST,
 } from '../../reducers/user';
 import { useSelector, useDispatch } from 'react-redux';
 import ModalPortal from '../../components/ModalPortal';
 import Modal from '../../components/common/Modal';
 import Button from '../../components/common/Button';
+import ProfileImageEdit from '../../components/ProfileImageEdit';
 
 const Profile = () => {
-  const { myPosts, me, userInfo } = useSelector((state) => state.user);
+  const {
+    myPosts,
+    me,
+    userInfo,
+    isProfileImageAdding,
+    ProfileImageAdded,
+    isProfileImageDeleting,
+    ProfileImageDeleted,
+  } = useSelector((state) => state.user);
   const {
     isBookmarkLoaded,
     isLoadingPosts,
@@ -27,6 +38,15 @@ const Profile = () => {
   } = useSelector((state) => state.post);
   const dispatch = useDispatch();
   const router = useRouter();
+
+  useEffect(() => {
+    if (ProfileImageAdded || ProfileImageDeleted) {
+      router.push(router.pathname);
+      dispatch({
+        type: SET_OFF_MODAL,
+      });
+    }
+  }, [ProfileImageAdded, ProfileImageDeleted]);
 
   const loadBookmark = useCallback(() => {
     // dispatch({
@@ -46,28 +66,6 @@ const Profile = () => {
     });
   }, []);
 
-  const profileImageInput = useRef();
-
-  const onChangeImage = useCallback((e) => {
-    const imageFormData = new FormData();
-    [].forEach.call(e.target.files, (f) => {
-      return imageFormData.append('profileImage', f);
-    });
-
-    dispatch({
-      type: ADD_PROFILE_IMAGE_REQUEST,
-      data: imageFormData,
-    });
-  }, []);
-
-  const onClickImageUpload = useCallback(
-    (e) => {
-      e.preventDefault();
-      profileImageInput.current.click();
-    },
-    [profileImageInput.current],
-  );
-
   return (
     <>
       <ProfileLayout
@@ -83,19 +81,7 @@ const Profile = () => {
       {onModal && router.asPath === '/profileImage' ? (
         <ModalPortal>
           <Modal>
-            <Button clearButton setOffModal>
-              X
-            </Button>
-            <form encType='multipart/form-data'>
-              <input
-                type='file'
-                multiple
-                hidden
-                ref={profileImageInput}
-                onChange={onChangeImage}
-              />
-              <button onClick={onClickImageUpload}>프로필 사진 업로드</button>
-            </form>
+            <ProfileImageEdit />
           </Modal>
         </ModalPortal>
       ) : null}

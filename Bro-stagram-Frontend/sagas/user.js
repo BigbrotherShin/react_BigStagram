@@ -28,6 +28,9 @@ import {
   ADD_PROFILE_IMAGE_SUCCESS,
   ADD_PROFILE_IMAGE_FAILURE,
   ADD_PROFILE_IMAGE_REQUEST,
+  DELETE_PROFILE_IMAGE_SUCCESS,
+  DELETE_PROFILE_IMAGE_FAILURE,
+  DELETE_PROFILE_IMAGE_REQUEST,
 } from '../reducers/user';
 
 function signUpAPI(SignUpData) {
@@ -268,6 +271,31 @@ function* watchAddProfileImage() {
   yield takeEvery(ADD_PROFILE_IMAGE_REQUEST, addProfileImage);
 }
 
+function deleteProfileImageAPI(actionData) {
+  return Axios.delete(`/user/profileImage`, {
+    withCredentials: true,
+  });
+}
+
+function* deleteProfileImage(action) {
+  try {
+    const result = yield call(deleteProfileImageAPI, action.data);
+    yield put({
+      type: DELETE_PROFILE_IMAGE_SUCCESS,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: DELETE_PROFILE_IMAGE_FAILURE,
+      error: e.response && e.response.data,
+    });
+  }
+}
+
+function* watchDeleteProfileImage() {
+  yield takeEvery(DELETE_PROFILE_IMAGE_REQUEST, deleteProfileImage);
+}
+
 export default function* userSaga() {
   yield all([
     fork(watchLogin),
@@ -279,5 +307,6 @@ export default function* userSaga() {
     fork(watchDeleteFollowing),
     fork(watchLoadMyFollow),
     fork(watchAddProfileImage),
+    fork(watchDeleteProfileImage),
   ]);
 }

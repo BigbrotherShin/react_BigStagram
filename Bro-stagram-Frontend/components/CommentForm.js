@@ -1,8 +1,9 @@
 import React, { memo, useState, useCallback, useRef, useEffect } from 'react';
 import styled, { css } from 'styled-components';
-import Button from './common/Button';
+import ClearButton from './common/ClearButton';
 import { useDispatch, useSelector } from 'react-redux';
 import { ADD_COMMENT_REQUEST, CLEAR_RECOMMENT } from '../reducers/post';
+import palette from '../lib/styles/palette';
 
 const StyledCommentFormDiv = styled.div`
   display: flex;
@@ -16,7 +17,7 @@ const StyledCommentFormDiv = styled.div`
     flex-grow: 1;
     align-items: center;
     width: 100%;
-    height: 20px;
+    height: 22px;
     justify-content: space-between;
     overflow: auto;
   }
@@ -25,7 +26,6 @@ const StyledCommentFormDiv = styled.div`
 const StyledTextarea = styled.textarea`
   resize: none;
   flex-grow: 1;
-  width: 100%;
   font-size: 1rem;
   border: none;
   height: 24px;
@@ -34,21 +34,11 @@ const StyledTextarea = styled.textarea`
   &:focus {
     outline: none;
   }
-
-  & + Button {
-    display: none;
-  }
-
-  &:focus + button {
-    display: block;
-  }
-
-  &+button: active {
-    display: block;
-  }
 `;
 
-const CommentButton = styled(Button)`
+const CommentButton = styled(ClearButton)`
+  font-size: 14px;
+  font-weight: bold;
   ${(props) =>
     !props.text &&
     css`
@@ -58,9 +48,12 @@ const CommentButton = styled(Button)`
 
 const CommentForm = memo(({ postId }) => {
   const dispatch = useDispatch();
-  const { recommentId, mentionedUser, commentPostId } = useSelector(
-    (state) => state.post,
-  );
+  const {
+    recommentId,
+    mentionedUser,
+    commentPostId,
+    isCommentAdded,
+  } = useSelector((state) => state.post);
   const [comment, setComment] = useState('');
 
   const commentRef = useRef();
@@ -79,6 +72,12 @@ const CommentForm = memo(({ postId }) => {
       });
     };
   }, []);
+
+  useEffect(() => {
+    if (isCommentAdded) {
+      setComment('');
+    }
+  }, [isCommentAdded]);
 
   const onChange = useCallback((e) => {
     setComment(e.target.value);
@@ -112,8 +111,13 @@ const CommentForm = memo(({ postId }) => {
             rows={1}
             placeholder='댓글 달기...'
           />
-          <CommentButton htmlType='submit' onClick={onSubmit} text={comment}>
-            <p>게시</p>
+          <CommentButton
+            fontColor={palette.blue}
+            htmlType='submit'
+            onClick={onSubmit}
+            text={comment}
+          >
+            게시
           </CommentButton>
         </form>
       </div>

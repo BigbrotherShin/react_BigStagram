@@ -21,6 +21,9 @@ export const initialState = {
   isFollowLoaded: false,
   isProfileImageAdding: false,
   ProfileImageAdded: false,
+  isProfileImageDeleting: false,
+  ProfileImageDeleted: false,
+  deleteProfileImageErrorReason: '',
 };
 
 export const LOG_IN_REQUEST = 'user/LOG_IN_REQUEST';
@@ -60,6 +63,10 @@ export const LOAD_MY_FOLLOW_FAILURE = 'user/LOAD_MY_FOLLOW_FAILURE';
 export const ADD_PROFILE_IMAGE_REQUEST = 'user/ADD_PROFILE_IMAGE_REQUEST';
 export const ADD_PROFILE_IMAGE_SUCCESS = 'user/ADD_PROFILE_IMAGE_SUCCESS';
 export const ADD_PROFILE_IMAGE_FAILURE = 'user/ADD_PROFILE_IMAGE_FAILURE';
+
+export const DELETE_PROFILE_IMAGE_REQUEST = 'user/DELETE_PROFILE_IMAGE_REQUEST';
+export const DELETE_PROFILE_IMAGE_SUCCESS = 'user/DELETE_PROFILE_IMAGE_SUCCESS';
+export const DELETE_PROFILE_IMAGE_FAILURE = 'user/DELETE_PROFILE_IMAGE_FAILURE';
 
 export const ADD_BOOKMARK_TO_ME = 'user/ADD_BOOKMARK_TO_ME';
 export const LOAD_BOOKMARK_TO_ME = 'user/LOAD_BOOKMARK_TO_ME';
@@ -231,6 +238,23 @@ const reducer = (state = initialState, action) => {
         draft.isProfileImageAdding = false;
         draft.ProfileImageAdded = false;
         draft.addProfileImageErrorReason = action.error;
+        break;
+      }
+      case DELETE_PROFILE_IMAGE_REQUEST: {
+        draft.isProfileImageDeleting = true;
+        draft.ProfileImageDeleted = false;
+        break;
+      }
+      case DELETE_PROFILE_IMAGE_SUCCESS: {
+        draft.isProfileImageDeleting = false;
+        draft.ProfileImageDeleted = true;
+        draft.me.profileImage = null;
+        break;
+      }
+      case DELETE_PROFILE_IMAGE_FAILURE: {
+        draft.isProfileImageDeleting = false;
+        draft.ProfileImageDeleted = false;
+        draft.deleteProfileImageErrorReason = action.error;
         break;
       }
       case ADD_BOOKMARK_TO_ME: {
