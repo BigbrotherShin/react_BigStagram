@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { LOAD_MAIN_POSTS_REQUEST } from '../reducers/post';
 import Posts from '../components/Posts';
 import { StyledProfileContainer } from '../components/ProfileLayout';
+import ModalPortal from '../components/ModalPortal';
+import Modal from '../components/common/Modal';
 
 const Explore = memo(() => {
   const { explorePosts, isLoadingPosts, isPostsLoaded } = useSelector(

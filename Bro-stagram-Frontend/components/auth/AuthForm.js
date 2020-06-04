@@ -148,7 +148,7 @@ const AuthForm = memo(({ type, error }) => {
           <ErrorMessage>비밀번호를 확인해주세요.</ErrorMessage>
         ) : null}
         {error ? <ErrorMessage>{error}</ErrorMessage> : null}
-        <ButtonWithMarginTop fullWidth cyan onClick={onSubmit}>
+        <ButtonWithMarginTop fullWidth blue onClick={onSubmit}>
           {text}
         </ButtonWithMarginTop>
       </form>

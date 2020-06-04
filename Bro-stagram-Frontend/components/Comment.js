@@ -1,6 +1,6 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 import { HeartOutlined, HeartFilled } from '@ant-design/icons';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import Link from 'next/link';
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -9,29 +9,76 @@ import {
   DELETE_COMMENT_LIKE_REQUEST,
 } from '../reducers/post';
 import Comments from './Comments';
+import ClearButton from '../components/common/ClearButton';
+import Time from './common/Time';
+import palette from '../lib/styles/palette';
 
 const CommentDiv = styled.div`
+  margin-top: 16px;
+  padding-left: 16px;
+  padding-right: 16px;
+
+  ${(props) =>
+    props.recomment &&
+    css`
+      padding-left: 0;
+      padding-right: 0;
+    `}
+`;
+
+const CommentBody = styled.div`
   display: flex;
-  align-items: center;
-  margin-bottom: 4px;
 
   & span {
     font-weight: bold;
+    padding-right: 8px;
   }
 
-  .comment_body {
-    margin-left: 10px;
-    margin-right: 10px;
-  }
-
-  .comment_like {
+  & .comment_body_like {
     margin-left: auto;
+  }
+
+  & .comment_mention_user {
+    color: ${palette.cyan[7]};
   }
 `;
 
-const Comment = memo(({ commentData }) => {
+const CommentButtons = styled.div`
+  margin-top: 8px;
+  & * {
+    margin-right: 10px;
+    color: ${palette.gray[6]};
+    font-size: 14px;
+  }
+  & *:last-child {
+    margin-right: 0;
+  }
+`;
+
+const MoreRecommentsWrapper = styled.div`
+  margin-top: 14px;
+  display: flex;
+
+  & .comment_see_more_recomments_dots {
+    border-bottom: 1px solid ${palette.gray[5]};
+    display: inline-block;
+    height: 0;
+    margin-right: 16px;
+    vertical-align: middle;
+    width: 24px;
+    flex-grow: 0;
+  }
+
+  & .comment_see_more_recomments {
+    display: inline-block;
+    flex: 1;
+  }
+`;
+
+const Comment = memo(({ commentData, recomment }) => {
   const { me } = useSelector((state) => state.user);
   const dispatch = useDispatch();
+  const [seeRecomments, setSeeRecomments] = useState(false);
 
   const onRecomment = useCallback(() => {
     dispatch({
@@ -73,11 +120,15 @@ const Comment = memo(({ commentData }) => {
     });
   }, []);
 
+  const onSeeRecomments = useCallback(() => {
+    setSeeRecomments((prevState) => !prevState);
+  }, []);
+
   return (
     <>
-      <CommentDiv>
-        <span>{commentData.Commenter.nickname}</span>
-        <div className='comment_body'>
+      <CommentDiv recomment={recomment}>
+        <CommentBody>
+          <span>{commentData.Commenter.nickname}</span>
           <div className='comment_body_content'>
             {commentData.content.split(/(@[^\s]+)/g).map((v, i) => {
               if (v.match(/(@[^\s]+)/g)) {
@@ -90,30 +141,62 @@ const Comment = memo(({ commentData }) => {
                     }}
                     as={`/user/${v.slice(1)}`}
                   >
-                    <a>{v}</a>
+                    <a className='comment_mention_user'>{v}</a>
                   </Link>
                 );
               }
               return v;
             })}
           </div>
-          <div className='comment_body_recomment'>
-            <button onClick={onRecomment}>답글 달기</button>
+          <div className='comment_body_like'>
+            {liked ? (
+              <HeartFilled
+                onClick={onCommentUnlike}
+                style={{ color: 'hotpink' }}
+              />
+            ) : (
+              <HeartOutlined onClick={onCommentLike} />
+            )}
           </div>
-        </div>
-        {liked ? (
-          <HeartFilled
-            onClick={onCommentUnlike}
-            className='comment_like'
-            style={{ color: 'hotpink' }}
-          />
-        ) : (
-          <HeartOutlined onClick={onCommentLike} className='comment_like' />
-        )}
+        </CommentBody>
+        <CommentButtons className='comment_recomment'>
+          <Time>{commentData.createdAt}</Time>
+          {commentData && commentData.CommentLikers.length !== 0 ? (
+            <span className='comment_recomment_like_button'>
+              좋아요 {commentData.CommentLikers.length}
+            </span>
+          ) : null}
+          <ClearButton onClick={onRecomment}>답글 달기</ClearButton>
+        </CommentButtons>
+        {commentData &&
+        commentData.Recomments &&
+        commentData.Recomments.length !== 0 ? (
+          <MoreRecommentsWrapper>
+            <div>
+              <div className='comment_see_more_recomments_dots'></div>
+            </div>
+            <div className='comment_see_more_recomments'>
+              <div>
+                <ClearButton fontSize='14' onClick={onSeeRecomments}>
+                  답글
+                  {seeRecomments
+                    ? ' 숨기기'
+                    : ` 보기 (${
+                        commentData &&
+                        commentData.Recomments &&
+                        commentData.Recomments.length
+                      }개)`}
+                </ClearButton>
+                {commentData.Recomments &&
+                commentData.Recomments.length !== 0 &&
+                seeRecomments ? (
+                  <Comments recomment comments={commentData.Recomments} />
+                ) : null}
+              </div>
+            </div>
+          </MoreRecommentsWrapper>
+        ) : null}
       </CommentDiv>
-      {commentData.Recomments && commentData.Recomments.length !== 0 ? (
-        <Comments comments={commentData.Recomments} />
-      ) : null}
     </>
   );
 });

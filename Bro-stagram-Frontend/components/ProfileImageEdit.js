@@ -8,6 +8,7 @@ import {
 } from '../reducers/user';
 import { SET_OFF_MODAL } from '../reducers/post';
 import ClearButton from './common/ClearButton';
+import WhiteBox from './common/WhiteBox';
 import palette from '../lib/styles/palette';
 
 const ProfileImageEditButtonsWrapper = styled.div`
@@ -32,29 +33,6 @@ const ProfileImageEditButtons = styled.div`
       font-weight: normal;
       border: none;
     }
-  }
-`;
-
-const WhiteBox = styled.div`
-  background: white;
-  border-radius: 12px;
-
-  @media (min-width: 736px) {
-    width: 420px;
-  }
-
-  @media (max-width: 736px) {
-    width: 210px;
-  }
-
-  & h1 {
-    display: flex;
-    height: 70px;
-    font-weight: bold;
-    font-size: 18px;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 1px solid ${palette.gray[3]};
   }
 `;
 
@@ -116,7 +94,7 @@ const ProfileImageEdit = memo(() => {
             <ClearButton
               className='profile_image_edit_button'
               onClick={onClickImageUpload}
-              fontColor={palette.blue}
+              fontColor={palette.blue[1]}
             >
               프로필 사진 업로드
             </ClearButton>

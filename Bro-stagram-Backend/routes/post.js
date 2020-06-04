@@ -63,7 +63,7 @@ router.post('/', isLoggedIn, upload.none(), async (req, res, next) => {
         {
           model: db.User,
           as: 'Writer',
-          attributes: ['id', 'nickname'],
+          attributes: { exclude: ['password'] },
         },
         {
           model: db.Image,
@@ -131,7 +131,12 @@ router.post('/comment', isLoggedIn, findPost, async (req, res, next) => {
         {
           model: db.User,
           as: 'Commenter',
-          attributes: ['id', 'userId', 'nickname'],
+          attributes: { exclude: ['password', 'profileImage'] },
+        },
+        {
+          model: db.User,
+          as: 'CommentLikers',
+          attributes: { exclude: ['password', 'profileImage'] },
         },
       ],
     });
@@ -255,6 +260,65 @@ router.delete('/bookmark', findUser, findPost, async (req, res, next) => {
     res.status(200).json({
       postId: req.findPost.id,
     });
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
+router.get('/detail/:postId', findPost, async (req, res, next) => {
+  try {
+    const postDetail = await db.Post.findOne({
+      where: { id: req.findPost.id },
+      include: [
+        {
+          model: db.User,
+          as: 'Writer',
+          attributes: { exclude: ['password'] },
+        },
+        {
+          model: db.User,
+          as: 'Likers',
+          attributes: { exclude: ['password'] },
+        },
+        {
+          model: db.Image,
+        },
+        {
+          model: db.Comment,
+          as: 'Comments',
+          include: [
+            {
+              model: db.User,
+              as: 'Commenter',
+              attributes: { exclude: ['password'] },
+            },
+            {
+              model: db.User,
+              as: 'CommentLikers',
+              attributes: { exclude: ['password'] },
+            },
+            {
+              model: db.Comment,
+              as: 'Recomments',
+              include: [
+                {
+                  model: db.User,
+                  as: 'Commenter',
+                  attributes: { exclude: ['password'] },
+                },
+                {
+                  model: db.User,
+                  as: 'CommentLikers',
+                  attributes: { exclude: ['password'] },
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+    res.status(200).json(postDetail);
   } catch (e) {
     console.error(e);
     next(e);

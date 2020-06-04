@@ -8,13 +8,10 @@ import { useDispatch } from 'react-redux';
 const StyledButton = styled.button`
   border: none;
   border-radius: 4px;
-  font-size: 1rem;
-  font-weight: bold;
-  padding: 0.25rem 1rem;
+
   color: white;
   outline: none;
   cursor: pointer;
-  min-width: 4rem;
 
   background: ${palette.gray[8]};
   &:hover {
@@ -23,6 +20,13 @@ const StyledButton = styled.button`
   &:active {
     background: ${palette.gray[7]};
   }
+
+  ${(props) =>
+    props.loginButton &&
+    css`
+      font-size: 17px;
+      padding: 0.25rem 1rem;
+    `}
 
   ${(props) =>
     props.fullWidth &&
@@ -39,6 +43,26 @@ const StyledButton = styled.button`
       background: ${palette.cyan[5]};
       &:hover {
         background: ${palette.cyan[4]};
+      }
+    `}
+
+  ${(props) =>
+    props.white &&
+    css`
+      color: black;
+      border: 1px solid ${palette.gray[5]};
+      background: ${palette.white[0]};
+      &:hover {
+        background: ${palette.white[1]};
+      }
+    `}
+
+  ${(props) =>
+    props.blue &&
+    css`
+      background: ${palette.blue[1]};
+      &:hover {
+        background: ${palette.blue[0]};
       }
     `}
 

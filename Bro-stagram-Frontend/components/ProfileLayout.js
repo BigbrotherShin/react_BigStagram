@@ -20,6 +20,7 @@ import { LOAD_OTHER_USER_INFO_REQUEST } from '../reducers/user';
 import { useRouter } from 'next/router';
 import FollowList from './common/FollowList';
 import ModalPortal from './ModalPortal';
+import Button from '../components/common/Button';
 
 export const StyledProfileContainer = styled.div`
   @media (min-width: 736px) {
@@ -189,8 +190,9 @@ const ProfileLayout = memo(({ ...props }) => {
                 profile
                 onClick={props.setProfileImage}
                 src={
-                  props.userInfo &&
-                  `http://localhost:3065/${props.userInfo.profileImage}`
+                  props.userInfo && props.userInfo.profileImage
+                    ? `http://localhost:3065/${props.userInfo.profileImage}`
+                    : ''
                 }
                 className='profile_avatar_icon'
                 icon={<UserOutlined />}
@@ -208,13 +210,16 @@ const ProfileLayout = memo(({ ...props }) => {
                       <a>프로필 편집</a>
                     </Link>
                   ) : props.isFollowing ? (
-                    <button onClick={props.deleteFollowing(props.userInfo)}>
+                    <Button
+                      white
+                      onClick={props.deleteFollowing(props.userInfo)}
+                    >
                       언팔로우
-                    </button>
+                    </Button>
                   ) : (
-                    <button onClick={props.addFollowing(props.userInfo)}>
+                    <Button blue onClick={props.addFollowing(props.userInfo)}>
                       팔로우
-                    </button>
+                    </Button>
                   )
                 ) : null
               }

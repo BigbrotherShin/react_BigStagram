@@ -77,6 +77,50 @@ exports.followUser = async (req, res, next) => {
 
 exports.findPost = async (req, res, next) => {
   try {
+    // let isDetail;
+    // console.log(req);
+    // if (req.body.data === 'getDetail') {
+    //   isDetail = {
+    //     include: [
+    //       {
+    //         model: db.User,
+    //         as: 'Writer',
+    //         attributes: { exclude: ['password'] },
+    //       },
+    //       {
+    //         model: db.User,
+    //         as: 'Likers',
+    //         attributes: { exclude: ['password'] },
+    //       },
+    //       {
+    //         model: db.User,
+    //         as: 'Commenter',
+    //         attributes: { exclude: ['password'] },
+    //       },
+    //       {
+    //         model: db.User,
+    //         as: 'CommentLikers',
+    //         attributes: { exclude: ['password'] },
+    //       },
+    //       {
+    //         model: db.Comment,
+    //         as: 'Recomments',
+    //         include: [
+    //           {
+    //             model: db.User,
+    //             as: 'Commenter',
+    //             attributes: { exclude: ['password'] },
+    //           },
+    //           {
+    //             model: db.User,
+    //             as: 'CommentLikers',
+    //             attributes: { exclude: ['password'] },
+    //           },
+    //         ],
+    //       },
+    //     ],
+    //   };
+    // }
     const findPost = await db.Post.findOne({
       where: {
         id: parseInt(req.params.postId || req.body.postId, 10),

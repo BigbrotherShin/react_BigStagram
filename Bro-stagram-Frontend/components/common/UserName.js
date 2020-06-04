@@ -17,6 +17,12 @@ const UserNicknameContainer = styled.span`
       display: inline-block;
       float: left;
     `}
+
+  ${(props) =>
+    props.attribute.followList &&
+    css`
+      height: auto;
+    `}
 `;
 
 const UserNickname = styled.span`
@@ -31,13 +37,7 @@ const UserNickname = styled.span`
     `}
 `;
 
-const UserName = ({
-  user,
-  isFollowing,
-  followOrUnfollow,
-  followList,
-  ...props
-}) => {
+const UserName = ({ user, ...props }) => {
   const { me } = useSelector((state) => state.user);
   const isMe = me && me.id === user.id;
   const goTo = isMe
@@ -61,11 +61,6 @@ const UserName = ({
           <UserNickname attribute={props}>{user.nickname}</UserNickname>
         </a>
       </Link>
-      {followList && !isMe ? (
-        <button onClick={followOrUnfollow(user.id)}>
-          {isFollowing ? '언팔로우' : '팔로우'}
-        </button>
-      ) : null}
     </UserNicknameContainer>
   );
 };

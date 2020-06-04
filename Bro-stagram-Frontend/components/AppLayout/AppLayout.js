@@ -123,8 +123,9 @@ const AppLayout = memo(({ children }) => {
                               <Avatar
                                 size='small'
                                 src={
-                                  me &&
-                                  `http://localhost:3065/${me.profileImage}`
+                                  me && me.profileImage
+                                    ? `http://localhost:3065/${me.profileImage}`
+                                    : ''
                                 }
                               >
                                 {me && me.nickname[0]}
@@ -136,7 +137,9 @@ const AppLayout = memo(({ children }) => {
                     ) : (
                       // <Link href={router.pathname} as='/login'>
                       //   <a>
-                      <Button onClick={onLogin}>로그인</Button>
+                      <Button loginButton onClick={onLogin}>
+                        로그인
+                      </Button>
                       //   </a>
                       // </Link>
                     )}

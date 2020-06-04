@@ -31,18 +31,21 @@ const PostImageWrapper = styled.div`
   }
 `;
 
-const PostImage = memo(({ postThumnail }) => {
+const PostImage = memo(({ postThumnail, onClick }) => {
   return (
     <PostImageWrapper className='profile_posts_item'>
-      <Link href='#'>
-        <a>
-          <div>
-            <div className='profile_posts_item_image'>
-              <img src={`http://localhost:3065/${postThumnail.src}`} />
-            </div>
-          </div>
-        </a>
-      </Link>
+      {/* <Link href='#'>
+        <a> */}
+      <div>
+        <div className='profile_posts_item_image'>
+          <img
+            onClick={onClick}
+            src={`http://localhost:3065/${postThumnail.src}`}
+          />
+        </div>
+      </div>
+      {/* </a>
+      </Link> */}
     </PostImageWrapper>
   );
 });

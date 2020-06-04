@@ -9,8 +9,8 @@ const StyledCommentFormDiv = styled.div`
   display: flex;
   padding-left: 16px;
   padding-right: 16px;
-  margin-top: 4px;
-  margin-bottom: 4px;
+  margin-top: 20px;
+  margin-bottom: 8px;
 
   & form {
     display: flex;
@@ -26,10 +26,11 @@ const StyledCommentFormDiv = styled.div`
 const StyledTextarea = styled.textarea`
   resize: none;
   flex-grow: 1;
-  font-size: 1rem;
+  font-size: 14px;
   border: none;
-  height: 24px;
+  // height: 24px;
   max-height: 80px;
+  // padding: 0;
 
   &:focus {
     outline: none;
@@ -86,6 +87,9 @@ const CommentForm = memo(({ postId }) => {
   const onSubmit = useCallback(
     (e) => {
       e.preventDefault();
+      if (!comment) {
+        return alert('적어도 한 글자는 입력하셔야 합니다.');
+      }
       dispatch({
         type: ADD_COMMENT_REQUEST,
         data: {
@@ -112,7 +116,7 @@ const CommentForm = memo(({ postId }) => {
             placeholder='댓글 달기...'
           />
           <CommentButton
-            fontColor={palette.blue}
+            fontColor={palette.blue[1]}
             htmlType='submit'
             onClick={onSubmit}
             text={comment}

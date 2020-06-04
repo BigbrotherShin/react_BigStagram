@@ -7,7 +7,9 @@ import { useDispatch } from 'react-redux';
 
 const StyledClearButton = styled.button`
   border: none;
+  outline: none;
   background: none;
+
   &:hover {
     background: none;
   }
@@ -22,6 +24,11 @@ const StyledClearButton = styled.button`
     props.fontColor &&
     css`
       color: ${props.fontColor};
+    `}
+  ${(props) =>
+    props.fontSize &&
+    css`
+      font-size: ${props.fontSize}px;
     `}
 `;
 

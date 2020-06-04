@@ -1,17 +1,23 @@
 import React, { memo, useEffect } from 'react';
 import Comment from './Comment';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const StyledCommentsList = styled.div`
-  padding-left: 16px;
-  padding-right: 16px;
+  max-height: 30vh;
+  overflow: auto;
+
+  ${(props) =>
+    props.recomment &&
+    css`
+      max-height: none;
+    `}
 `;
 
-const Comments = memo(({ comments }) => {
+const Comments = memo(({ comments, recomment }) => {
   return (
-    <StyledCommentsList>
+    <StyledCommentsList recomment={recomment}>
       {comments.map((v, i) => (
-        <Comment key={v.createdAt + i} commentData={v} />
+        <Comment key={v.createdAt + i} commentData={v} recomment={recomment} />
       ))}
     </StyledCommentsList>
   );

@@ -3,24 +3,33 @@ import styled, { css } from 'styled-components';
 import Modal from './Modal';
 import UserName from './UserName';
 import Button from './Button';
-import { AuthTemplateBlock, WhiteBox } from '../auth/AuthTemplate';
+import WhiteBox from '../common/WhiteBox';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   ADD_FOLLOWING_REQUEST,
   DELETE_FOLLOWING_REQUEST,
 } from '../../reducers/user';
 
-const FollowListHeader = styled.div`
-  display: flex;
+const FollowListWhiteBox = styled(WhiteBox)`
+  position: relative;
+`;
 
-  & .follow_list_header_right {
-    margin-left: auto;
-  }
+const FollowListItemsWrapper = styled.div`
+  overflow: auto;
+  max-height: 400px;
+`;
+
+const FollowListItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 16px;
 `;
 
 const FollowList = memo(({ followData }) => {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
+
+  const isMe = me && me.id === followData.id;
 
   const follow = useCallback(
     (userData) => () => {
@@ -51,20 +60,16 @@ const FollowList = memo(({ followData }) => {
 
   return (
     <Modal>
-      <AuthTemplateBlock>
-        <WhiteBox followList>
-          <FollowListHeader>
-            <h1>
-              <div>{followData.followType}</div>
-            </h1>
-            <Button
-              setOffModal
-              className='follow_list_header_right'
-              clearButton
-            >
-              X
-            </Button>
-          </FollowListHeader>
+      <FollowListWhiteBox>
+        <header>
+          <h1>
+            <div>{followData.followType}</div>
+          </h1>
+          <Button setOffModal className='follow_list_header_right' clearButton>
+            X
+          </Button>
+        </header>
+        <FollowListItemsWrapper>
           <ul>
             {followData.followData.map((v, i) => {
               const isFollowing =
@@ -72,18 +77,24 @@ const FollowList = memo(({ followData }) => {
 
               return (
                 <li key={+v.createdAt}>
-                  <UserName
-                    followList
-                    isFollowing={isFollowing}
-                    followOrUnfollow={isFollowing ? unfollow : follow}
-                    user={v}
-                  />
+                  <FollowListItem>
+                    <UserName followList user={v} />
+                    {!isMe ? (
+                      <Button
+                        blue={isFollowing ? false : true}
+                        white={isFollowing ? true : false}
+                        onClick={isFollowing ? unfollow(v.id) : follow(v.id)}
+                      >
+                        {isFollowing ? '언팔로우' : '팔로우'}
+                      </Button>
+                    ) : null}
+                  </FollowListItem>
                 </li>
               );
             })}
           </ul>
-        </WhiteBox>
-      </AuthTemplateBlock>
+        </FollowListItemsWrapper>
+      </FollowListWhiteBox>
     </Modal>
   );
 });

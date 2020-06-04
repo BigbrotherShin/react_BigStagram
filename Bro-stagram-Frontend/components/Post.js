@@ -19,8 +19,12 @@ import {
   DELETE_POST_LIKE_REQUEST,
   ADD_BOOKMARK_REQUEST,
   DELETE_BOOKMARK_REQUEST,
+  UNSET_POST_DETAIL,
 } from '../reducers/post';
 import UserName from './common/UserName';
+import Time from './common/Time';
+import palette from '../lib/styles/palette';
+import ClearButton from './common/ClearButton';
 
 const dummy_images = [
   'https://interactive-examples.mdn.mozilla.net/media/examples/grapefruit-slice-332-332.jpg',
@@ -32,6 +36,7 @@ const dummy_images = [
 
 const Card = styled.div`
   padding: 0;
+  position: relative;
 
   @media (min-width: 640px) {
     margin-bottom: 60px;
@@ -103,18 +108,25 @@ const CardContent = styled.div`
     width: 100%;
   }
 
-  .card_time {
-    padding-left: 16px;
-    margin-bottom: 4px;
+  & .card_content_body_hashtag {
+    color: ${palette.cyan[7]};
   }
 `;
 
-const Post = memo(({ postData }) => {
+const Post = memo(({ postData, postDetail, offPostDetail }) => {
   const { me } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const liked =
     me && postData.Likers && postData.Likers.find((v, i) => v.id === me.id);
+
+  useEffect(() => {
+    return () => {
+      dispatch({
+        type: UNSET_POST_DETAIL,
+      });
+    };
+  }, []);
 
   const onLike = useCallback(() => {
     dispatch({
@@ -157,6 +169,9 @@ const Post = memo(({ postData }) => {
       <Card>
         <header className='explore_card_two'>
           <UserName user={postData.Writer} />
+          {postDetail ? (
+            <ClearButton onClick={offPostDetail}>X</ClearButton>
+          ) : null}
         </header>
         <div className='card_image explore_card_one'>
           <Slider images={postData.Images} />
@@ -200,14 +215,36 @@ const Post = memo(({ postData }) => {
           <div className='card_content_body_wrapper'>
             <span className='card_content_body'>
               <UserName user={postData.Writer} bodyName />
-
-              {postData.content}
+              {postData.content.split(/(#[^\s]+)/g).map((v, i) => {
+                if (v.match(/(#[^\s]+)/g)) {
+                  return (
+                    <Link
+                      key={`${v} ${i}`}
+                      href={{
+                        pathname: '/hashtag',
+                        query: { hashtagData: v.slice(1) },
+                      }}
+                      as={`/hashtag/${v.slice(1)}`}
+                    >
+                      <a className='card_content_body_hashtag'>{v}</a>
+                    </Link>
+                  );
+                }
+                return v;
+              })}
             </span>
+            <Time
+              fontSize='14px'
+              fontColor={palette.gray[6]}
+              className='card_time'
+            >
+              {postData.createdAt}
+            </Time>
           </div>
-          <div className='card_time'>{postData.createdAt}</div>
           {postData.Comments ? (
             <Comments className='card_comments' comments={postData.Comments} />
           ) : null}
+
           <CommentForm className='card_comment_form' postId={postData.id} />
         </CardContent>
       </Card>

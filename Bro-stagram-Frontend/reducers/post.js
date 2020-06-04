@@ -25,6 +25,10 @@ export const initialState = {
   isBookmarkAdded: false,
   loadBookmarkErrorReason: '',
   deleteBookmarkErrorReason: '',
+  isLoadingPostDetail: false,
+  postDetailLoaded: false,
+  loadPostDetailErrorReason: '',
+  postDetail: null,
 };
 
 export const SET_ON_MODAL = 'post/SET_ON_MODAL';
@@ -78,9 +82,14 @@ export const DELETE_BOOKMARK_REQUEST = 'post/DELETE_BOOKMARK_REQUEST';
 export const DELETE_BOOKMARK_SUCCESS = 'post/DELETE_BOOKMARK_SUCCESS';
 export const DELETE_BOOKMARK_FAILURE = 'post/DELETE_BOOKMARK_FAILURE';
 
+export const LOAD_POST_DETAIL_REQUEST = 'post/LOAD_POST_DETAIL_REQUEST';
+export const LOAD_POST_DETAIL_SUCCESS = 'post/LOAD_POST_DETAIL_SUCCESS';
+export const LOAD_POST_DETAIL_FAILURE = 'post/LOAD_POST_DETAIL_FAILURE';
+
 export const ADD_MENTION = 'post/ADD_MENTION';
 export const PREPARE_RECOMMENT = 'post/PREPARE_RECOMMENT';
 export const CLEAR_RECOMMENT = 'post/CLEAR_RECOMMENT';
+export const UNSET_POST_DETAIL = 'post/UNSET_POST_DETAIL';
 
 const reducer = (state = initialState, action) => {
   return produce(state, (draft) => {
@@ -348,6 +357,23 @@ const reducer = (state = initialState, action) => {
         draft.deleteBookmarkErrorReason = action.error;
         break;
       }
+      case LOAD_POST_DETAIL_REQUEST: {
+        draft.isLoadingPostDetail = true;
+        draft.postDetailLoaded = false;
+        break;
+      }
+      case LOAD_POST_DETAIL_SUCCESS: {
+        draft.isLoadingPostDetail = false;
+        draft.postDetailLoaded = true;
+        draft.postDetail = action.data;
+        break;
+      }
+      case LOAD_POST_DETAIL_FAILURE: {
+        draft.isLoadingPostDetail = false;
+        draft.postDetailLoaded = false;
+        draft.loadPostDetailErrorReason = action.error;
+        break;
+      }
       case PREPARE_RECOMMENT: {
         draft.recommentId = action.data.recommentId;
         draft.mentionedUser = action.data.mentionedUser;
@@ -358,6 +384,10 @@ const reducer = (state = initialState, action) => {
         draft.recommentId = '';
         draft.mentionedUser = '';
         draft.commentPostId = '';
+        break;
+      }
+      case UNSET_POST_DETAIL: {
+        draft.postDetail = null;
         break;
       }
       default:

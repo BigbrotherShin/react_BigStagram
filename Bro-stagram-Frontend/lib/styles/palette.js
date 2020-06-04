@@ -25,7 +25,8 @@ const palette = {
     '#0c8599',
     '#0b7285',
   ],
-  blue: '#57B9F9',
+  blue: ['#5BC0FF', '#0095F6'],
+  white: ['#FFFFFF', '#E8E5E5'],
   red: '#ED4956',
 };
 

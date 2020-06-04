@@ -34,6 +34,9 @@ import {
   DELETE_BOOKMARK_SUCCESS,
   DELETE_BOOKMARK_FAILURE,
   DELETE_BOOKMARK_REQUEST,
+  LOAD_POST_DETAIL_REQUEST,
+  LOAD_POST_DETAIL_SUCCESS,
+  LOAD_POST_DETAIL_FAILURE,
 } from '../reducers/post';
 import {
   LOAD_MY_POSTS,
@@ -356,6 +359,32 @@ function* watchDeleteBookmark() {
   yield takeEvery(DELETE_BOOKMARK_REQUEST, deleteBookmark);
 }
 
+function loadPostDetailAPI(actionData) {
+  return Axios.get(`/post/detail/${actionData}`, {
+    withCredentials: false,
+  });
+}
+
+function* loadPostDetail(action) {
+  try {
+    const result = yield call(loadPostDetailAPI, action.data);
+    yield put({
+      type: LOAD_POST_DETAIL_SUCCESS,
+      data: result.data,
+    });
+  } catch (e) {
+    console.error(e);
+    yield put({
+      type: LOAD_POST_DETAIL_FAILURE,
+      error: e.response && e.response.data,
+    });
+  }
+}
+
+function* watchLoadPostDetail() {
+  yield takeEvery(LOAD_POST_DETAIL_REQUEST, loadPostDetail);
+}
+
 export default function* postSaga() {
   yield all([
     fork(watchAddPost),
@@ -369,5 +398,6 @@ export default function* postSaga() {
     fork(watchAddBookmark),
     fork(watchLoadBookmark),
     fork(watchDeleteBookmark),
+    fork(watchLoadPostDetail),
   ]);
 }
