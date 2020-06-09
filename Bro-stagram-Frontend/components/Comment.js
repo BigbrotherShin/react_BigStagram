@@ -148,16 +148,18 @@ const Comment = memo(({ commentData, recomment }) => {
               return v;
             })}
           </div>
-          <div className='comment_body_like'>
-            {liked ? (
-              <HeartFilled
-                onClick={onCommentUnlike}
-                style={{ color: 'hotpink' }}
-              />
-            ) : (
-              <HeartOutlined onClick={onCommentLike} />
-            )}
-          </div>
+          {me ? (
+            <div className='comment_body_like'>
+              {liked ? (
+                <HeartFilled
+                  onClick={onCommentUnlike}
+                  style={{ color: 'hotpink' }}
+                />
+              ) : (
+                <HeartOutlined onClick={onCommentLike} />
+              )}
+            </div>
+          ) : null}
         </CommentBody>
         <CommentButtons className='comment_recomment'>
           <Time>{commentData.createdAt}</Time>

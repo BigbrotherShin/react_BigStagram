@@ -138,14 +138,18 @@ const ProfileLayout = memo(({ ...props }) => {
   } = useSelector((state) => state.post);
   const dispatch = useDispatch();
   const router = useRouter();
+  const { pathname, query, asPath } = router;
+  const { userData } = query;
   const [followData, setFollowData] = useState({
     followType: null,
     followData: null,
   });
+  // const asPathOfFollow = (follow) =>
+  //   `${pathname}${userData ? `/${userData}` : ''}/${follow}`;
 
   const setOnModal = useCallback(
     (follow, userInfo) => () => {
-      router.push(router.pathname, `/${follow}`);
+      router.push(pathname, `${pathname}/${follow}`, { shallow: true });
       dispatch({
         type: SET_ON_MODAL,
       });
@@ -158,23 +162,25 @@ const ProfileLayout = memo(({ ...props }) => {
   );
 
   const loadBookmark = useCallback(() => {
-    // dispatch({
-    //   type: LOAD_BOOKMARK_REQUEST,
-    // });
-    router.push('/profile/bookmark');
+    dispatch({
+      type: LOAD_BOOKMARK_REQUEST,
+    });
+    router.push(pathname, pathname + '/bookmark', { shallow: true });
   }, []);
 
   if (
     props.loading &&
     !(
-      me &&
-      me.Followings &&
-      me.Followers &&
-      props.userInfo &&
-      props.userInfo.Followings &&
-      props.userInfo.Followers &&
-      props.userInfo.nickname &&
-      props.userInfo.Posts
+      // me &&
+      // me.Followings &&
+      // me.Followers &&
+      (
+        props.userInfo &&
+        props.userInfo.Followings &&
+        props.userInfo.Followers &&
+        props.userInfo.nickname &&
+        props.userInfo.Posts
+      )
     )
   ) {
     return <div>로딩중..</div>;
@@ -204,7 +210,7 @@ const ProfileLayout = memo(({ ...props }) => {
               className='profile_card'
               title={props.userInfo.nickname}
               extra={
-                isLoggedIn ? (
+                me && isLoggedIn ? (
                   props.profile ? (
                     <Link href='#'>
                       <a>프로필 편집</a>
@@ -271,14 +277,20 @@ const ProfileLayout = memo(({ ...props }) => {
             </Menu.Item>
           </ProfileMenu>
         </ProfileOptions>
-        {props.posts ? (
-          <Posts posts={props.posts} />
+        {me &&
+        me.BookmarkPosts &&
+        isBookmarkLoaded &&
+        router.asPath === pathname + '/bookmark' ? (
+          <Posts modalPost posts={me.BookmarkPosts} />
+        ) : props.posts ? (
+          <Posts modalPost posts={props.posts} />
         ) : (
-          <Posts posts={props.userInfo && props.userInfo.Posts} />
+          <Posts modalPost posts={props.userInfo && props.userInfo.Posts} />
         )}
       </StyledProfileContainer>
       {onModal &&
-      (router.asPath === `/Followings` || router.asPath === `/Followers`) ? (
+      (asPath === `${pathname}/Followings` ||
+        asPath === `${pathname}/Followers`) ? (
         <ModalPortal>
           <FollowList followData={followData} />
         </ModalPortal>

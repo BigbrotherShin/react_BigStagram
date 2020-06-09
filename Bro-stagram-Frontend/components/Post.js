@@ -35,6 +35,12 @@ const dummy_images = [
 ];
 
 const Card = styled.div`
+  ${(props) =>
+    props.modalPost &&
+    css`
+      width: 540px;
+    `}
+
   padding: 0;
   position: relative;
 
@@ -71,13 +77,13 @@ const Card = styled.div`
   .card_content_likes_wrapper {
     display: flex;
     justify-content: flex-start;
-    padding-left: 16px;
-    padding-right: 16px;
-    margin-bottom: 8px;
+
+    padding: 10px 16px;
   }
 
   & .card_image {
     width: 100%;
+    z-index: 50;
     float: left;
     & img {
       width: 100%;
@@ -91,8 +97,8 @@ const CardContent = styled.div`
     // flex-direction: column;
     // justify-content: flex-start;
 
-    padding-left: 16px;
-    padding-right: 16px;
+    padding: 8px 16px 14px;
+
     flex: 0 0 auto;
   }
 
@@ -113,7 +119,7 @@ const CardContent = styled.div`
   }
 `;
 
-const Post = memo(({ postData, postDetail, offPostDetail }) => {
+const Post = memo(({ postData, postDetail, offPostDetail, modalPost }) => {
   const { me } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
@@ -166,7 +172,7 @@ const Post = memo(({ postData, postDetail, offPostDetail }) => {
 
   return (
     <>
-      <Card>
+      <Card modalPost={modalPost}>
         <header className='explore_card_two'>
           <UserName user={postData.Writer} />
           {postDetail ? (
@@ -174,36 +180,42 @@ const Post = memo(({ postData, postDetail, offPostDetail }) => {
           ) : null}
         </header>
         <div className='card_image explore_card_one'>
-          <Slider images={postData.Images} />
+          {postData.Images.length !== 0 && <Slider images={postData.Images} />}
         </div>
-        <div className='card_info explore_card_two'>
-          <div className='card_info_left'>
-            {liked ? (
-              <HeartFilled
-                onClick={onDislike}
-                style={{ color: 'hotpink' }}
-                className='card_info_icons'
-              />
-            ) : (
-              <HeartOutlined onClick={onLike} className='card_info_icons' />
-            )}
+        {me ? (
+          <div className='card_info explore_card_two'>
+            <div className='card_info_left'>
+              {liked ? (
+                <HeartFilled
+                  onClick={onDislike}
+                  style={{ color: 'hotpink' }}
+                  className='card_info_icons'
+                />
+              ) : (
+                <HeartOutlined onClick={onLike} className='card_info_icons' />
+              )}
 
-            <MessageOutlined className='card_info_icons' />
-            <UploadOutlined className='card_info_icons' />
+              <MessageOutlined className='card_info_icons' />
+              <UploadOutlined className='card_info_icons' />
+            </div>
+            <div className='card_info_right'>
+              {me &&
+              me.BookmarkPosts &&
+              me.BookmarkPosts.find((v, i) => v.id === postData.id) ? (
+                <BookFilled
+                  onClick={deleteBookmark}
+                  className='card_info_icons'
+                />
+              ) : (
+                <BookOutlined
+                  onClick={addBookmark}
+                  className='card_info_icons'
+                />
+              )}
+            </div>
           </div>
-          <div className='card_info_right'>
-            {me &&
-            me.BookmarkPosts &&
-            me.BookmarkPosts.find((v, i) => v.id === postData.id) ? (
-              <BookFilled
-                onClick={deleteBookmark}
-                className='card_info_icons'
-              />
-            ) : (
-              <BookOutlined onClick={addBookmark} className='card_info_icons' />
-            )}
-          </div>
-        </div>
+        ) : null}
+
         <CardContent className='card_content explore_card_two'>
           <section className='card_content_likes_wrapper'>
             <div className='card_content_likes'>
@@ -244,8 +256,9 @@ const Post = memo(({ postData, postDetail, offPostDetail }) => {
           {postData.Comments ? (
             <Comments className='card_comments' comments={postData.Comments} />
           ) : null}
-
-          <CommentForm className='card_comment_form' postId={postData.id} />
+          {me ? (
+            <CommentForm className='card_comment_form' postId={postData.id} />
+          ) : null}
         </CardContent>
       </Card>
     </>

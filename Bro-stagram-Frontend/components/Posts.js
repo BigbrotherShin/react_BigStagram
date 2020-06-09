@@ -13,6 +13,7 @@ import {
 } from '../reducers/post';
 import ClearButton from './common/ClearButton';
 import { useRouter } from 'next/router';
+import { format } from 'url';
 
 const StyledPosts = styled.div`
   & article {
@@ -60,24 +61,18 @@ const StyledPosts = styled.div`
   }
 `;
 
-const FixedClearButton = styled(ClearButton)`
-  position: fixed;
-  right: 8px;
-  top: 8px;
-
-  font-size: 24px;
-`;
-
-const Posts = memo(({ posts }) => {
+const Posts = memo(({ posts, modalPost }) => {
   const dispatch = useDispatch();
   const { postDetail, onModal, isLoadingPostDetail } = useSelector(
     (state) => state.post,
   );
   const router = useRouter();
+  const { pathname, query } = router;
+  const { userData } = query;
 
   const onPostDetail = useCallback(
     (postId) => () => {
-      router.push(router.pathname, '/explore/detail');
+      router.push(pathname, `${pathname}/post/detail`, { shallow: true });
       dispatch({
         type: SET_ON_MODAL,
       });
@@ -90,7 +85,7 @@ const Posts = memo(({ posts }) => {
   );
 
   const offPostDetail = useCallback(() => {
-    router.push(router.pathname);
+    router.back();
     dispatch({
       type: SET_OFF_MODAL,
     });
@@ -110,7 +105,7 @@ const Posts = memo(({ posts }) => {
                 {posts.map((v, i) => (
                   <PostImage
                     onClick={onPostDetail(v.id)}
-                    postThumnail={v.Images[0]}
+                    postThumnail={v.Images.length !== 0 && v.Images[0]}
                     key={`${v.id} ${i}`}
                   />
                 ))}
@@ -119,11 +114,18 @@ const Posts = memo(({ posts }) => {
           </div>
         </article>
       </StyledPosts>
-      {onModal && router.asPath === '/explore/detail' ? (
+      {onModal && router.asPath === `${pathname}/post/detail` ? (
         <ModalPortal>
           <Modal>
-            <Post postData={postDetail} />
-            <FixedClearButton onClick={offPostDetail}>X</FixedClearButton>
+            <Post modalPost={modalPost} postData={postDetail} />
+            <ClearButton
+              fontColor='white'
+              setOffModal
+              fontSize='24px'
+              onClick={offPostDetail}
+            >
+              X
+            </ClearButton>
           </Modal>
         </ModalPortal>
       ) : null}

@@ -1,12 +1,17 @@
 const express = require('express');
 
 const db = require('../models');
-const { isLoggedIn, findPost, findUser } = require('./middlewares');
+const {
+  isLoggedIn,
+  findPost,
+  findUser,
+  resizeImage,
+} = require('./middlewares');
 const { upload } = require('../util/multer');
 
 const router = express.Router();
 
-router.post('/image', upload.single('file'), (req, res) => {
+router.post('/image', upload.single('file'), resizeImage, (req, res) => {
   // multer: 폼데이터 파일 -> req.file(s) / 폼데이터 일반 값 -> req.body
 
   // upload.array() 이미지 여러 장 -> req.files

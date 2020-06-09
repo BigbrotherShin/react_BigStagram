@@ -141,7 +141,6 @@ exports.findPost = async (req, res, next) => {
 exports.resizeProfile = async (req, res, next) => {
   try {
     if (!req.file) return next();
-    console.log('file file', req.file);
 
     const file = req.file;
     const ext = path.extname(file.originalname);
@@ -152,6 +151,34 @@ exports.resizeProfile = async (req, res, next) => {
 
     req.body.profileImage = newFilename;
 
+    next();
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+};
+
+// 이미지 리사이즈
+exports.resizeImage = async (req, res, next) => {
+  try {
+    if (!req.file) return next();
+
+    const file = req.file;
+    const ext = path.extname(file.originalname);
+    const basename = path.basename(file.originalname, ext);
+
+    const metadata = await sharp(file.buffer).metadata();
+
+    let newFilename;
+    if (metadata.width > 540) {
+      newFilename = basename + new Date().valueOf() + 'resized' + ext;
+      await sharp(file.buffer).resize(540).toFile(`uploads/${newFilename}`);
+    } else {
+      newFilename = basename + new Date().valueOf() + ext;
+      await sharp(file.buffer).toFile(`uploads/${newFilename}`);
+    }
+
+    req.file.filename = newFilename;
     next();
   } catch (e) {
     console.error(e);

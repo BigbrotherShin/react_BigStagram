@@ -22,6 +22,7 @@ export const initialState = {
   isLikeDeleted: false,
   addBookmarkErrorReason: '',
   isLoadingBookmark: false,
+  isBookmarkLoaded: false,
   isBookmarkAdded: false,
   loadBookmarkErrorReason: '',
   deleteBookmarkErrorReason: '',

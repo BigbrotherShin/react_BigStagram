@@ -44,6 +44,7 @@ const NavAvatarCircle = styled.div`
 
 const AppLayout = memo(({ children }) => {
   const router = useRouter();
+  const { pathname, asPath, query } = router;
   const { me, isLoggedIn } = useSelector((state) => state.user);
   const { onModal } = useSelector((state) => state.post);
   const dispatch = useDispatch();
@@ -57,7 +58,7 @@ const AppLayout = memo(({ children }) => {
   );
 
   const onLogin = () => {
-    router.push(router.pathname, '/login');
+    router.push({ pathname, query }, '/login', { shallow: true });
     dispatch({
       type: SET_ON_MODAL,
     });

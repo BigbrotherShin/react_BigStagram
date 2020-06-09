@@ -8,6 +8,7 @@ const Container = styled.div`
   width: 100%;
   position: relative;
   overflow: hidden;
+  // width: 540px;
 `;
 
 const SliderContainer = styled.div`
@@ -15,6 +16,7 @@ const SliderContainer = styled.div`
   display: flex;
   align-items: center;
   transform: translateX(-100%);
+  min-width: 540px;
 
   ${(props) =>
     props.forPost &&

@@ -9,6 +9,8 @@ import {
   ADD_FOLLOWING_REQUEST,
   DELETE_FOLLOWING_REQUEST,
 } from '../../reducers/user';
+import { useRouter } from 'next/router';
+import ClearButton from '../common/ClearButton';
 
 const FollowListWhiteBox = styled(WhiteBox)`
   position: relative;
@@ -28,8 +30,17 @@ const FollowListItem = styled.div`
 const FollowList = memo(({ followData }) => {
   const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
+  const router = useRouter();
+  const { pathname, query } = router;
+  const { userData } = query;
 
-  const isMe = me && me.id === followData.id;
+  // useEffect(() => {
+  //   return () => {
+  //     router.push(pathname, `${pathname}${userData ? `/${userData}` : ''}`, {
+  //       shwallow: true,
+  //     });
+  //   };
+  // }, []);
 
   const follow = useCallback(
     (userData) => () => {
@@ -65,13 +76,18 @@ const FollowList = memo(({ followData }) => {
           <h1>
             <div>{followData.followType}</div>
           </h1>
-          <Button setOffModal className='follow_list_header_right' clearButton>
+          <ClearButton
+            fontSize='20px'
+            setOffModal
+            className='follow_list_header_right'
+          >
             X
-          </Button>
+          </ClearButton>
         </header>
         <FollowListItemsWrapper>
           <ul>
             {followData.followData.map((v, i) => {
+              const isMe = me && me.id === v.id;
               const isFollowing =
                 me && me.Followings.find((f) => f.id === v.id);
 
@@ -79,7 +95,7 @@ const FollowList = memo(({ followData }) => {
                 <li key={+v.createdAt}>
                   <FollowListItem>
                     <UserName followList user={v} />
-                    {!isMe ? (
+                    {!me && isMe ? (
                       <Button
                         blue={isFollowing ? false : true}
                         white={isFollowing ? true : false}

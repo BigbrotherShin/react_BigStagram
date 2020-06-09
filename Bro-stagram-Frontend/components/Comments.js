@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components';
 const StyledCommentsList = styled.div`
   max-height: 30vh;
   overflow: auto;
+  padding-bottom: 12px;
 
   ${(props) =>
     props.recomment &&

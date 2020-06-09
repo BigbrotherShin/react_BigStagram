@@ -1,5 +1,5 @@
 import React, { useEffect, useCallback } from 'react';
-import { useRouter } from 'next/router';
+import Router from 'next/router';
 import styled, { css } from 'styled-components';
 import palette from '../../lib/styles/palette';
 import { SET_OFF_MODAL } from '../../reducers/post';
@@ -28,12 +28,28 @@ const StyledClearButton = styled.button`
   ${(props) =>
     props.fontSize &&
     css`
-      font-size: ${props.fontSize}px;
+      font-size: ${props.fontSize};
+    `}
+  ${(props) =>
+    props.setOffModal &&
+    css`
+      position: absolute;
+      right: 4px;
+      top: 4px;
     `}
 `;
 
 const ClearButton = (props) => {
-  return <StyledClearButton {...props} />;
+  const dispatch = useDispatch();
+  const offModal = useCallback(() => {
+    Router.back();
+    dispatch({
+      type: SET_OFF_MODAL,
+    });
+  }, []);
+  return (
+    <StyledClearButton onClick={props.setOffModal && offModal} {...props} />
+  );
 };
 
 export default ClearButton;

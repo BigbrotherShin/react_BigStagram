@@ -17,7 +17,7 @@ const Explore = memo(() => {
 
   return (
     <StyledProfileContainer>
-      <Posts posts={explorePosts} />
+      <Posts modalPost posts={explorePosts} />
     </StyledProfileContainer>
   );
 });

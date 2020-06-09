@@ -99,7 +99,7 @@ const Button = (props) => {
   const { clearButton, cyan, fullWidth, setOffModal } = props;
   const dispatch = useDispatch();
   const setOffModalAction = useCallback(() => {
-    router.push(router.pathname);
+    router.back();
     dispatch({
       type: SET_OFF_MODAL,
     });

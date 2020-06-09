@@ -116,11 +116,12 @@ router.get('/:userData', async (req, res, next) => {
           { nickname: decodeURIComponent(req.params.userData) },
         ],
       },
+      order: [[{ model: db.Post, as: 'Posts' }, 'createdAt', 'DESC']],
       include: [
         {
           model: db.Post,
           as: 'Posts',
-          order: [['createdAt', 'DESC']],
+          required: false,
           include: [
             {
               model: db.Image,
@@ -130,10 +131,12 @@ router.get('/:userData', async (req, res, next) => {
         {
           model: db.User,
           as: 'Followers',
+          attributes: { exclude: ['password'] },
         },
         {
           model: db.User,
           as: 'Followings',
+          attributes: { exclude: ['password'] },
         },
       ],
       attributes: { exclude: ['password'] },
