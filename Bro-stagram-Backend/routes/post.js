@@ -235,16 +235,8 @@ router.delete('/comment/like', isLoggedIn, findPost, async (req, res, next) => {
 router.post('/bookmark', isLoggedIn, findPost, async (req, res, next) => {
   try {
     await req.findPost.addBookmarkUser(req.user.id);
-    res.status(200).json({ postId: req.findPost.id });
-  } catch (e) {
-    console.error(e);
-    next(e);
-  }
-});
-
-router.get('/bookmark', findUser, async (req, res, next) => {
-  try {
-    const bookmarkPosts = await req.findUser.getBookmarkPosts({
+    const bookmarkFullPost = await db.Post.findOne({
+      where: { id: req.findPost.id },
       include: [
         {
           model: db.Image,
@@ -252,7 +244,7 @@ router.get('/bookmark', findUser, async (req, res, next) => {
         },
       ],
     });
-    res.status(200).json(bookmarkPosts);
+    res.status(200).json(bookmarkFullPost);
   } catch (e) {
     console.error(e);
     next(e);
@@ -292,6 +284,8 @@ router.get('/detail/:postId', findPost, async (req, res, next) => {
         {
           model: db.Comment,
           as: 'Comments',
+          where: { RecommentId: null },
+          required: false,
           include: [
             {
               model: db.User,

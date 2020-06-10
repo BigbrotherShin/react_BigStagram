@@ -136,4 +136,22 @@ router.get('/myPosts', isLoggedIn, async (req, res, next) => {
   }
 });
 
+router.get('/bookmark', findUser, async (req, res, next) => {
+  try {
+    const bookmarkPosts = await req.findUser.getBookmarkPosts({
+      order: [[db.Sequelize.literal('PostBookmark.createdAt'), 'DESC']],
+      include: [
+        {
+          model: db.Image,
+          limits: 1,
+        },
+      ],
+    });
+    res.status(200).json(bookmarkPosts);
+  } catch (e) {
+    console.error(e);
+    next(e);
+  }
+});
+
 module.exports = router;

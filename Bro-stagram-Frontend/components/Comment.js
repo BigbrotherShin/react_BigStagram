@@ -179,7 +179,7 @@ const Comment = memo(({ commentData, recomment }) => {
             </div>
             <div className='comment_see_more_recomments'>
               <div>
-                <ClearButton fontSize='14' onClick={onSeeRecomments}>
+                <ClearButton fontSize='14px' onClick={onSeeRecomments}>
                   답글
                   {seeRecomments
                     ? ' 숨기기'

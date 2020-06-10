@@ -23,10 +23,13 @@ const ProfileBookmark = memo(() => {
     router.push({ pathname: '/profile' });
   }, []);
 
+  if (!(me && me.BookmarkPosts && isBookmarkLoaded)) return <div>로딩중..</div>;
+
   return (
     <ProfileLayout
       loading={!(me && me.BookmarkPosts && isBookmarkLoaded)}
       userInfo={me}
+      bookmark
       loadPosts={loadPosts}
       loadBookmark={loadBookmark}
       posts={me && me.BookmarkPosts}

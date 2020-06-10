@@ -145,9 +145,11 @@ const Slider = ({ images }) => {
 
     if (currentSlide === images.length) {
       setPagenationSlide(0);
+
       setTimeout(goToSlide, aniTime);
     } else if (currentSlide === -1) {
       setPagenationSlide(images.length - 1);
+
       setTimeout(goToLastSlide, aniTime);
     }
   }, [currentSlide]);

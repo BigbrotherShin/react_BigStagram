@@ -84,7 +84,7 @@ const Card = styled.div`
   & .card_image {
     width: 100%;
     z-index: 50;
-    float: left;
+    // float: left;
     & img {
       width: 100%;
     }

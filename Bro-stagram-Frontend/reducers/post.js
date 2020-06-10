@@ -163,11 +163,28 @@ const reducer = (state = initialState, action) => {
       case ADD_COMMENT_SUCCESS: {
         draft.isAddingComment = false;
         draft.isCommentAdded = true;
+        draft.mentionedUser = '';
+        draft.recommentId = '';
+        draft.commentPostId = '';
+
+        if (draft.postDetail) {
+          if (!action.data.RecommentId) {
+            // post 모달창이 켜져있는 경우 댓글 추가
+            draft.postDetail.Comments.push(action.data);
+            break;
+          }
+          // post 모달창이 켜져있는 경우 대댓글 추가
+          const commentIndex = draft.postDetail.Comments.findIndex(
+            (v) => v.id === action.data.RecommentId,
+          );
+          draft.postDetail.Comments[commentIndex].Recomments.push(action.data);
+          break;
+        }
+
         const postIndex = draft.mainPosts.findIndex(
           // 댓글을 추가한 포스트 id 찾기
           (v) => v.id === action.data.PostId,
         );
-
         if (!action.data.RecommentId) {
           // 대댓글이 아니라면 해당 포스트의 댓글 리스트에 댓글 추가
           draft.mainPosts[postIndex].Comments.push(action.data);
@@ -176,13 +193,12 @@ const reducer = (state = initialState, action) => {
           const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
             (v) => v.id === action.data.RecommentId,
           );
+
           draft.mainPosts[postIndex].Comments[commentIndex].Recomments.push(
             action.data,
           );
         }
-        draft.mentionedUser = '';
-        draft.recommentId = '';
-        draft.commentPostId = '';
+
         break;
       }
       case ADD_COMMENT_FAILURE: {
@@ -199,10 +215,17 @@ const reducer = (state = initialState, action) => {
       case ADD_POST_LIKE_SUCCESS: {
         draft.isAddingLike = false;
         draft.isLikeAdded = true;
-        const postIndex = draft.mainPosts.findIndex(
-          (v, i) => v.id === action.data.postId,
-        );
-        draft.mainPosts[postIndex].Likers.push(action.data.user);
+
+        if (draft.postDetail) {
+          // post 모달창이 켜져있는 경우
+          draft.postDetail.Likers.push(action.data.user);
+        } else {
+          // mainPosts 좋아요 추가
+          const postIndex = draft.mainPosts.findIndex(
+            (v, i) => v.id === action.data.postId,
+          );
+          draft.mainPosts[postIndex].Likers.push(action.data.user);
+        }
         break;
       }
       case ADD_POST_LIKE_FAILURE: {
@@ -219,6 +242,15 @@ const reducer = (state = initialState, action) => {
       case DELETE_POST_LIKE_SUCCESS: {
         draft.isDeletingLike = false;
         draft.isLikeDeleted = true;
+        if (draft.postDetail) {
+          // post 모달창이 켜져있는 경우 좋아요 취소
+          const userIndex = draft.postDetail.Likers.findIndex(
+            (v) => v.id === action.data.user.id,
+          );
+          draft.postDetail.Likers.splice(userIndex, 1);
+          break;
+        }
+        // mainPosts에서의 좋아요 취소
         const postIndex = draft.mainPosts.findIndex(
           (v, i) => v.id === action.data.postId,
         );
@@ -242,6 +274,30 @@ const reducer = (state = initialState, action) => {
       case ADD_COMMENT_LIKE_SUCCESS: {
         draft.isAddingLike = false;
         draft.isLikeAdded = true;
+        if (draft.postDetail && action.data.recommentId) {
+          // post 모달창이 켜져있는 경우 대댓글 좋아요
+          const recommentIndex = draft.postDetail.Comments.findIndex(
+            (v) => v.id === action.data.recommentId,
+          );
+          const commentIndex = draft.postDetail.Comments[
+            recommentIndex
+          ].Recomments.findIndex((v) => v.id === action.data.commentId);
+          draft.postDetail.Comments[recommentIndex].Recomments[
+            commentIndex
+          ].CommentLikers.push(action.data.user);
+          break;
+        } else if (draft.postDetail && !action.data.recommentId) {
+          // post 모달창이 켜져있는 경우 댓글 좋아요
+          const commentIndext = draft.postDetail.Comments.findIndex(
+            (v) => v.id === action.data.commentId,
+          );
+          draft.postDetail.Comments[commentIndext].CommentLikers.push(
+            action.data.user,
+          );
+          break;
+        }
+
+        // mainPosts에서 (대)댓글 좋아요 추가
         const postIndex = draft.mainPosts.findIndex(
           (v, i) => v.id === action.data.postId,
         );
@@ -253,18 +309,22 @@ const reducer = (state = initialState, action) => {
           const commentIndex = draft.mainPosts[postIndex].Comments[
             recommentIndex
           ].Recomments.findIndex((v, i) => v.id === action.data.commentId);
+
           draft.mainPosts[postIndex].Comments[recommentIndex].Recomments[
             commentIndex
           ].CommentLikers.push(action.data.user);
+
           break;
         } else {
           // 댓글인 경우 좋아요 추가
           const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
             (v, i) => v.id === action.data.commentId,
           );
+
           draft.mainPosts[postIndex].Comments[commentIndex].CommentLikers.push(
             action.data.user,
           );
+
           break;
         }
       }
@@ -282,11 +342,45 @@ const reducer = (state = initialState, action) => {
       case DELETE_COMMENT_LIKE_SUCCESS: {
         draft.isDeletingLike = false;
         draft.isLikeDeleted = true;
+
+        if (action.postDetail && action.data.recommentId) {
+          // post 모달창이 켜져있는 경우 대댓글 좋아요
+          const recommentIndex = draft.postDetail.Comments.findIndex(
+            (v) => v.id === action.data.recommentId,
+          );
+          const commentIndex = draft.postDetail.Comments[
+            recommentIndex
+          ].Recomments.findIndex((v) => v.id === action.data.commentId);
+          const userIndex = draft.postDetail.Comments[
+            recommentIndex
+          ].Recomments[commentIndex].CommentLikers.findIndex(
+            (v) => v.id === action.data.user.id,
+          );
+          draft.postDetail.Comments[recommentIndex].Recomments[
+            commentIndex
+          ].CommentLikers.splice(userIndex, 1);
+          break;
+        } else if (action.postDetail && !action.data.recommentId) {
+          // post 모달창이 켜져있는 경우 댓글 좋아요
+          const commentIndex = draft.postDetail.Comments.findIndex(
+            (v) => v.id === action.data.commentId,
+          );
+          const userIndex = draft.postDetail.Comments[
+            commentIndex
+          ].CommentLikers.findIndex((v) => v.id === action.data.user.id);
+          draft.postDetail.Comments[commentIndex].CommentLikers.splice(
+            userIndex,
+            1,
+          );
+          break;
+        }
+
         const postIndex = draft.mainPosts.findIndex(
           (v, i) => v.id === action.data.postId,
         );
+
         if (action.data.recommentId) {
-          // 대댓글인 경우 좋아요 취소
+          // mainPosts에서 대댓글 좋아요 취소
           const recommentIndex = draft.mainPosts[postIndex].Comments.findIndex(
             (v, i) => v.id === action.data.recommentId,
           );
@@ -302,8 +396,8 @@ const reducer = (state = initialState, action) => {
             commentIndex
           ].CommentLikers.splice(userIndex, 1);
           break;
-        } else if (action.data.recommentId === null) {
-          // 댓글인 경우 좋아요 취소
+        } else if (!action.data.recommentId) {
+          // mainPosts에서의 댓글 좋아요 취소
           const commentIndex = draft.mainPosts[postIndex].Comments.findIndex(
             (v, i) => v.id === action.data.commentId,
           );

@@ -259,7 +259,7 @@ const reducer = (state = initialState, action) => {
       }
       case ADD_BOOKMARK_TO_ME: {
         if (draft.me && draft.me.BookmarkPosts) {
-          draft.me.BookmarkPosts.push({ id: action.data.postId });
+          draft.me.BookmarkPosts.unshift(action.data);
           break;
         }
       }

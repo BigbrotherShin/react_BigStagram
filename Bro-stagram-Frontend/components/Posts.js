@@ -1,4 +1,4 @@
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
 import PostImage from './PostImage';
@@ -67,7 +67,7 @@ const Posts = memo(({ posts, modalPost }) => {
     (state) => state.post,
   );
   const router = useRouter();
-  const { pathname, query } = router;
+  const { pathname, query, asPath } = router;
   const { userData } = query;
 
   const onPostDetail = useCallback(

@@ -161,12 +161,12 @@ const ProfileLayout = memo(({ ...props }) => {
     [],
   );
 
-  const loadBookmark = useCallback(() => {
-    dispatch({
-      type: LOAD_BOOKMARK_REQUEST,
-    });
-    router.push(pathname, pathname + '/bookmark', { shallow: true });
-  }, []);
+  // const loadBookmark = useCallback(() => {
+  //   dispatch({
+  //     type: LOAD_BOOKMARK_REQUEST,
+  //   });
+  //   router.push('/profile/bookmark');
+  // }, []);
 
   if (
     props.loading &&
@@ -211,7 +211,7 @@ const ProfileLayout = memo(({ ...props }) => {
               title={props.userInfo.nickname}
               extra={
                 me && isLoggedIn ? (
-                  props.profile ? (
+                  props.profile || props.bookmark ? (
                     <Link href='#'>
                       <a>프로필 편집</a>
                     </Link>
@@ -257,12 +257,12 @@ const ProfileLayout = memo(({ ...props }) => {
             >
               게시물
             </Menu.Item>
-            {props.loadBookmark ? (
+            {props.loadBookmark || props.profile || props.bookmark ? (
               <Menu.Item
                 className='profile_menu_items'
                 key='myBookmark'
                 icon={<BookOutlined />}
-                onClick={loadBookmark}
+                onClick={props.loadBookmark}
               >
                 저장됨
               </Menu.Item>
@@ -277,16 +277,24 @@ const ProfileLayout = memo(({ ...props }) => {
             </Menu.Item>
           </ProfileMenu>
         </ProfileOptions>
-        {me &&
-        me.BookmarkPosts &&
-        isBookmarkLoaded &&
-        router.asPath === pathname + '/bookmark' ? (
-          <Posts modalPost posts={me.BookmarkPosts} />
-        ) : props.posts ? (
+        {/* {props.profile || props.bookmark ? (
+          // &&
+          // me.BookmarkPosts &&
+          // isBookmarkLoaded &&
+          // router.asPath === pathname + '/bookmark' ? (
+          //   <Posts modalPost posts={me.BookmarkPosts} />
+          // ) : props.posts
           <Posts modalPost posts={props.posts} />
-        ) : (
-          <Posts modalPost posts={props.userInfo && props.userInfo.Posts} />
-        )}
+        ) : ( */}
+        <Posts
+          modalPost
+          posts={
+            props.userInfo && props.bookmark
+              ? props.posts
+              : props.userInfo.Posts
+          }
+        />
+        {/* )} */}
       </StyledProfileContainer>
       {onModal &&
       (asPath === `${pathname}/Followings` ||

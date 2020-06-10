@@ -301,7 +301,7 @@ function* watchAddBookmark() {
 }
 
 function loadBookmarkAPI(actionData) {
-  return Axios.get(`/post/bookmark`, {
+  return Axios.get(`/posts/bookmark`, {
     withCredentials: true,
   });
 }

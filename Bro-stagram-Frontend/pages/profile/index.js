@@ -49,9 +49,9 @@ const Profile = () => {
   }, [ProfileImageAdded, ProfileImageDeleted]);
 
   const loadBookmark = useCallback(() => {
-    // dispatch({
-    //   type: LOAD_BOOKMARK_REQUEST,
-    // });
+    dispatch({
+      type: LOAD_BOOKMARK_REQUEST,
+    });
     router.push('/profile/bookmark');
   }, []);
 
@@ -60,7 +60,7 @@ const Profile = () => {
   }, []);
 
   const setProfileImage = useCallback(() => {
-    router.push(router.pathname, '/profileImage');
+    router.push(router.pathname, '/profileImage', { shwallow: true });
     dispatch({
       type: SET_ON_MODAL,
     });
